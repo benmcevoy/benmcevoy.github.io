@@ -637,6 +637,13 @@ break}};e.documentElement.addEventListener(this.POINTER_UP,l,!1),e.documentEleme
 
         map.addLayer(markers);
 
+        try{
+            navigator.geolocation.getCurrentPosition(function(pos){
+                L.map('map').setView([pos.coords.latitude, pos.coords.longitude], 13);
+            });
+        }
+        catch(e){}
+
     </script>
 
 </body>
