@@ -605,14 +605,8 @@ break}};e.documentElement.addEventListener(this.POINTER_UP,l,!1),e.documentEleme
      <script src="/Leaflet.awesome-markers-2.0.2/dist/leaflet.awesome-markers.min.js"></script>
 </head>
 <body>
-
-
-                <div id="map"></div>
-
-
-
+    <div id="map"></div>
     <script type="text/javascript">
-
         var icon = L.AwesomeMarkers.icon({ icon: 'beer', prefix: 'fa', markerColor: 'green', spin: false });
         var map = L.map('map').setView([-37.814107, 144.96327999999994], 13);
 
@@ -621,7 +615,6 @@ break}};e.documentElement.addEventListener(this.POINTER_UP,l,!1),e.documentEleme
         }).addTo(map);
 
         var markers = new L.MarkerClusterGroup();
-
 
         for (var i = 0; i < venues.length; i++) {
             if (venues[i].Latitude) {
@@ -633,8 +626,6 @@ break}};e.documentElement.addEventListener(this.POINTER_UP,l,!1),e.documentEleme
             }
         }
 
-
-
         map.addLayer(markers);
 
         try{
@@ -643,8 +634,6 @@ break}};e.documentElement.addEventListener(this.POINTER_UP,l,!1),e.documentEleme
             });
         }
         catch(e){}
-
     </script>
-
 </body>
 </html>
