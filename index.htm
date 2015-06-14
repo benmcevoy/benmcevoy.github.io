@@ -169,7 +169,7 @@
         </div>
 
         <div class="tile accent6">
-            <a href="http://benmcevoy.com.au/blog/feed/">
+            <a href="http://benmcevoy.com.au/blog/feed/atom.xml">
                 <div class="content">
                     <h2 class="title">RSS</h2>
                     <div class="caption">
@@ -183,7 +183,7 @@
 
     <script type="text/javascript">
         $(function () {
-            $.get("http://benmcevoy.com.au/feed", function (data) {
+            $.get("http://benmcevoy.com.au/blog/feed/atom.xml", function (data) {
                 $('#blog').html($(data).find('entry').first().find('title').text());
             });
         });
