@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Having knocked up a couple of apps that use the map control, I sat down and refactored some common functionality out of them, and implemented a nice Clusterer, that will group points on the map together if they are within certain thresholds.  [Get the all the code and more][1] Clustering Location Items ![alt text][2] ![alt text][3] ![alt text][4] ![alt text][5] For each point on the map I am interested in I have a model item that implements ILocationItem public interface ILocationItem { int Id { get;  } } In order to cluster these items I provide the set of location items, the geographic boundary we are interested in (the map boundary) and some threshold to control the level of clustering: public interface ILocationItemClusterer { IEnumerable&lt;ClusteredLocationItem&gt;  y++) { sectors.Add(new LocationRect( boundingRectangle.North - (y * strideY), boundingRectangle.West - (x * strideX), boundingRectangle.North - ((y + 1) * strideY), boundingRectangle.West - ((x + 1) * strideX))); ">
+    <meta name="keywords" content="{, }, clustering, =, items, var">
+    <meta name="author" content="ben mcevoy">
+    <title>Clustering Results with Windows Phone Bing Map Control - blog.benmcevoy.com.au</title>
+    <link href="/assets/css/site.css" rel="stylesheet">
+    <link type="application/atom+xml" rel="alternate" href="/feed" />
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <!-- Navigation -->
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Home</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="http://benmcevoy.com.au/">benmcevoy.com.au</a>
+                </li>
+                <li>
+                    <a href="https://github.com/benmcevoy/">Github</a>
+                </li>
+                <li>
+                    <a href="http://benmcevoy.com.au/resume.aspx">Resume</a>
+                </li>
+                <li>
+                    <a href="/feed">Feed</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+    <div class="container">
+        <div class="row content">
+            <div class="col-lg-8 entry">
+                <h1>Clustering Results with Windows Phone Bing Map Control</h1>
+                <hr>
+                <p><span class="glyphicon glyphicon-time"></span> Posted on Sunday May 2012</p>
+                <hr>
+                <h2>Clustering Results on the Windows Phone Bing Map Control</h2>
+
+<p>I have been having fun today with the Bing Map Control for Silverlight/Windows Phone 7.</p>
+
+<p>Having knocked up a couple of apps that use the map control, I sat down and refactored some common functionality out of them, and implemented a nice Clusterer, that will group points on the map together if they are within certain thresholds.</p>
+
+<p>There are a few implementations of clustering around, mainly for the AJAX control, and therefore in JavaScript. </p>
+
+<p><a href="https://bitbucket.org/benmcevoy/radio7.phone.common">Get the all the code and more</a> </p>
+
+<h3>Clustering Location Items</h3>
+
+<p><img class="img-responsive" src="http://benmcevoy.com.au/blog/get/cluster/zoom12.png" alt="alt text" /> <img class="img-responsive" src="http://benmcevoy.com.au/blog/get/cluster/zoom16.png" alt="alt text" /> <img class="img-responsive" src="http://benmcevoy.com.au/blog/get/cluster/zoom18.png" alt="alt text" /> <img class="img-responsive" src="http://benmcevoy.com.au/blog/get/cluster/detail.png" alt="alt text" /></p>
+
+<p>For each point on the map I am interested in I have a model item that implements ILocationItem</p>
+
+<pre><code>
+    public interface ILocationItem
+    {
+        int Id { get;  }
+
+        Microsoft.Phone.Controls.Maps.Platform.Location Location { get; }
+
+        LocationRect LocationRect { get; }
+
+        string Name { get;  }
+    }
+</code></pre>
+
+In order to cluster these items I provide the set of location items, the geographic boundary we are interested in (the map boundary) and some threshold to control the level of clustering:
+
+<pre><code>
+    public interface ILocationItemClusterer
+    {
+        IEnumerable&lt;ClusteredLocationItem&gt; Cluster(IEnumerable&lt;ILocationItem&gt; items, 
+    		LocationRect boundingRectangle, double threshold);
+    }
+</code></pre>
+
+In any algorithm the first thing I'd want to do is discard points that are outside that boundary.  Other implementations might retain all points, some might calcuate the cluster for a zoom level and cache it and so on.  My implementation reclusters each time, so I guess there is some room for improvement there.
+
+I have a nice way to filter the items, taking advantage of yield:
+
+<pre>
+<code>
+        public static IEnumerable&lt;ILocationItem&gt; IsInBoundary(this IEnumerable&lt;ILocationItem&gt; items, LocationRect boundary)
+        {
+            foreach (ILocationItem item in items)
+            {
+                if (boundary.Intersects(item.LocationRect))
+                {
+                    yield return item;
+                }
+            }
+        }
+</code>
+</pre>
+
+<p>So only those items that intersect with the map boundary will be processed.</p>
+
+<p>Incidently, each item has an arbitrary LocationRect, or area. As we are essentially dealing with points on a map I have just given them a small area, of maybe a couple of square meters.  It's just to ensure they have a non-zero area.</p>
+
+<p>We can group or cluster these location items together inside a ClusteredLocationItem</p>
+
+<pre><code>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using map = Microsoft.Phone.Controls.Maps;
+
+namespace Radio7.Phone.Common.Location
+{
+    public class ClusteredLocationItem : ILocationItem
+    {
+        public ClusteredLocationItem(map.LocationRect sector)
+        {
+            SectorLocationRect = sector;
+            _locationItems = new List&lt;ILocationItem&gt;();
+        }
+
+        public void AddLocationItem(ILocationItem item)
+        {
+            _locationItems.Add(item);
+
+            if (_firstItem == null)
+            {
+                _firstItem = item;
+            }
+        }
+
+        public bool IsInSector(map.LocationRect sectorRect)
+        {
+            return SectorLocationRect.Intersects(sectorRect);
+        }
+
+        private ILocationItem _firstItem;
+        private ILocationItem FirstItem { get { return _firstItem; } }
+
+        public map.LocationRect SectorLocationRect { get; private set; }
+
+        private List&lt;ILocationItem&gt; _locationItems;
+        public IEnumerable&lt;ILocationItem&gt; LocationItems { get { return _locationItems; } }
+
+        public int Count { get { return LocationItems.Count(); } }
+
+        public int Id { get { return FirstItem.Id; } }
+
+        public map.Platform.Location Location
+        {
+            get
+            {
+                if (Count > 1)
+                    return SectorLocationRect.Center;
+
+                return FirstItem.Location;
+            }
+        }
+
+        public map.LocationRect LocationRect
+        {
+            get
+            {
+                if (Count > 1)
+                    return SectorLocationRect;
+
+                return FirstItem.LocationRect;
+            }
+        }
+
+        public string Name
+        {
+            get
+            {
+                if (Count > 1)
+                    return Count.ToString();
+
+                return FirstItem.Name;
+            }
+        }
+    }
+}
+</code></pre>
+
+<p>A ClusteredLocationItem is basically another ILocationItem, representing where on the map the cluster is.  It also contains the collection of items that comprise the cluster. If the cluster only has a single item then it will behave like it is that single item.</p>
+
+<h3>Grid Clustering</h3>
+
+<p>The most common, and most obvious algorithm is to use a regular grid over the map.  If one or more points are in a common cell of the grid then they will be clustered.</p>
+
+<p>As the map pans and zooms however, the number of cells in the cluster will be more or less, that is the cell will contain different sets of points.  This causes the rendered clusters to jump around as they regroup within the ever shifting boundaries of the cells.  It's quite distracting.</p>
+
+<p>Firstly we split our bounding rectangle up into a grid of cells, or sectors.</p>
+
+<pre><code>
+        private IEnumerable&lt;LocationRect&gt; GetSectorRects(LocationRect boundingRectangle, double sectorOrdinal)
+        {
+            var sectors = new List&lt;LocationRect&gt;();
+
+            var strideX = (boundingRectangle.West - boundingRectangle.East) / sectorOrdinal;
+            var strideY = (boundingRectangle.North - boundingRectangle.South) / sectorOrdinal;
+
+            for (int x = 0; x &lt; sectorOrdinal; x++)
+            {
+                for (int y = 0; y &lt; sectorOrdinal; y++)
+                {
+                    sectors.Add(new LocationRect(
+                            boundingRectangle.North - (y * strideY),
+                            boundingRectangle.West - (x * strideX),
+                            boundingRectangle.North - ((y + 1) * strideY),
+                            boundingRectangle.West - ((x + 1) * strideX)));
+                }
+            }
+
+            return sectors;
+        }
+</code></pre>
+
+<p>Here the sectorOrdinal indicates the number of cells to create - e.g. 10 by 10.  This splits the map up in to sectorOrdinal^2 cells.</p>
+
+<p>I am unsure about my stride logic here.  I'm not sure what happens in the northern hemisphere, or if we cross a meridan or equator.  I believe it should be using some kind of sine function, but I haven't really looked into it.</p>
+
+<p>I guess that's another item on the TODO list :)</p>
+
+<p>Now that we have our sectors we need to check if a point belongs to one and start actually clustering results.</p>
+
+<pre><code>
+        public IEnumerable&lt;ClusteredLocationItem&gt; Cluster(IEnumerable&lt;ILocationItem&gt; items, LocationRect boundingRectangle, double sectorOrdinal)
+        {
+            var clusters = new List&lt;ClusteredLocationItem&gt;();
+            var sectorRects = GetSectorRects(boundingRectangle, sectorOrdinal);
+
+            foreach (var item in items.IsInBoundary(boundingRectangle))
+            {
+                foreach (var sector in sectorRects)
+                {
+                    if (sector.Intersects(item.LocationRect))
+                    {
+                        var cluster = GetClusterForThisSector(clusters, sector);
+                        cluster.AddLocationItem(item);
+                        break;
+                    }
+                }
+            }
+
+            return clusters;
+        }
+
+        private ClusteredLocationItem GetClusterForThisSector(List&lt;ClusteredLocationItem&gt; clusters, LocationRect sector)
+        {
+            foreach (var cluster in clusters)
+            {
+                if (cluster.IsInSector(sector))
+                {
+                    return cluster;
+                }
+            }
+
+            var newCluster = new ClusteredLocationItem(sector);
+
+            clusters.Add(newCluster);
+
+            return newCluster;
+        }
+</code></pre>
+
+<p>Once we find the sector the item belongs to we add it to a cluster, creating one if need be, then move on to the next item.</p>
+
+<h3>Distance Clustering</h3>
+
+<p>As clustering on a grid produced some unpleasant effects when paning and zooming I looked for alteratives.</p>
+
+<p>We can cluster on distance instead.  For location item we are interested in we find or create a cluster for it.  To determine if a point belongs to a cluster we create an area (LocationRect) around the cluster center.  If a point intersects with this area then it is included in the cluster.</p>
+
+<p>This algorithm turns out be simpler, faster and produces more aesthetically pleasing results.</p>
+
+<pre><code>
+using System;
+using System.Collections.Generic;
+using Microsoft.Phone.Controls.Maps;
+
+namespace Radio7.Phone.Common.Location
+{
+    public class LocationItemDistanceClusterer : ILocationItemClusterer
+    {
+        public IEnumerable&lt;ClusteredLocationItem&gt; Cluster(IEnumerable&lt;ILocationItem&gt; items, LocationRect boundingRectangle, double zoomLevel)
+        {
+            var threshold = 8192 / Math.Exp(zoomLevel);
+            var clusters = new List&lt;ClusteredLocationItem&gt;();
+
+            foreach (var item in items.IsInBoundary(boundingRectangle))
+            {
+                var cluster = GetClusterForThisPoint(clusters, item.LocationRect, threshold);
+                cluster.AddLocationItem(item);
+            }
+
+            return clusters;
+        }
+
+        private ClusteredLocationItem GetClusterForThisPoint(List&lt;ClusteredLocationItem&gt; clusters, LocationRect locationRect, double threshold)
+        {
+            foreach (var cluster in clusters)
+            {
+                var thresholdRect = new LocationRect(cluster.Location, threshold, threshold);
+
+                if (thresholdRect.Intersects(locationRect))
+                {
+                    return cluster;
+                }
+            }
+
+            var newCluster = new ClusteredLocationItem(new LocationRect(locationRect.Center, threshold, threshold));
+
+            clusters.Add(newCluster);
+
+            return newCluster;
+        }
+    }
+}
+</code></pre>
+
+<p>The threshold value of var threshold = 8192 / Math.Exp(zoomLevel) is something I arrived at by trial and error.  It works pretty good on the phone in portrait mode, I would suggest you test it with different resolutions and layouts.</p>
+
+<h3>More Betterer Grid Clusterer</h3>
+
+<p>After building these two implementations it occoured to me that a better grid clusterer is most likely.  By aligning the grid to the underlying co-ordinate system - the latitude and longitude - the cells would move in sync with the map.  Changing the zoom level would change the size of the cells, but panning should look good.  To be fair I'm pretty happy with the distance Clusterer for now, so I'll leave this for another day.</p>
+
+<h3>Using the Clusterer</h3>
+
+<pre><code>
+       private void UpdateMap()
+        {
+            var clusters = _clusterer.Cluster(_repository.Get().Cast&lt;ILocationItem&gt;(), MapControl.BoundingRectangle, MapControl.ZoomLevel);
+
+            _pinLayer.Children.Clear();
+
+            foreach (var cluster in clusters)
+            {
+                if (cluster.Count == 1)
+                {
+                    var p = new Image();
+                    p.Source = new BitmapImage(new Uri("pushpin.png", UriKind.Relative));
+                    p.Stretch = System.Windows.Media.Stretch.None;
+                    p.Name = string.Format("pin_{0}", cluster.Id);
+
+                    p.Tag = cluster.LocationItems.First() as Shop;
+                    p.Tap += new EventHandler&lt;GestureEventArgs&gt;(PinTap);
+
+                    _pinLayer.AddChild(p, cluster.Location, PositionOrigin.Center);
+                }
+                else
+                {
+                    var p = new Pushpin()
+                    {
+                        Location = cluster.Location,
+                        Content = cluster.Name,
+                    };
+
+                    _pinLayer.AddChild(p, cluster.Location, PositionOrigin.Center);
+                }
+            }
+
+            UpdateLabel();
+        }
+</code></pre>
+
+            </div>
+
+            <div class="col-md-4">
+                <div class="well">
+                    <h4>2014</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2014/06/less-worse-webforms/">Less Worse Webforms</a></li><li><a href="/2014/05/web-transforms-for-external-files/">Web Transforms for external files</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div><div class="col-md-4">
+                <div class="well">
+                    <h4>2013</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2013/09/simulating-contentplaceholder-without-masterpages/">Simulating Content PlaceHolder without MasterPages</a></li><li><a href="/2013/09/windows-phone-download-stats/">Windows Phone Download Stats</a></li><li><a href="/2013/09/resolve-strategy-by-key/">Resolving strategies by key</a></li><li><a href="/2013/08/synchronize-dispatcher-and-caller/">Synchronize dispatcher and caller</a></li><li><a href="/2013/07/better-csv-downloads/">Better CSV downloads</a></li><li><a href="/2013/07/detect-wifi-on-windows-phone/">Detect wifi on Windows Phone</a></li><li><a href="/2013/04/quick-caching-for-web-api/">Quick n Dirty Web API Caching</a></li><li><a href="/2013/04/using-aliases-for-class-name-collisions/">Using aliases for class name collisions</a></li><li><a href="/2013/01/test/">New post</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div><div class="col-md-4">
+                <div class="well">
+                    <h4>2012</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2012/12/app-upgrade-manager/">App Upgrade Manager</a></li><li><a href="/2012/11/classing-invalid-elements-with-webforms-validation/">Classing Invalid Elements With WebForms Validation</a></li><li><a href="/2012/11/webforms-modelbinder/">WebForms ModelBinder</a></li><li><a href="/2012/10/bookmark-to-feed/">Bookmark to RSS</a></li><li><a href="/2012/10/aspnet-webforms-modelbinding/">Budget ModelBinder for ASP.NET WebForms</a></li><li><a href="/2012/09/optimising-csharp/">Optimising C#</a></li><li><a href="/2012/07/falling-stars/">Falling Stars</a></li><li><a href="/2012/05/the-simplest-thing-event-aggregation/">the simplest thing - event aggregation</a></li><li><a href="/2012/05/you-never-get-anything-done/">You Never Get Anything Done</a></li><li><a href="/2012/05/clustering-results-with-windows-phone-bing-map-control/">Clustering Results with Windows Phone Bing Map Control</a></li><li><a href="/2012/04/csv-the-file-format-that-would-not-die/">CSV the file format that would not die</a></li><li><a href="/2012/01/building-a-windows-phone-app-part-fuuuu/">Building a Windows Phone App Part FUUUU</a></li><li><a href="/2012/01/building-a-windows-phone-app-part-3/">Building a Windows Phone App Part 3</a></li><li><a href="/2012/01/building-a-windows-phone-app-part-2/">Building a Windows Phone App Part 2</a></li><li><a href="/2012/01/build-windows-phone-app-part-1/">Building a Windows Phone App Part 1</a></li><li><a href="/2012/01/target-winmopho-css/">Target Windows Phone CSS</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div><div class="col-md-4">
+                <div class="well">
+                    <h4>2011</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2011/12/javascript-select/">JavaScript select</a></li><li><a href="/2011/11/jquery-plugin-template/">jQuery Plugin Template</a></li><li><a href="/2011/10/javascript-workers/">Mandelbrot with Workers</a></li><li><a href="/2011/10/html5-canvas-mandelbrot/">Drawing the Mandelbrot Set on HTML5 canvas</a></li><li><a href="/2011/09/metro/">Metro GOOD, url rewriting BAD</a></li><li><a href="/2011/09/simple-log-helper/">Simple Logging Helpers</a></li><li><a href="/2011/09/wpf-find-textbox/">WPF Find Textbox</a></li><li><a href="/2011/09/zero-width-space/">Zero Width Space</a></li><li><a href="/2011/08/unstructured-data/">Structuring Data</a></li><li><a href="/2011/08/getting-started-with-msmq/">Getting Started with MSMQ</a></li><li><a href="/2011/08/javascript-module-template/">JavaScript Module Visual Studio Template</a></li><li><a href="/2011/07/visualize-di/">Visualizing Dependancies</a></li><li><a href="/2011/07/fluent-file-renamer/">Fluent File Renaming API</a></li><li><a href="/2011/07/google-weather-proxy-part2/">Proxy Google Weather as JSON (Part 2)</a></li><li><a href="/2011/07/google-weather-proxy-part1/">Proxy Google Weather as JSON (Part 1)</a></li><li><a href="/2011/06/google-suggests/">What does Google suggest?</a></li><li><a href="/2011/06/wpf-screensvaer/">Basic Screen saver in WPF</a></li><li><a href="/2011/06/impersonal-search/">Un-Personalizing your google search results (in FireFox)</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+    </div>
+    <script src="/assets/js/site.js"></script>
+</body>
+</html>

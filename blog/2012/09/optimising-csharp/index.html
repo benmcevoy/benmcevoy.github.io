@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="And for Property Get - about 0.581 of a second in VS2012 - about 0.581 of a second in VS2010 - about 2.17 seconds on the phone emulator And for Property Set - about 0.493 of a second in VS2012 - about 0.493 of a second in VS2010 - about 1.90 seconds on the phone emulator Comparing to a Method get - about 0.581 of a second in VS2012 - about 0.581 of a second in VS2010 - about 2.16 seconds on the phone emulator And the method set - about 0.493 of a second in VS2012 - about 0.493 of a second in VS2010 - about 1.90 seconds on the phone emulator So.... ">
+    <meta name="keywords" content=", second, =, member, {, phone">
+    <meta name="author" content="ben mcevoy">
+    <title>Optimising C# - blog.benmcevoy.com.au</title>
+    <link href="/assets/css/site.css" rel="stylesheet">
+    <link type="application/atom+xml" rel="alternate" href="/feed" />
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <!-- Navigation -->
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Home</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="http://benmcevoy.com.au/">benmcevoy.com.au</a>
+                </li>
+                <li>
+                    <a href="https://github.com/benmcevoy/">Github</a>
+                </li>
+                <li>
+                    <a href="http://benmcevoy.com.au/resume.aspx">Resume</a>
+                </li>
+                <li>
+                    <a href="/feed">Feed</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+    <div class="container">
+        <div class="row content">
+            <div class="col-lg-8 entry">
+                <h1>Optimising C#</h1>
+                <hr>
+                <p><span class="glyphicon glyphicon-time"></span> Posted on Wednesday September 2012</p>
+                <hr>
+                <h2>Optimising C#</h2>
+
+<p>Premature optimisation man! YAGNI man!</p>
+
+<p>Well sometimes you do need it.  I've been writing a little game on the windows phone and I needed MORE POWER! Trying to get more explosions on screen at once.</p>
+
+<h3>Accessing a member</h3>
+
+<p>Now someone on the internet had said that accessing a class member was slow.</p>
+
+<pre><code>
+    private float _member;
+
+    // do something with that class member
+    _member++;
+</code></pre>
+
+<p>With a release compiled console app, accessing that member 100000000 times:</p>
+
+<ul>
+<li>about 0.34 of a second in VS2012</li>
+<li>about 0.34 of a second in VS2010</li>
+</ul>
+
+<p>OK, so that's our base line.</p>
+
+<h3>Inlining member access</h3>
+
+<p>So the wisdom is to inline that reference:</p>
+
+<pre><code>
+    private float _member;
+
+    // inline it
+    var m = _member;
+
+    // do something with that local reference
+    m++;
+</code></pre>
+
+<p>and we get....</p>
+
+<ul>
+<li>about 0.34 of a second in VS2012</li>
+<li>about 0.34 of a second in VS2010</li>
+</ul>
+
+<p>Hmmm... not a very good optimisation at all.</p>
+
+<p>But wait! I care about the Windows Phone. So what's the damage?
+Well, the phone is a wee bit slower than my desktop, so running in the 512MB emulator (OS7.1)</p>
+
+<ul>
+<li>Member reference about 2.16 seconds</li>
+<li>Inline reference <strong>about 1.547 seconds!</strong></li>
+</ul>
+
+<p>Hold the fsking phone!</p>
+
+<p>And, I'd like to point out, running on a REAL phone the results are similarly good.</p>
+
+<ul>
+<li>Member reference about 3.51 seconds</li>
+<li>Inline reference <strong>about 2.12 seconds!</strong></li>
+</ul>
+
+<h3>Accessing a property</h3>
+
+<p>OK, so the wise internet monkeys also pronounce that property access is killer. And you could reason easily that property access probably involves more CPU, as it must go to the backing member.  But surely compiler optimisations will make that cool?</p>
+
+<pre><code>
+    public float Member { get; set; }
+
+    // do something with that property
+    Member++;
+
+</code></pre>
+
+<p>And for Property Get</p>
+
+<ul>
+<li>about 0.581 of a second in VS2012</li>
+<li>about 0.581 of a second in VS2010</li>
+<li>about 2.17 seconds on the phone emulator</li>
+</ul>
+
+<p>And for Property Set</p>
+
+<ul>
+<li>about 0.493 of a second in VS2012</li>
+<li>about 0.493 of a second in VS2010</li>
+<li>about 1.90 seconds on the phone emulator</li>
+</ul>
+
+<p>Comparing to a Method get</p>
+
+<ul>
+<li>about 0.581 of a second in VS2012</li>
+<li>about 0.581 of a second in VS2010</li>
+<li>about 2.16 seconds on the phone emulator</li>
+</ul>
+
+<p>And the method set</p>
+
+<ul>
+<li>about 0.493 of a second in VS2012</li>
+<li>about 0.493 of a second in VS2010</li>
+<li>about 1.90 seconds on the phone emulator</li>
+</ul>
+
+<p>So.... no noticeable difference...</p>
+
+<p>However, if your properties are doing more than just getting and setting a backing member, well you should probably turn them into methods anyway.  For the common and trivial case of something like:</p>
+
+<pre><code>
+        private float _myProperty;
+        public float MyProperty { get { return _myProperty; } set { _myProperty = value; } }
+</code></pre>
+
+<p>You probably ain't gonna need it, man!</p>
+
+<p>My code was an implementation of a 2d vector.  It had properties like Length and Angle.  If you look at the System.Windows.Vector it has methods like Length() and so on. Make of that what you will.  </p>
+
+<p>The moral of the story is test your assumptions, and test your compiler/platform.</p>
+
+<p>It's a nice feeling to write code that is noticeably faster in release than debug. This ain't no LOB app!</p>
+
+<p>These optimisations made a noticeable difference on the running game but... unfortunately there was still not enough explosions, so it's off to XNA anyways...</p>
+
+<h3>Test Harness</h3>
+
+<pre><code>
+    static void Main(string[] args)
+    {
+        var tc = new TestClass();
+
+        // warm up, I don't think this really matters. Maybe GC is affected
+        tc.TestMember();
+        tc.TestInlineMember();
+
+        for (int i = 0; i &lt; 10; i++)
+        {
+            var sw = Stopwatch.StartNew();
+
+                tc.TestMember();
+
+                sw.Stop();
+
+                Console.WriteLine("TestMember " + sw.Elapsed);
+
+                sw = Stopwatch.StartNew();
+
+                tc.TestInlineMember();
+
+                sw.Stop();
+                Console.WriteLine("TestInlineMember " + sw.Elapsed);
+
+                sw = Stopwatch.StartNew();
+
+                tc.TestPropertyGet();
+
+                sw.Stop();
+                Console.WriteLine("TestPropertyGet " + sw.Elapsed);
+
+                sw = Stopwatch.StartNew();
+
+                tc.TestPropertySet();
+
+                sw.Stop();
+                Console.WriteLine("TestPropertySet " + sw.Elapsed);
+
+                sw = Stopwatch.StartNew();
+
+                tc.TestMethodGet();
+
+                sw.Stop();
+                Console.WriteLine("TestMethodGet " + sw.Elapsed);
+
+                sw = Stopwatch.StartNew();
+
+                tc.TestMethodSet();
+
+                sw.Stop();
+                Console.WriteLine("TestMethodSet " + sw.Elapsed);
+        }
+
+        Console.ReadKey();
+    }
+</code></pre>
+
+<h3>Test Class</h3>
+
+<pre><code>
+    class TestClass
+    {
+        private float _member;
+
+        public float Member { get; set; }
+
+        public float TestMember()
+        {
+            _member = 0;
+
+            for (int i = 0; i < 100000000; i++)
+            {
+                _member++;
+            }
+
+            return _member;
+        }
+
+        public float TestInlineMember()
+        {
+            var m = _member;
+
+            for (int i = 0; i < 100000000; i++)
+            {
+                m++;
+            }
+
+            return m;
+        }
+
+        public float TestPropertyGet()
+        {
+            Member = 1;
+            var m = 0f;
+
+            for (int i = 0; i < 100000000; i++)
+            {
+                m += Member;
+            }
+
+            return Member;
+        }
+
+        public void TestPropertySet()
+        {
+            for (int i = 0; i < 100000000; i++)
+            {
+                Member = i;
+            }
+        }
+
+        public float TestMethodGet()
+        {
+            SetMember(1);
+
+            var m = 0f;
+
+            for (int i = 0; i < 100000000; i++)
+            {
+                m += GetMember();
+            }
+
+            return GetMember();
+        }
+
+        public void TestMethodSet()
+        {
+            for (int i = 0; i < 100000000; i++)
+            {
+                SetMember(i);
+            }
+        }
+
+        public float GetMember()
+        {
+            return _member;
+        }
+
+        public void SetMember(float value)
+        {
+            _member = value;
+        }
+    }
+</code></pre>
+
+            </div>
+
+            <div class="col-md-4">
+                <div class="well">
+                    <h4>2014</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2014/06/less-worse-webforms/">Less Worse Webforms</a></li><li><a href="/2014/05/web-transforms-for-external-files/">Web Transforms for external files</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div><div class="col-md-4">
+                <div class="well">
+                    <h4>2013</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2013/09/simulating-contentplaceholder-without-masterpages/">Simulating Content PlaceHolder without MasterPages</a></li><li><a href="/2013/09/windows-phone-download-stats/">Windows Phone Download Stats</a></li><li><a href="/2013/09/resolve-strategy-by-key/">Resolving strategies by key</a></li><li><a href="/2013/08/synchronize-dispatcher-and-caller/">Synchronize dispatcher and caller</a></li><li><a href="/2013/07/better-csv-downloads/">Better CSV downloads</a></li><li><a href="/2013/07/detect-wifi-on-windows-phone/">Detect wifi on Windows Phone</a></li><li><a href="/2013/04/quick-caching-for-web-api/">Quick n Dirty Web API Caching</a></li><li><a href="/2013/04/using-aliases-for-class-name-collisions/">Using aliases for class name collisions</a></li><li><a href="/2013/01/test/">New post</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div><div class="col-md-4">
+                <div class="well">
+                    <h4>2012</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2012/12/app-upgrade-manager/">App Upgrade Manager</a></li><li><a href="/2012/11/classing-invalid-elements-with-webforms-validation/">Classing Invalid Elements With WebForms Validation</a></li><li><a href="/2012/11/webforms-modelbinder/">WebForms ModelBinder</a></li><li><a href="/2012/10/bookmark-to-feed/">Bookmark to RSS</a></li><li><a href="/2012/10/aspnet-webforms-modelbinding/">Budget ModelBinder for ASP.NET WebForms</a></li><li><a href="/2012/09/optimising-csharp/">Optimising C#</a></li><li><a href="/2012/07/falling-stars/">Falling Stars</a></li><li><a href="/2012/05/the-simplest-thing-event-aggregation/">the simplest thing - event aggregation</a></li><li><a href="/2012/05/you-never-get-anything-done/">You Never Get Anything Done</a></li><li><a href="/2012/05/clustering-results-with-windows-phone-bing-map-control/">Clustering Results with Windows Phone Bing Map Control</a></li><li><a href="/2012/04/csv-the-file-format-that-would-not-die/">CSV the file format that would not die</a></li><li><a href="/2012/01/building-a-windows-phone-app-part-fuuuu/">Building a Windows Phone App Part FUUUU</a></li><li><a href="/2012/01/building-a-windows-phone-app-part-3/">Building a Windows Phone App Part 3</a></li><li><a href="/2012/01/building-a-windows-phone-app-part-2/">Building a Windows Phone App Part 2</a></li><li><a href="/2012/01/build-windows-phone-app-part-1/">Building a Windows Phone App Part 1</a></li><li><a href="/2012/01/target-winmopho-css/">Target Windows Phone CSS</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div><div class="col-md-4">
+                <div class="well">
+                    <h4>2011</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2011/12/javascript-select/">JavaScript select</a></li><li><a href="/2011/11/jquery-plugin-template/">jQuery Plugin Template</a></li><li><a href="/2011/10/javascript-workers/">Mandelbrot with Workers</a></li><li><a href="/2011/10/html5-canvas-mandelbrot/">Drawing the Mandelbrot Set on HTML5 canvas</a></li><li><a href="/2011/09/metro/">Metro GOOD, url rewriting BAD</a></li><li><a href="/2011/09/simple-log-helper/">Simple Logging Helpers</a></li><li><a href="/2011/09/wpf-find-textbox/">WPF Find Textbox</a></li><li><a href="/2011/09/zero-width-space/">Zero Width Space</a></li><li><a href="/2011/08/unstructured-data/">Structuring Data</a></li><li><a href="/2011/08/getting-started-with-msmq/">Getting Started with MSMQ</a></li><li><a href="/2011/08/javascript-module-template/">JavaScript Module Visual Studio Template</a></li><li><a href="/2011/07/visualize-di/">Visualizing Dependancies</a></li><li><a href="/2011/07/fluent-file-renamer/">Fluent File Renaming API</a></li><li><a href="/2011/07/google-weather-proxy-part2/">Proxy Google Weather as JSON (Part 2)</a></li><li><a href="/2011/07/google-weather-proxy-part1/">Proxy Google Weather as JSON (Part 1)</a></li><li><a href="/2011/06/google-suggests/">What does Google suggest?</a></li><li><a href="/2011/06/wpf-screensvaer/">Basic Screen saver in WPF</a></li><li><a href="/2011/06/impersonal-search/">Un-Personalizing your google search results (in FireFox)</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+    </div>
+    <script src="/assets/js/site.js"></script>
+</body>
+</html>

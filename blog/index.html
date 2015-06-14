@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Less Worse Webforms Routing I seem to be unable to escape the horrific pit of despair that is ASP.NET WebForms, it's really starting to look like the Classic ASP of the um...  The friendly url package also allows to do something that MVC 4 (or was it from an earlier version?) can do out of the box, namely chuck a device specific view in, e.g. ">
+    <meta name="keywords" content="urls, webforms, routing, friendly, starting, pages">
+    <meta name="author" content="ben mcevoy">
+    <title>Less Worse Webforms - blog.benmcevoy.com.au</title>
+    <link href="/assets/css/site.css" rel="stylesheet">
+    <link type="application/atom+xml" rel="alternate" href="/feed" />
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <!-- Navigation -->
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Home</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="http://benmcevoy.com.au/">benmcevoy.com.au</a>
+                </li>
+                <li>
+                    <a href="https://github.com/benmcevoy/">Github</a>
+                </li>
+                <li>
+                    <a href="http://benmcevoy.com.au/resume.aspx">Resume</a>
+                </li>
+                <li>
+                    <a href="/feed">Feed</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+    <div class="container">
+        <div class="row content">
+            <div class="col-lg-8 entry">
+                <h1>Less Worse Webforms</h1>
+                <hr>
+                <p><span class="glyphicon glyphicon-time"></span> Posted on Monday June 2014</p>
+                <hr>
+                <h2>Less Worse Webforms</h2>
+
+<h3>Routing</h3>
+
+<p>I seem to be unable to escape the horrific pit of despair that is ASP.NET WebForms, it's really starting to look like the Classic ASP of the um... noughties? Millennial something something? At any rate, there have at least been a couple of nice(r) features introduced to ease our suffering.</p>
+
+<p>Routing is one of these, but to get the best out of it you'll also want to nuget in some Friendly Urls:</p>
+
+<pre><code>
+Install-Package Microsoft.AspNet.FriendlyUrls
+</code></pre>
+
+<p>A vanilla asp.net web application (in VS2013 at least) is kind enough to include this by default.</p>
+
+<p>The Friendly Urls package <a href="http://www.hanselman.com/blog/IntroducingASPNETFriendlyUrlsCleanerURLsEasierRoutingAndMobileViewsForASPNETWebForms.aspx">includes a few things</a>, and supports .NET 4, but for my purposes I care only for <em>EnableFriendlyUrls()</em> which will effectively turn on extensionless urls for a webforms project.  Probably in your RouteConfig class:</p>
+
+<pre><code>
+    var settings = new FriendlyUrlSettings();
+    routes.EnableFriendlyUrls(settings);
+</code></pre>
+
+<p>Armed with this and System.Web.Routing we can start to do less sucky things.</p>
+
+<p>From .NET 4 System.Web.Routing is in the System.Web assembly, and so should be available to most new Web Forms applications.  The <a href="http://msdn.microsoft.com/en-us/library/system.web.routing.routecollection.mappageroute(v=vs.100">MapPageRoute</a>.aspx) method lets us start to do nice(r) things.</p>
+
+<p>For instance, we can map request values (query string or form) to placeholders in the url:</p>
+
+<pre><code>
+    routes.MapPageRoute("AboutRoute", "About/{param1}/{*param2}", "~/about.aspx");
+</code></pre>
+
+<p>And we can map arbitrary friendly urls to existing pages:</p>
+
+<pre><code>
+    routes.MapPageRoute("AnotherRoute", "TotallyFriendlyUrl/{param1}/{*param2}", "~/about.aspx");
+</code></pre>
+
+<p>In the second case there is no underlying page at <em>TotallyFriendlyUrl.aspx</em> so if the route is not matched correctly, i.e. <em>/TotallyFriendlyUrl/this_bit_is_mandatory/this_bit_is_optional</em> then a 404 will result.</p>
+
+<p>Calls to <em>/About/</em> will succeed for pretty much any parameters as 1) there is a page at about.aspx and 2) the <em>param2</em> is a catch all.  </p>
+
+<h3>Other bits</h3>
+
+<p>Quick, my beer is getting warm, we have an expression builder so we can make friendly urls declaratively in an aspx page:</p>
+
+<pre><code>
+&lt;asp:HyperLink ID="HyperLink5" runat="server" 
+    NavigateUrl="&lt;%$RouteUrl:locale=CA,year=2009,routename=salesroute%&gt;"&gt;
+    Sales Report - CA, 2009
+&lt;/asp:HyperLink&gt;
+</code></pre>
+
+<p>And [FriendlyUrlSegments] parameter attribute for um.. doing things like <a href="http://www.asp.net/web-forms/tutorials/data-access/model-binding/retrieving-data">model binding to a method and junk</a>. And also [Form] and [QueryString] to boot.</p>
+
+<p>The friendly url package also allows to do something that MVC 4 (or was it from an earlier version?) can do out of the box, namely chuck a device specific view in, e.g.  </p>
+
+<ul>
+<li>about.aspx</li>
+<li>about.mobile.aspx</li>
+</ul>
+
+<p>Unfortunately this does not seem to play well with the other children.  So adding an <em>about.mobile.aspx</em> you <em>might</em> expect the uh... attractive <em>/totallyfriendlyurl/oh/hai/</em> route to dish up a mobile specific view.  It did not.  Given we stated that the route mapped to <em>about.aspx</em> it's not that surprising, but it would have been nice if it was magic and just worked.</p>
+
+<p>To be fair I'm not sure where I can be using this stuff.  WebForms work is either some legacy hell that would break as soon as you started doing this (and mobile support? Ha!) or is piggy backing on top of Umbraco or SiteCore which takes care of (some) of this stuff for you anyway.  No-one in their right mind would start a green fields webforms project today? Right? Amiright?</p>
+
+            </div>
+
+            <div class="col-md-4">
+                <div class="well">
+                    <h4>2014</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2014/06/less-worse-webforms/">Less Worse Webforms</a></li><li><a href="/2014/05/web-transforms-for-external-files/">Web Transforms for external files</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div><div class="col-md-4">
+                <div class="well">
+                    <h4>2013</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2013/09/simulating-contentplaceholder-without-masterpages/">Simulating Content PlaceHolder without MasterPages</a></li><li><a href="/2013/09/windows-phone-download-stats/">Windows Phone Download Stats</a></li><li><a href="/2013/09/resolve-strategy-by-key/">Resolving strategies by key</a></li><li><a href="/2013/08/synchronize-dispatcher-and-caller/">Synchronize dispatcher and caller</a></li><li><a href="/2013/07/better-csv-downloads/">Better CSV downloads</a></li><li><a href="/2013/07/detect-wifi-on-windows-phone/">Detect wifi on Windows Phone</a></li><li><a href="/2013/04/quick-caching-for-web-api/">Quick n Dirty Web API Caching</a></li><li><a href="/2013/04/using-aliases-for-class-name-collisions/">Using aliases for class name collisions</a></li><li><a href="/2013/01/test/">New post</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div><div class="col-md-4">
+                <div class="well">
+                    <h4>2012</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2012/12/app-upgrade-manager/">App Upgrade Manager</a></li><li><a href="/2012/11/classing-invalid-elements-with-webforms-validation/">Classing Invalid Elements With WebForms Validation</a></li><li><a href="/2012/11/webforms-modelbinder/">WebForms ModelBinder</a></li><li><a href="/2012/10/bookmark-to-feed/">Bookmark to RSS</a></li><li><a href="/2012/10/aspnet-webforms-modelbinding/">Budget ModelBinder for ASP.NET WebForms</a></li><li><a href="/2012/09/optimising-csharp/">Optimising C#</a></li><li><a href="/2012/07/falling-stars/">Falling Stars</a></li><li><a href="/2012/05/the-simplest-thing-event-aggregation/">the simplest thing - event aggregation</a></li><li><a href="/2012/05/you-never-get-anything-done/">You Never Get Anything Done</a></li><li><a href="/2012/05/clustering-results-with-windows-phone-bing-map-control/">Clustering Results with Windows Phone Bing Map Control</a></li><li><a href="/2012/04/csv-the-file-format-that-would-not-die/">CSV the file format that would not die</a></li><li><a href="/2012/01/building-a-windows-phone-app-part-fuuuu/">Building a Windows Phone App Part FUUUU</a></li><li><a href="/2012/01/building-a-windows-phone-app-part-3/">Building a Windows Phone App Part 3</a></li><li><a href="/2012/01/building-a-windows-phone-app-part-2/">Building a Windows Phone App Part 2</a></li><li><a href="/2012/01/build-windows-phone-app-part-1/">Building a Windows Phone App Part 1</a></li><li><a href="/2012/01/target-winmopho-css/">Target Windows Phone CSS</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div><div class="col-md-4">
+                <div class="well">
+                    <h4>2011</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2011/12/javascript-select/">JavaScript select</a></li><li><a href="/2011/11/jquery-plugin-template/">jQuery Plugin Template</a></li><li><a href="/2011/10/javascript-workers/">Mandelbrot with Workers</a></li><li><a href="/2011/10/html5-canvas-mandelbrot/">Drawing the Mandelbrot Set on HTML5 canvas</a></li><li><a href="/2011/09/metro/">Metro GOOD, url rewriting BAD</a></li><li><a href="/2011/09/simple-log-helper/">Simple Logging Helpers</a></li><li><a href="/2011/09/wpf-find-textbox/">WPF Find Textbox</a></li><li><a href="/2011/09/zero-width-space/">Zero Width Space</a></li><li><a href="/2011/08/unstructured-data/">Structuring Data</a></li><li><a href="/2011/08/getting-started-with-msmq/">Getting Started with MSMQ</a></li><li><a href="/2011/08/javascript-module-template/">JavaScript Module Visual Studio Template</a></li><li><a href="/2011/07/visualize-di/">Visualizing Dependancies</a></li><li><a href="/2011/07/fluent-file-renamer/">Fluent File Renaming API</a></li><li><a href="/2011/07/google-weather-proxy-part2/">Proxy Google Weather as JSON (Part 2)</a></li><li><a href="/2011/07/google-weather-proxy-part1/">Proxy Google Weather as JSON (Part 1)</a></li><li><a href="/2011/06/google-suggests/">What does Google suggest?</a></li><li><a href="/2011/06/wpf-screensvaer/">Basic Screen saver in WPF</a></li><li><a href="/2011/06/impersonal-search/">Un-Personalizing your google search results (in FireFox)</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+    </div>
+    <script src="/assets/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The problem statement is going to define the scope and hopefully keep us focused on just doing the one thing well: Show me upto date weather info for Melbourne And here's a bunch of features, both functional and technical - use the [BOM](http://www.bom.gov.au/vic/forecasts/melbourne.shtml) data for Melbourne - do not require ME to provide any online service ('cos I 'aint paying for hosting) - have a Live Tile that shows the little icon for today's weather and current/last temperature - show today's forecast in detail - show the rest of the week or next 7 days in a summary - show it all on one screen - cache the data to local storage - be free - support portrait orientation only - be as pretty as I can make it. ">
+    <meta name="keywords" content=", app, >, show, phone, free, weather">
+    <meta name="author" content="ben mcevoy">
+    <title>Building a Windows Phone App Part 1 - blog.benmcevoy.com.au</title>
+    <link href="/assets/css/site.css" rel="stylesheet">
+    <link type="application/atom+xml" rel="alternate" href="/feed" />
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <!-- Navigation -->
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Home</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="http://benmcevoy.com.au/">benmcevoy.com.au</a>
+                </li>
+                <li>
+                    <a href="https://github.com/benmcevoy/">Github</a>
+                </li>
+                <li>
+                    <a href="http://benmcevoy.com.au/resume.aspx">Resume</a>
+                </li>
+                <li>
+                    <a href="/feed">Feed</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+    <div class="container">
+        <div class="row content">
+            <div class="col-lg-8 entry">
+                <h1>Building a Windows Phone App Part 1</h1>
+                <hr>
+                <p><span class="glyphicon glyphicon-time"></span> Posted on Monday January 2012</p>
+                <hr>
+                <h2>Building a Windows Phone App Part 1</h2>
+
+<h3>My <del>First</del> Second Windows Phone App</h3>
+
+<p>Having acquired a Windows Phone I now want to build some apps.  That and there is a competition going at the moment where I can win a newer phone.  Much procrastination ensues.</p>
+
+<p>I have spent some time researching; I had a few ideas such as a basic dictation app.</p>
+
+<p>There are a number of issues in building a decent solution, not insurmountable but certainly difficult. For instance although we have a WMA decoder on the phone there is no encoder.  There are several third party and open source libraries to bridge this... but they must be in managed code. And run on .NET CF. So, not impossible, just a massive pain in either porting a solution or hunting something down.  </p>
+
+<p>And there's the question of whether a phone is the best place to be transcoding audio on the fly...</p>
+
+<p>Or another idea to be able to update the tile of a bookmarked web page on the start screen. By default you get a picture of the webpage you were looking at, which is... crap.  Sounds trivial, but your sandboxed and have no access to do this.  We hear tell of dodgy pinvoking assemblies around that access the registry and let you run unmanaged code.  There is probably a solution somewhere down that path (I'm guessing the bookmarks are either in a system folder somewhere or in the registry - it is Windows running on there after all) but good luck getting that submitted to the market place.</p>
+
+<p>I got some skills in Silverlight, HTML and JS, so native apps or Phone Gap apps are both open to me.  And I reckon I can cobble an XNA based app together.</p>
+
+<h3>I need a design</h3>
+
+<p>Problem number one - what to build?</p>
+
+<p>My advice, to anyone who would listen, would be to:</p>
+
+<ul>
+<li>Keep it simple,</li>
+<li>Focus on solving a single problem,</li>
+<li>Do that really well,</li>
+<li>and, Keep it simple</li>
+</ul>
+
+<p>For me point 2 translates to </p>
+
+<p><em>"what annoys me, is a hassle, or a little pain when using the phone"</em></p>
+
+<p>and/or </p>
+
+<p><em>"what do I wish I could do but can't on this phone"</em></p>
+
+<h3>I need a problem</h3>
+
+<p>I've got a lot of problems.  Personal issues aside, I do have few things I want out of this phone:</p>
+
+<ul>
+<li>a free weather app that tells what is happening near me.  Particularly if it is going to rain shortly, as I cycle everywhere</li>
+<li>a free, simple, audio notes app thingy.  Just want to record stuff occasionally</li>
+<li>fix the bookmarks on the start screen! Use the favicon at least</li>
+<li>a (free) decent mobile view of a few sites I like to read, Hacker News, Slash Dot. HN has shit markup (I see you like tables) and an anaemic RSS feed</li>
+<li>a (free) decent RSS reader</li>
+</ul>
+
+<p>Some of these are easily solved by having a look through the market place.  Some of these are opportunities (as far I can see).  And some of these are really only going to appeal to me.</p>
+
+<p>Oh, and I like free.</p>
+
+<h3>OK, <em>Now</em> I need a design</h3>
+
+<p>I'm going to pick an easy (I hope) one - a weather app.  Hey, hey, why not, I've already written a couple for my own personal pleasures.  I want total saturation of weather information on all devices!</p>
+
+<p>The problem statement is going to define the scope and hopefully keep us focused on just doing the one thing well:</p>
+
+<p>Show me upto date weather info for Melbourne</p>
+
+<p>And here's a bunch of features, both functional and technical</p>
+
+<ul>
+<li>use the <a href="http://www.bom.gov.au/vic/forecasts/melbourne.shtml">BOM</a> data for Melbourne</li>
+<li>do not require ME to provide any online service ('cos I 'aint paying for hosting)</li>
+<li>have a Live Tile that shows the little icon for today's weather and current/last temperature</li>
+<li>show today's forecast in detail</li>
+<li>show the rest of the week or next 7 days in a summary</li>
+<li>show it all on one screen</li>
+<li>cache the data to local storage</li>
+<li>be free</li>
+<li>support portrait orientation only</li>
+<li>be as pretty as I can make it.  Hmm... maybe - don't be ugly?</li>
+</ul>
+
+<p><strong>Use the BOM data.</strong>  <a href="ftp://ftp.bom.gov.au/anon/gen/fwo/IDV10450.xml">This is some good data!</a> It's in a pretty crap format, it's XML at least, but in a very generic structure (xml elements are called... element! Yeah that makes sense).  Actually, maybe making things as key-value pairs provides flexibility? It's free!  It's accurate, the BOM are pretty much the source of the weather data round here.</p>
+
+<p>At least <a href="http://reg.bom.gov.au/catalogue/data-feeds.shtml">I think it's free</a>, I'm using the data for "ingestion by computers". Delicious.  I don't think I'm performing "secondary distribution" - you  cannot use this app as a source for some other system. Nor am I caching or proxying the FTP data on my sever, I explicitly do not want to do that. </p>
+
+<p>Maybe I should ask.</p>
+
+<blockquote>
+  <p>Hello, I am writing a windows phone 7 application to show forecast and current observation data on the phone for the Melbourne area.</p>
+  
+  <p>As per your policy on http://reg.bom.gov.au/catalogue/data-feeds.shtml I believe my use is acceptable
+  - the app will be free
+  - the app will pull direct from the BOM FTP server and cache locally so as not to unnecessarily hit your servers.
+  - it is not performing "secondary distribution" in the sense that the app cannot be used as a source for further consumption
+  - I am happy to add copyright and source information within the app</p>
+  
+  <p>Is my usage acceptable?  Is there anything else you require me to do?</p>
+  
+  <p>Regards,
+  Ben</p>
+</blockquote>
+
+<p>This adds a new feature:</p>
+
+<ul>
+<li>show BOM copyright message on screen</li>
+</ul>
+
+<p><strong>Live Tile.</strong>  I checked out the Microsoft weather app, its biggest complaint - no live tile!  At the very least we can update the tile when we exit the app with the last cached observations.</p>
+
+<p>The live tile will show the icon for today's weather and the most recent temperature observation.  Observations are <a href="http://www.bom.gov.au/fwo/IDV60901/IDV60901.94868.json">available in JSON</a>, probably also as XML somewhere too.</p>
+
+<p><strong>Show today’s forecast in detail, show a summary for the rest of the week, fit on one screen.</strong>  I'm keeping it simple, simple in terms of I just want to glance and see enough info for today, less info for tomorrow. It's like a KPI dashboard report.  I'm going to limit the number of future days to only show the next five, so as to have a consistent display and I'm pretty sure there will always be five days forecast available.</p>
+
+<p>We need a wireframe/mockup!  Paint is my favourite tool for this, as I am graphically retarded.</p>
+
+<p><img class="img-responsive" src="http://benmcevoy.com.au/blog/get/winmopho/weather-wireframe.png" alt="wireframe take 1" title="" /></p>
+
+<p>OK, so looking at that:</p>
+
+<ul>
+<li>hey it looks pretty good!</li>
+<li>I forgot the temperature (min and max)</li>
+<li>I should define the properties I am going to use (precis?)</li>
+<li>I know today is today, so I don't need the date.  Besides, that date just... isn't... possible...</li>
+<li>I need to add the copyright message</li>
+<li>I should show the forecast temperature on the future day’s icon as well</li>
+<li>I forgot the current temperature reading</li>
+</ul>
+
+<p><img class="img-responsive" src="http://benmcevoy.com.au/benmcevoy/blog/get/winmopho/weather-wireframe-2.png" alt="wireframe take 2" title="" /></p>
+
+<p>The Live tile will look like the future tile.</p>
+
+<p>I think that covers the enough detail.  Lets get cracking!</p>
+
+            </div>
+
+            <div class="col-md-4">
+                <div class="well">
+                    <h4>2014</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2014/06/less-worse-webforms/">Less Worse Webforms</a></li><li><a href="/2014/05/web-transforms-for-external-files/">Web Transforms for external files</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div><div class="col-md-4">
+                <div class="well">
+                    <h4>2013</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2013/09/simulating-contentplaceholder-without-masterpages/">Simulating Content PlaceHolder without MasterPages</a></li><li><a href="/2013/09/windows-phone-download-stats/">Windows Phone Download Stats</a></li><li><a href="/2013/09/resolve-strategy-by-key/">Resolving strategies by key</a></li><li><a href="/2013/08/synchronize-dispatcher-and-caller/">Synchronize dispatcher and caller</a></li><li><a href="/2013/07/better-csv-downloads/">Better CSV downloads</a></li><li><a href="/2013/07/detect-wifi-on-windows-phone/">Detect wifi on Windows Phone</a></li><li><a href="/2013/04/quick-caching-for-web-api/">Quick n Dirty Web API Caching</a></li><li><a href="/2013/04/using-aliases-for-class-name-collisions/">Using aliases for class name collisions</a></li><li><a href="/2013/01/test/">New post</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div><div class="col-md-4">
+                <div class="well">
+                    <h4>2012</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2012/12/app-upgrade-manager/">App Upgrade Manager</a></li><li><a href="/2012/11/classing-invalid-elements-with-webforms-validation/">Classing Invalid Elements With WebForms Validation</a></li><li><a href="/2012/11/webforms-modelbinder/">WebForms ModelBinder</a></li><li><a href="/2012/10/bookmark-to-feed/">Bookmark to RSS</a></li><li><a href="/2012/10/aspnet-webforms-modelbinding/">Budget ModelBinder for ASP.NET WebForms</a></li><li><a href="/2012/09/optimising-csharp/">Optimising C#</a></li><li><a href="/2012/07/falling-stars/">Falling Stars</a></li><li><a href="/2012/05/the-simplest-thing-event-aggregation/">the simplest thing - event aggregation</a></li><li><a href="/2012/05/you-never-get-anything-done/">You Never Get Anything Done</a></li><li><a href="/2012/05/clustering-results-with-windows-phone-bing-map-control/">Clustering Results with Windows Phone Bing Map Control</a></li><li><a href="/2012/04/csv-the-file-format-that-would-not-die/">CSV the file format that would not die</a></li><li><a href="/2012/01/building-a-windows-phone-app-part-fuuuu/">Building a Windows Phone App Part FUUUU</a></li><li><a href="/2012/01/building-a-windows-phone-app-part-3/">Building a Windows Phone App Part 3</a></li><li><a href="/2012/01/building-a-windows-phone-app-part-2/">Building a Windows Phone App Part 2</a></li><li><a href="/2012/01/build-windows-phone-app-part-1/">Building a Windows Phone App Part 1</a></li><li><a href="/2012/01/target-winmopho-css/">Target Windows Phone CSS</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div><div class="col-md-4">
+                <div class="well">
+                    <h4>2011</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2011/12/javascript-select/">JavaScript select</a></li><li><a href="/2011/11/jquery-plugin-template/">jQuery Plugin Template</a></li><li><a href="/2011/10/javascript-workers/">Mandelbrot with Workers</a></li><li><a href="/2011/10/html5-canvas-mandelbrot/">Drawing the Mandelbrot Set on HTML5 canvas</a></li><li><a href="/2011/09/metro/">Metro GOOD, url rewriting BAD</a></li><li><a href="/2011/09/simple-log-helper/">Simple Logging Helpers</a></li><li><a href="/2011/09/wpf-find-textbox/">WPF Find Textbox</a></li><li><a href="/2011/09/zero-width-space/">Zero Width Space</a></li><li><a href="/2011/08/unstructured-data/">Structuring Data</a></li><li><a href="/2011/08/getting-started-with-msmq/">Getting Started with MSMQ</a></li><li><a href="/2011/08/javascript-module-template/">JavaScript Module Visual Studio Template</a></li><li><a href="/2011/07/visualize-di/">Visualizing Dependancies</a></li><li><a href="/2011/07/fluent-file-renamer/">Fluent File Renaming API</a></li><li><a href="/2011/07/google-weather-proxy-part2/">Proxy Google Weather as JSON (Part 2)</a></li><li><a href="/2011/07/google-weather-proxy-part1/">Proxy Google Weather as JSON (Part 1)</a></li><li><a href="/2011/06/google-suggests/">What does Google suggest?</a></li><li><a href="/2011/06/wpf-screensvaer/">Basic Screen saver in WPF</a></li><li><a href="/2011/06/impersonal-search/">Un-Personalizing your google search results (in FireFox)</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+    </div>
+    <script src="/assets/js/site.js"></script>
+</body>
+</html>

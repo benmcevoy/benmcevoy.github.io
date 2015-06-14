@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="MSMQ has a number of features, but I think the obvious ones are: - it's a Microsoft product (not sure if that’s a feature, but what the hey) - It's included in the OS from XP onwards - It's wrapped up in .NET in the System.Messaging namespace - It's pretty easy to use It may not be the fastest or the best, but I think that feature set makes it a good choice for dipping your toe in the world of message queues. ">
+    <meta name="keywords" content="message, =, queues, }, {, reading, ">
+    <meta name="author" content="ben mcevoy">
+    <title>Getting Started with MSMQ - blog.benmcevoy.com.au</title>
+    <link href="/assets/css/site.css" rel="stylesheet">
+    <link type="application/atom+xml" rel="alternate" href="/feed" />
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <!-- Navigation -->
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Home</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="http://benmcevoy.com.au/">benmcevoy.com.au</a>
+                </li>
+                <li>
+                    <a href="https://github.com/benmcevoy/">Github</a>
+                </li>
+                <li>
+                    <a href="http://benmcevoy.com.au/resume.aspx">Resume</a>
+                </li>
+                <li>
+                    <a href="/feed">Feed</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+    <div class="container">
+        <div class="row content">
+            <div class="col-lg-8 entry">
+                <h1>Getting Started with MSMQ</h1>
+                <hr>
+                <p><span class="glyphicon glyphicon-time"></span> Posted on Sunday August 2011</p>
+                <hr>
+                <p>I recently needed to know a little bit about MSQM, so I put together a very basic little prototype.</p>
+
+<p>MSMQ has a number of features, but I think the obvious ones are:</p>
+
+<ul>
+<li>it's a Microsoft product (not sure if that’s a feature, but what the hey)</li>
+<li>It's included in the OS from XP onwards</li>
+<li>It's wrapped up in .NET in the System.Messaging namespace</li>
+<li>It's pretty easy to use</li>
+</ul>
+
+<p>It may not be the fastest or the best, but I think that feature set makes it a good choice for dipping your toe in the world of message queues.</p>
+
+<p>We can start by enabling MSMQ in the control panel (under Windows Features).  This will start up a service and we will be good to go.
+First of all we want to create a source of messages.
+Here we just send a very basic string.  In practice you may want to create a message class, perhaps with a message type, Id and maybe a serialized DTO payload.</p>
+
+<pre><code>
+    // create a queue
+    if (!MessageQueue.Exists(_queueName))
+    {
+    	MessageQueue.Create(_queueName);
+    }
+
+    // send a bunch of messages
+    for (int i = 0; i < 100; i++)
+    {
+    	// slow things down a bit so we can see what’s happening
+    	Thread.Sleep(100);
+    	SendPublic(i);
+    }
+
+    public static void SendPublic(int i )
+    {
+    	var myQueue = new MessageQueue(_queueName);
+
+    	string body = string.Format("{0} Public queue by path name.", i);
+
+    	var msg = new Message(body);
+
+    	msg.Formatter = new MessageFormatter();
+
+    	myQueue.Send(msg);
+    	Console.WriteLine(body);
+    	return;
+    }
+
+</code></pre>
+
+<p>By default MSMQ uses an XML message formatter, and reading the message body is done through streams.  This is sometimes a bit inconvenient.
+I’ve added a simple message formatter (nicked from MSDN) to ease things.</p>
+
+<pre><code>
+    public class MessageFormatter : IMessageFormatter
+    {
+    	public bool CanRead(Message message)
+    	{
+    		return true;
+    	}
+
+    	public object Read(Message message)
+    	{
+    		//Obtain the BodyStream for the message.
+    		var stm = message.BodyStream;
+    		stm.Position = 0;
+    		//Create a StreamReader object used for reading from the stream.
+    		var reader = new StreamReader(stm);
+
+    		//Return the string read from the stream.
+    		//StreamReader.ReadToEnd returns a string.
+    		return reader.ReadToEnd();
+    	}
+
+    	public void Write(Message message, object obj)
+    	{
+    		//Declare a buffer.
+    		byte[] buff = Encoding.UTF8.GetBytes(obj.ToString());
+
+    		//Create a new MemoryStream object passing the buffer.
+    		var stm = new MemoryStream(buff);
+
+    		//Assign the stream to the message's BodyStream property.
+    		message.BodyStream = stm;
+    	}
+
+    	public object Clone()
+    	{
+    		return new MessageFormatter();
+    	}
+    }
+</code></pre>
+
+<p>We can then start up several process, just simple console apps, to listen to the queue and read the messages.  I was running three or four, and they would read the messages off the queue in a round robin fashion.  I found that quite pleasing :)</p>
+
+<pre><code>
+    public static void MonitorQueue ()
+    {
+    	var myQueue = new MessageQueue(_queueName);
+
+    	// enter an idle loop till a message is recieved
+    	while (true)
+    	{
+    		var msg = myQueue.Receive();
+    		// Process the journal message.
+    		if(msg != null)
+    		{
+    			msg.Formatter= new MessageFormatter();
+
+                // read the payload via the BodyStream
+    			var rdr = new StreamReader(msg.BodyStream);
+    			var str = rdr.ReadToEnd();
+    			// or read it directly thanks to the message formatter
+    			Console.WriteLine(msg.Body);
+    		}
+    	}
+    }
+</code></pre>
+
+<p>I’m writing this at home and immediately discovered a few problems that are casting quite a few shadows on MSMQ.</p>
+
+<p>It seems there a few limitations when running MSMQ when you aren’t on a domain (which would be pretty much everyone when they’re not at work, geeks excepted).  At work (on a domain) I had no trouble. The messages were sent from one process and several listening processes merrily picked them up and ran with it.  Life was good.  At home (on a workgroup) my most trivial test does not work.</p>
+
+<p>I’ve only barely scratched the surface here and I’m not sure I like what I’m smelling.</p>
+
+<p>I’d strongly think twice before using MSMQ.  If you’re rocking the “enterprise” and building things for a known environment then by all means.  If you need to cross boundaries (network, OS, etc) or you want to run over the internet, you want it to “just work” – maybe look a little deeper. RabbitMQ, ZeroMQ, nServiceBus, maybe there is something else out there.</p>
+
+<p>Update:
+So... I should have read the error message, but it was late.
+There were a couple of problems with WORKGROUP mode.</p>
+
+<p>The first one I do not really understand (I guess I need to RTFM).  If you "Manage" your computer you can see a Message Queuing node has been added.  I created a queue directly there, copied the name (something like machinename\private$\testqueue) and used that.  All good.  Apparantly you can only use private queus in WORKGROUP mode and must reference them with a specific naming format.  I found a few forum posts alluding to this, but no definitive answer anywhere. I'm sure it's mentioned somewhere in MSDN... </p>
+
+<p><img class="img-responsive" src="http://benmcevoy.com.au/blog/get/msmq/manage_queue.JPG" alt="Alt text" title="manage queues manually" /></p>
+
+<p>Secondly, although you can't see it here :) I was also enumerating the public queues on my machine, as a check that the queue was created.</p>
+
+<p>Calling MessageQueue.GetPublicQueues is not supported in WORKGROUP mdoe, which was a bit of red herring.  I love the <a href="http://msdn.microsoft.com/en-us/library/hd4s6c1z.aspx">MSDN documentation</a> which lists whether the method is available. Guess the answer is no?</p>
+
+<p><img class="img-responsive" src="http://benmcevoy.com.au/blog/get/msmq/queue_test.JPG" alt="Alt text" title="Finally everything runs! One app is spitting messages out, while listeners grab the messages off round robin style" /></p>
+
+            </div>
+
+            <div class="col-md-4">
+                <div class="well">
+                    <h4>2014</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2014/06/less-worse-webforms/">Less Worse Webforms</a></li><li><a href="/2014/05/web-transforms-for-external-files/">Web Transforms for external files</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div><div class="col-md-4">
+                <div class="well">
+                    <h4>2013</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2013/09/simulating-contentplaceholder-without-masterpages/">Simulating Content PlaceHolder without MasterPages</a></li><li><a href="/2013/09/windows-phone-download-stats/">Windows Phone Download Stats</a></li><li><a href="/2013/09/resolve-strategy-by-key/">Resolving strategies by key</a></li><li><a href="/2013/08/synchronize-dispatcher-and-caller/">Synchronize dispatcher and caller</a></li><li><a href="/2013/07/better-csv-downloads/">Better CSV downloads</a></li><li><a href="/2013/07/detect-wifi-on-windows-phone/">Detect wifi on Windows Phone</a></li><li><a href="/2013/04/quick-caching-for-web-api/">Quick n Dirty Web API Caching</a></li><li><a href="/2013/04/using-aliases-for-class-name-collisions/">Using aliases for class name collisions</a></li><li><a href="/2013/01/test/">New post</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div><div class="col-md-4">
+                <div class="well">
+                    <h4>2012</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2012/12/app-upgrade-manager/">App Upgrade Manager</a></li><li><a href="/2012/11/classing-invalid-elements-with-webforms-validation/">Classing Invalid Elements With WebForms Validation</a></li><li><a href="/2012/11/webforms-modelbinder/">WebForms ModelBinder</a></li><li><a href="/2012/10/bookmark-to-feed/">Bookmark to RSS</a></li><li><a href="/2012/10/aspnet-webforms-modelbinding/">Budget ModelBinder for ASP.NET WebForms</a></li><li><a href="/2012/09/optimising-csharp/">Optimising C#</a></li><li><a href="/2012/07/falling-stars/">Falling Stars</a></li><li><a href="/2012/05/the-simplest-thing-event-aggregation/">the simplest thing - event aggregation</a></li><li><a href="/2012/05/you-never-get-anything-done/">You Never Get Anything Done</a></li><li><a href="/2012/05/clustering-results-with-windows-phone-bing-map-control/">Clustering Results with Windows Phone Bing Map Control</a></li><li><a href="/2012/04/csv-the-file-format-that-would-not-die/">CSV the file format that would not die</a></li><li><a href="/2012/01/building-a-windows-phone-app-part-fuuuu/">Building a Windows Phone App Part FUUUU</a></li><li><a href="/2012/01/building-a-windows-phone-app-part-3/">Building a Windows Phone App Part 3</a></li><li><a href="/2012/01/building-a-windows-phone-app-part-2/">Building a Windows Phone App Part 2</a></li><li><a href="/2012/01/build-windows-phone-app-part-1/">Building a Windows Phone App Part 1</a></li><li><a href="/2012/01/target-winmopho-css/">Target Windows Phone CSS</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div><div class="col-md-4">
+                <div class="well">
+                    <h4>2011</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2011/12/javascript-select/">JavaScript select</a></li><li><a href="/2011/11/jquery-plugin-template/">jQuery Plugin Template</a></li><li><a href="/2011/10/javascript-workers/">Mandelbrot with Workers</a></li><li><a href="/2011/10/html5-canvas-mandelbrot/">Drawing the Mandelbrot Set on HTML5 canvas</a></li><li><a href="/2011/09/metro/">Metro GOOD, url rewriting BAD</a></li><li><a href="/2011/09/simple-log-helper/">Simple Logging Helpers</a></li><li><a href="/2011/09/wpf-find-textbox/">WPF Find Textbox</a></li><li><a href="/2011/09/zero-width-space/">Zero Width Space</a></li><li><a href="/2011/08/unstructured-data/">Structuring Data</a></li><li><a href="/2011/08/getting-started-with-msmq/">Getting Started with MSMQ</a></li><li><a href="/2011/08/javascript-module-template/">JavaScript Module Visual Studio Template</a></li><li><a href="/2011/07/visualize-di/">Visualizing Dependancies</a></li><li><a href="/2011/07/fluent-file-renamer/">Fluent File Renaming API</a></li><li><a href="/2011/07/google-weather-proxy-part2/">Proxy Google Weather as JSON (Part 2)</a></li><li><a href="/2011/07/google-weather-proxy-part1/">Proxy Google Weather as JSON (Part 1)</a></li><li><a href="/2011/06/google-suggests/">What does Google suggest?</a></li><li><a href="/2011/06/wpf-screensvaer/">Basic Screen saver in WPF</a></li><li><a href="/2011/06/impersonal-search/">Un-Personalizing your google search results (in FireFox)</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+    </div>
+    <script src="/assets/js/site.js"></script>
+</body>
+</html>

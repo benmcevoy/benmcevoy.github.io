@@ -1,0 +1,607 @@
+﻿<?xml version="1.0" encoding="utf-8"?><feed xml:lang="en-us" xmlns="http://www.w3.org/2005/Atom"><title type="text">blog.benmcevoy.com.au</title><subtitle type="text">blog.benmcevoy.com.au</subtitle><id>FeedID</id><updated>2014-12-20T09:46:01+11:00</updated><link rel="alternate" href="http://blog.benmcevoy.com.au/feed" /><entry><id>2014\06\less-worse-webforms\</id><title type="text">Less Worse Webforms</title><updated>2014-06-16T07:00:00+10:00</updated><link rel="alternate" href="http://blog.benmcevoy.com.au/2014/06/less-worse-webforms/" /><content type="text">&lt;h2&gt;Less Worse Webforms&lt;/h2&gt;
+
+&lt;h3&gt;Routing&lt;/h3&gt;
+
+&lt;p&gt;I seem to be unable to escape the horrific pit of despair that is ASP.NET WebForms, it's really starting to look like the Classic ASP of the um... noughties? Millennial something something? At any rate, there have at least been a couple of nice(r) features introduced to ease our suffering.&lt;/p&gt;
+
+&lt;p&gt;Routing is one of these, but to get the best out of it you'll also want to nuget in some Friendly Urls:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+Install-Package Microsoft.AspNet.FriendlyUrls
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;A vanilla asp.net web application (in VS2013 at least) is kind enough to include this by default.&lt;/p&gt;
+
+&lt;p&gt;The Friendly Urls package &lt;a href="http://www.hanselman.com/blog/IntroducingASPNETFriendlyUrlsCleanerURLsEasierRoutingAndMobileViewsForASPNETWebForms.aspx"&gt;includes a few things&lt;/a&gt;, and supports .NET 4, but for my purposes I care only for &lt;em&gt;EnableFriendlyUrls()&lt;/em&gt; which will effectively turn on extensionless urls for a webforms project.  Probably in your RouteConfig class:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+    var settings = new FriendlyUrlSettings();
+    routes.EnableFriendlyUrls(settings);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Armed with this and System.Web.Routing we can start to do less sucky things.&lt;/p&gt;
+
+&lt;p&gt;From .NET 4 System.Web.Routing is in the System.Web assembly, and so should be available to most new Web Forms applications.  The &lt;a href="http://msdn.microsoft.com/en-us/library/system.web.routing.routecollection.mappageroute(v=vs.100"&gt;MapPageRoute&lt;/a&gt;.aspx) method lets us start to do nice(r) things.&lt;/p&gt;
+
+&lt;p&gt;For instance, we can map request values (query string or form) to placeholders in the url:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+    routes.MapPageRoute("AboutRoute", "About/{param1}/{*param2}", "~/about.aspx");
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And we can map arbitrary friendly urls to existing pages:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+    routes.MapPageRoute("AnotherRoute", "TotallyFriendlyUrl/{param1}/{*param2}", "~/about.aspx");
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In the second case there is no underlying page at &lt;em&gt;TotallyFriendlyUrl.aspx&lt;/em&gt; so if the route is not matched correctly, i.e. &lt;em&gt;/TotallyFriendlyUrl/this_bit_is_mandatory/this_bit_is_optional&lt;/em&gt; then a 404 will result.&lt;/p&gt;
+
+&lt;p&gt;Calls to &lt;em&gt;/About/&lt;/em&gt; will succeed for pretty much any parameters as 1) there is a page at about.aspx and 2) the &lt;em&gt;param2&lt;/em&gt; is a catch all.  &lt;/p&gt;
+
+&lt;h3&gt;Other bits&lt;/h3&gt;
+
+&lt;p&gt;Quick, my beer is getting warm, we have an expression builder so we can make friendly urls declaratively in an aspx page:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+&amp;lt;asp:HyperLink ID="HyperLink5" runat="server" 
+    NavigateUrl="&amp;lt;%$RouteUrl:locale=CA,year=2009,routename=salesroute%&amp;gt;"&amp;gt;
+    Sales Report - CA, 2009
+&amp;lt;/asp:HyperLink&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And [FriendlyUrlSegments] parameter attribute for um.. doing things like &lt;a href="http://www.asp.net/web-forms/tutorials/data-access/model-binding/retrieving-data"&gt;model binding to a method and junk&lt;/a&gt;. And also [Form] and [QueryString] to boot.&lt;/p&gt;
+
+&lt;p&gt;The friendly url package also allows to do something that MVC 4 (or was it from an earlier version?) can do out of the box, namely chuck a device specific view in, e.g.  &lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;about.aspx&lt;/li&gt;
+&lt;li&gt;about.mobile.aspx&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Unfortunately this does not seem to play well with the other children.  So adding an &lt;em&gt;about.mobile.aspx&lt;/em&gt; you &lt;em&gt;might&lt;/em&gt; expect the uh... attractive &lt;em&gt;/totallyfriendlyurl/oh/hai/&lt;/em&gt; route to dish up a mobile specific view.  It did not.  Given we stated that the route mapped to &lt;em&gt;about.aspx&lt;/em&gt; it's not that surprising, but it would have been nice if it was magic and just worked.&lt;/p&gt;
+
+&lt;p&gt;To be fair I'm not sure where I can be using this stuff.  WebForms work is either some legacy hell that would break as soon as you started doing this (and mobile support? Ha!) or is piggy backing on top of Umbraco or SiteCore which takes care of (some) of this stuff for you anyway.  No-one in their right mind would start a green fields webforms project today? Right? Amiright?&lt;/p&gt;
+</content></entry><entry><id>2014\05\web-transforms-for-external-files\</id><title type="text">Web Transforms for external files</title><updated>2014-05-05T07:00:00+10:00</updated><link rel="alternate" href="http://blog.benmcevoy.com.au/2014/05/web-transforms-for-external-files/" /><content type="text">&lt;h2&gt;Web Transforms for external files&lt;/h2&gt;
+
+&lt;p&gt;So often it's easy to come up with the complex solution and hard to do the simplest thing. And sometimes it's a case of just not seeing the wood for the trees.&lt;/p&gt;
+
+&lt;p&gt;When working with systems like Sitecore or Umbraco you find &lt;em&gt;a lot&lt;/em&gt; of external config files. Sitecore has it's &lt;em&gt;patch&lt;/em&gt;ing (a kind of custom transform engine) and there's always web transforms, but what to do about environmental differences in all those external files?&lt;/p&gt;
+
+&lt;h3&gt;The complex way&lt;/h3&gt;
+
+&lt;p&gt;All we wanted was to be able to "add transform" to any old config file.  So we reach for solutions like &lt;a href="http://www.hanselman.com/blog/SlowCheetahWebconfigTransformationSyntaxNowGeneralizedForAnyXMLConfigurationFile.aspx"&gt;SlowCheetah&lt;/a&gt; or msbuild scripts using Web Transform Task and others.&lt;/p&gt;
+
+&lt;p&gt;It works and seems easy enough (expecially SlowCheetah).&lt;/p&gt;
+
+&lt;p&gt;But now any one coming to the project has friction and has to install a Visual Studio extension, or god forbid, edit an msbuild script.&lt;/p&gt;
+
+&lt;h3&gt;The simple way&lt;/h3&gt;
+
+&lt;p&gt;Rather than trying to transform the external config file, we just need to &lt;a href="http://stackoverflow.com/a/14842051"&gt;&lt;em&gt;transform the path&lt;/em&gt;&lt;/a&gt; to the file.&lt;/p&gt;
+
+&lt;p&gt;Like a light bulb. So simple. So obvious.  Took so long to recognise it.&lt;/p&gt;
+
+&lt;p&gt;Just a bunch of config files with each environment in the name.&lt;/p&gt;
+
+&lt;p&gt;Add a web transform and use the Condition locator.  Say &lt;strong&gt;Web.Staging.config&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+    &amp;lt;myModule configsource="config/myModule.&lt;strong&gt;STAGING&lt;/strong&gt;.config" 
+          xdt:Locator="Condition(@configSource='config/myModule.config')" 
+          xdt:Transfrom="Replace" /&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Sure, you don't get nicely nested files in the solution explorer, and it's not completely DRY. But it's simple. And easy. And it works.  &lt;/p&gt;
+
+&lt;h3&gt;But&lt;/h3&gt;
+
+&lt;p&gt;You will end up deploying multiple config files, e.g. myModule.config, mymodule.staging.config etc. and that might be an issue if there are sensitive settings in there, like connection strings or passwords. &lt;/p&gt;
+
+&lt;p&gt;Cheers.&lt;/p&gt;
+</content></entry><entry><id>2013\09\simulating-contentplaceholder-without-masterpages\</id><title type="text">Simulating Content PlaceHolder without MasterPages</title><updated>2013-09-29T07:00:00+10:00</updated><link rel="alternate" href="http://blog.benmcevoy.com.au/2013/09/simulating-contentplaceholder-without-masterpages/" /><content type="text">&lt;h2&gt;Simulating Content PlaceHolder without MasterPages&lt;/h2&gt;
+
+&lt;p&gt;Oh back in the deeply wrong world of WebForms...&lt;/p&gt;
+
+&lt;p&gt;So somewhere in the misty depths of an ASPX page I wish to render out all the scraps of javascript that any ASCX user controls may require. You could use the ScriptManager and RegisterClientScriptBlock (and LoadScriptsBeforeUI=false), or be very tidy and bundle and minify all the little script snippets together.&lt;/p&gt;
+
+&lt;p&gt;Other times it is desirable to just keep all the HTML and script together in a single ASCX.&lt;/p&gt;
+
+&lt;p&gt;With a master page we can use ContentPlaceHolder, but in just a normal ASPX page?&lt;/p&gt;
+
+&lt;p&gt;Behold.  Add a placeholder to the ASPX, prehaps at the bottom of the page.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+&amp;lt;asp:PlaceHolder runat="server" ID="ScriptsPlaceHolder"&amp;gt;&amp;lt;/asp:PlaceHolder&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In the user control we have a little javascript snippet, prehaps to hook up a click event. Who knows.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+    html normally goes here
+
+    &amp;lt;my:RenderPlaceHolder runat="server" PlaceHolderId="ScriptsPlaceHolder"&amp;gt;
+        &amp;lt;content&amp;gt;
+           &amp;lt;script type="text/javascript"&amp;gt;
+              console.log('this script is rendered from a user control 
+    							into it's parents placeholder');
+           &amp;lt;/script&amp;gt;        
+        &amp;lt;/content&amp;gt;
+    &amp;lt;/my:RenderPlaceHolder&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The RenderPlaceHolder control will look up into the page and find the corresponding PlaceHolder control, dumping it's content into it.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+    using System.Web.UI;
+
+    [ParseChildren(true, "Content")]
+    [PersistChildren(false)]
+    public class RenderPlaceHolder : UserControl
+    {
+        protected override void Render(HtmlTextWriter writer)
+        {
+            // you should probably do some null reference checks here...
+            Page.FindControl(PlaceHolderId).Controls.Add(Content);
+            base.Render(writer);
+        }
+
+        public Control Content { get; set; }
+
+        public string PlaceHolderId { get; set; }
+    }
+
+&lt;/code&gt;&lt;/pre&gt;
+</content></entry><entry><id>2013\09\windows-phone-download-stats\</id><title type="text">Windows Phone Download Stats</title><updated>2013-09-16T07:00:00+10:00</updated><link rel="alternate" href="http://blog.benmcevoy.com.au/2013/09/windows-phone-download-stats/" /><content type="text">&lt;p&gt;&lt;a href="http://www.windowsphone.com/en-au/store/app/melbourne-weather/856400ad-2f7e-4780-b080-3eae8902ecca"&gt;Melbourne weather&lt;/a&gt;, I'm sure that's a correlation between temperature and downloads.&lt;/p&gt;
+
+&lt;p&gt;&lt;img class="img-responsive" src="http://blog.benmcevoy.com.au/files/wp-stats/melbweather.png" alt="alt text" /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://www.windowsphone.com/en-au/store/app/falling-stars/d1af821d-291c-46ba-b82e-12dd768784a9"&gt;Falling stars&lt;/a&gt;, put it in the game category and it gets shitloads of downloads. at first. but then after re-categorizing to children it starts to pick up again.  Gotta get that black line going up.&lt;/p&gt;
+
+&lt;p&gt;&lt;img class="img-responsive" src="http://blog.benmcevoy.com.au/files/wp-stats/falling.png" alt="alt text" /&gt;&lt;/p&gt;
+
+&lt;p&gt;This is more the reality for a lot of crap i think.  9 downloads in 4 months? :) and then I killed it.&lt;/p&gt;
+
+&lt;p&gt;&lt;img class="img-responsive" src="http://blog.benmcevoy.com.au/files/wp-stats/bad.png" alt="alt text" /&gt;&lt;/p&gt;
+
+&lt;p&gt;My whole portfolio.  Can you spot the "game" releases?&lt;/p&gt;
+
+&lt;p&gt;&lt;img class="img-responsive" src="http://blog.benmcevoy.com.au/files/wp-stats/all.png" alt="alt text" /&gt;&lt;/p&gt;
+
+&lt;p&gt;Another one, just looking at 2013 so far, ticking along at about 35 downloads a day, mostly weather, &lt;a href="http://www.windowsphone.com/en-au/store/app/myki-balance/f21f2943-51a1-4b00-bb97-a4d0fdd4aa1a"&gt;myki&lt;/a&gt; and Falling stars.&lt;/p&gt;
+
+&lt;p&gt;&lt;img class="img-responsive" src="http://blog.benmcevoy.com.au/files/wp-stats/2013.png" alt="alt text" /&gt;&lt;/p&gt;
+
+&lt;p&gt;This week &lt;a href="http://www.windowsphone.com/en-au/store/app/falling-stars/d1af821d-291c-46ba-b82e-12dd768784a9"&gt;Falling Stars&lt;/a&gt; was "featured" in the Chile and then the Spanish markets. I'm told I should have put a price on it, then I might have made... 20 bucks?&lt;/p&gt;
+
+&lt;p&gt;&lt;img class="img-responsive" src="http://blog.benmcevoy.com.au/files/wp-stats/fallingfeature.png" alt="alt text" /&gt;&lt;/p&gt;
+
+&lt;p&gt;At least i don't crash as much. 400+ crashes in a day? Ouch! &lt;a href="http://www.windowsphone.com/en-au/store/app/myki-balance/f21f2943-51a1-4b00-bb97-a4d0fdd4aa1a"&gt;Myki&lt;/a&gt; was down I think...&lt;/p&gt;
+
+&lt;p&gt;&lt;img class="img-responsive" src="http://blog.benmcevoy.com.au/files/wp-stats/crash.png" alt="alt text" /&gt;&lt;/p&gt;
+</content></entry><entry><id>2013\09\resolve-strategy-by-key\</id><title type="text">Resolving strategies by key</title><updated>2013-09-07T07:00:00+10:00</updated><link rel="alternate" href="http://blog.benmcevoy.com.au/2013/09/resolve-strategy-by-key/" /><content type="text">&lt;p&gt;I have been abusing the strategy pattern of late, and ended up writing a StrategyResolver class.&lt;/p&gt;
+
+&lt;p&gt;This sort of thing is probably best left to a DI container, using a factory to resolve. But anyways...&lt;/p&gt;
+
+&lt;p&gt;We can inject a StrategyResolver&lt;TStrategy&gt; for our strategy implementations, and then Resolve the correct strategy based on a key.&lt;/p&gt;
+
+&lt;p&gt;This lets use resolve the strategy through data.  For example, I've been doing a bit web scraping and manipulation, so using this technique I can resolve a strategy based on the domain of the page I am processing.&lt;/p&gt;
+
+&lt;p&gt;I guess I'm really just injecting a factory. Sort of.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+    // create a resolver (or inject one)
+    StrategyResolver _strategyResolver = new StrategyResolver&lt;IMyStrategyInterface&gt;();
+
+    // use it to retrieve an implementation based on some key
+    _myStrategy = _strategyResolver.Resolve(url.Host);
+
+    // create and decorate your strategy implementation
+    [StrategyFor("news.ycombinator.com")]
+    public class HackerNewsStrategy : IMyStrategyInterface
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The resolver scans the calling assembly for implementations of TStrategy.  When any are found they are stashed away in a dictionary.&lt;/p&gt;
+
+&lt;p&gt;Later we can retrieve them by the key.  If nothing is found then we will return the default(TStrategy), which is probably going to be null.&lt;/p&gt;
+
+&lt;p&gt;Whether this is a good implementation or idea or not, I am finding it quite nice to be able to just add a new class implementing my IStrategy, decorate it and... that's it. Done.&lt;/p&gt;
+
+&lt;p&gt;The resolver class:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+    public class StrategyResolver&amp;lt;TStrategy&amp;gt; 
+    {
+        private static Dictionary&amp;lt;string, TStrategy&amp;gt; _strategies;
+
+        public TStrategy Resolve(string key)
+        {
+            var assembly = Assembly.GetCallingAssembly();
+
+            return ResolveImpl(key, assembly);
+        }
+
+        public TStrategy Resolve(string key, TStrategy defaultStrategy)
+        {
+            var assembly = Assembly.GetCallingAssembly();
+
+            return ResolveImpl(key, assembly, defaultStrategy);
+        }
+
+        private static TStrategy ResolveImpl(string key, Assembly callingAssembly, TStrategy defaultStrategy = default(TStrategy))
+        {
+            if (_strategies == null) Load(callingAssembly);
+
+            var lowerKey = key.ToLowerInvariant();
+
+            if (_strategies != null &amp;&amp; _strategies.ContainsKey(lowerKey))
+            {
+                return _strategies[lowerKey];
+            }
+
+            return defaultStrategy;
+        }
+
+        private static void Load(Assembly assembly)
+        {
+            _strategies = new Dictionary&amp;lt;string, TStrategy&amp;gt;();
+
+            var strategyType = typeof(TStrategy);
+            var types = assembly
+                .GetTypes()
+                .Where(t =&amp;gt; strategyType.IsAssignableFrom(t) &amp;&amp; t.IsClass)
+                .ToList();
+
+            foreach (var type in types)
+            {
+                var strategyFor = type.GetCustomAttributes(typeof(StrategyForAttribute), false).FirstOrDefault();
+
+                if (strategyFor == null) continue;
+
+                var strategyForAttribute = strategyFor as StrategyForAttribute;
+
+                if (strategyForAttribute == null) continue;
+
+                _strategies[strategyForAttribute.Key] = (TStrategy)Activator.CreateInstance(type);
+            }
+        }
+    }
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Each strategy implementation is decorated with the [StrategyFor] attribute.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+    [AttributeUsage(AttributeTargets.Class)]
+    public class StrategyForAttribute : Attribute
+    {
+        public StrategyForAttribute(string key)
+        {
+            Key = key;
+        }
+
+        public string Key { get; private set; }
+    }
+
+&lt;/code&gt;&lt;/pre&gt;
+</content></entry><entry><id>2013\08\synchronize-dispatcher-and-caller\</id><title type="text">Synchronize dispatcher and caller</title><updated>2013-08-05T07:00:00+10:00</updated><link rel="alternate" href="http://blog.benmcevoy.com.au/2013/08/synchronize-dispatcher-and-caller/" /><content type="text">&lt;p&gt;More Windows Phone/Silverlight/WPF/(and probably WinRT) goodness.&lt;/p&gt;
+
+&lt;p&gt;Sometimes you want to know that any work pushed to the UI dispatcher has completed.  For awhile I worked with the idea that &lt;a href="http://msdn.microsoft.com/en-us/library/d00bd51t(v=vs.95).aspx"&gt;Thread.Sleep(1)&lt;/a&gt; would let any pending work complete. It doesn't.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://stackoverflow.com/questions/9453553/windows-phone-how-to-tell-when-deployment-current-dispatcher-begininvoke-has-co"&gt;A much better approach&lt;/a&gt; is to use some &lt;a href="http://msdn.microsoft.com/en-us/library/system.threading.autoresetevent(v=vs.95).aspx"&gt;thread signalling&lt;/a&gt;. The calling thread will wait until the dispatched work has completed, or give up after some period.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+
+        private static void WaitWithDispatcher(Action action)
+        {
+            if (Deployment.Current.Dispatcher.CheckAccess())
+            {
+                action();
+                return;
+            }
+
+            var wait = new AutoResetEvent(false);
+
+            Deployment.Current.Dispatcher.BeginInvoke(() =&gt;
+            {
+                try
+                {
+                    action();
+                }
+                finally
+                {
+                    // always signal so code can continue
+                    wait.Set();
+                }
+            });
+
+            // wait for a reasonable period for dispatcher to complete
+            wait.WaitOne(TimeSpan.FromSeconds(10));
+        }
+
+        private static void WithDispatcher(Action action)
+        {
+            if (Deployment.Current.Dispatcher.CheckAccess())
+            {
+                action();
+                return;
+            }
+
+            Deployment.Current.Dispatcher.BeginInvoke(action);
+        }
+
+&lt;/code&gt;&lt;/pre&gt;
+</content></entry><entry><id>2013\07\better-csv-downloads\</id><title type="text">Better CSV downloads</title><updated>2013-07-27T07:00:00+10:00</updated><link rel="alternate" href="http://blog.benmcevoy.com.au/2013/07/better-csv-downloads/" /><content type="text">&lt;p&gt;To often when offering a simple "save as CSV" function I see code that simply makes the database request, strings it up and sends it down the wire.&lt;/p&gt;
+
+&lt;p&gt;And more than once I have written code like this.&lt;/p&gt;
+
+&lt;p&gt;It's generally not a problem if:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;the requested data is small&lt;/li&gt;
+&lt;li&gt;you have very few users&lt;/li&gt;
+&lt;li&gt;you do not care about the impact on your servers memory&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;We can do better, and in a fairly simple way.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;By using an IQueryable&lt;T&gt; and paging we can easily limit the memory usage by only streaming one page at a time back to the user.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;This does have the downside of making multiple database requests, but I believe that to be preferable to simply pulling all the data at once.&lt;/p&gt;
+
+&lt;p&gt;Here we simply skip and take over the query.  My ToCsv code is a bit ropey and only does &lt;em&gt;what I need&lt;/em&gt;, but there are plenty of similar functions to be found around the interwebs.&lt;/p&gt;
+
+&lt;p&gt;Whenever you make a database request, be it for downloading results or just populating a grid, you should always considering limiting the results.  There are very few times when the user &lt;em&gt;really&lt;/em&gt; wants 100,000 records at once.&lt;/p&gt;
+
+&lt;p&gt;Usage:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+
+    using (var context = new DataContext())
+            {
+                var code = Request.QueryString["code"];
+
+                // query and project to a flat structure for CSV
+                var earnings = context.StockEarnings.Where(
+                    s =&gt; s.StockCode == code)
+                    .Select(earning =&gt; new
+                    {
+                        earning.StockCode,
+                        earning.Year,
+                        earning.Margin,
+                        earning.CashFlow,
+                        earning.ROE
+                    }).AsQueryable();  // note that AsQueryable
+
+                DownloadHelper.DownloadAsCsv(Context, earnings, code + "_earnings.csv");
+            }
+
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;
+    public static void DownloadAsCsv&amp;lt;T&amp;gt;(HttpContext httpContext, IQueryable&amp;lt;T&amp;gt; query, string fileName, int pageSize = 500) where T : class
+        {
+            var pageNumber = 0;
+
+            while (true)
+            {
+                var results = query.Skip(pageSize * pageNumber).Take(pageSize);
+
+                if (!results.Any()) break;
+
+                var csv = results.ToCsv();
+
+                if (pageNumber == 0)
+                {
+                    var properties = typeof(T).GetProperties();
+                    // a bit of reflection to generate the header row
+                    var header = properties.Aggregate("", (current, propertyInfo) =&amp;gt; current + string.Format("{0},", propertyInfo.Name));
+
+                    header = header.TrimEnd(',');
+                    header += "\r\n";
+
+                    csv = csv.Insert(0, header);
+
+                    httpContext.Response.Clear();
+                    httpContext.Response.AddHeader("Content-Disposition",
+                                                   "attachment; filename='" + fileName + "'");
+                    httpContext.Response.ContentType = "text/comma-separated-values";
+                }
+
+                pageNumber++;
+
+                httpContext.Response.Write(csv);
+                // flush starts sending the response back to the user
+                httpContext.Response.Flush();
+            }
+
+            httpContext.Response.End();
+        }
+
+    public static string ToCsv&amp;lt;T&amp;gt;(this IEnumerable&amp;lt;T&amp;gt; items)
+            where T : class
+        {
+            var csvBuilder = new StringBuilder();
+            var properties = typeof(T).GetProperties();
+
+            foreach (T item in items)
+            {
+                var line = string.Join(",", properties.Select(p =&amp;gt; p.GetValue(item, null).ToCsvValue()).ToArray());
+                csvBuilder.AppendLine(line);
+            }
+
+            return csvBuilder.ToString();
+        }
+
+        private static string ToCsvValue&amp;lt;T&amp;gt;(this T item)
+        {
+            if (item == null) return "\"\"";
+
+            if (item is string)
+            {
+                return string.Format("\"{0}\"", item.ToString().Replace("\"", "\\\""));
+            }
+
+            double dummy;
+
+            if (double.TryParse(item.ToString(), out dummy))
+            {
+                return string.Format("{0}", item);
+            }
+
+            return string.Format("\"{0}\"", item);
+        }
+
+
+&lt;/code&gt;&lt;/pre&gt;
+</content></entry><entry><id>2013\07\detect-wifi-on-windows-phone\</id><title type="text">Detect wifi on Windows Phone</title><updated>2013-07-23T07:00:00+10:00</updated><link rel="alternate" href="http://blog.benmcevoy.com.au/2013/07/detect-wifi-on-windows-phone/" /><content type="text">&lt;p&gt;If you are making web requests on the windows phone you should check network availability first.  &lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+     Microsoft.Phone.Net.NetworkInformation.DeviceNetworkInformation.IsNetworkAvailable
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you are trying to be a conscientious developer you may only want to make web requests when the phone is connected to a wifi network, for instance in a background agent update.&lt;/p&gt;
+
+&lt;p&gt;The API offers:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+     DeviceNetworkInformation.IsWiFiEnabled
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This, however only tells you the user has wifi enabled.  It does not tell you if the phone is connected and using a wifi network. &lt;/p&gt;
+
+&lt;p&gt;You must also check the &lt;em&gt;&lt;a href="http://msdn.microsoft.com/en-US/library/windowsphone/develop/microsoft.phone.net.networkinformation.networkinterfacetype(v=vs.105).aspx"&gt;NetworkInterfaceType&lt;/a&gt;&lt;/em&gt;.  Note that the majority of interface types are not supported on the phone. There is really only &lt;strong&gt;Wireless80211&lt;/strong&gt;, &lt;strong&gt;MobileBroadbandGsm&lt;/strong&gt; and &lt;strong&gt;MobileBroadbandCdma&lt;/strong&gt; to worry about.  I &lt;em&gt;believe&lt;/em&gt; &lt;strong&gt;Ethernet&lt;/strong&gt; is available when connected to a PC with Zune running, as I &lt;em&gt;think&lt;/em&gt; Zune allows the phone to piggy back off the PC's network connection. AFAIK.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+    NetworkInterface.NetworkInterfaceType == NetworkInterfaceType.Wireless80211
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Put it all together.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+
+        private bool IsWifiConnected()
+        {
+            if(IsNetworkAvailable() &amp;&amp; IsWifiEnabled())
+            {
+                return NetworkInterface.NetworkInterfaceType == NetworkInterfaceType.Wireless80211;
+            }
+
+            return false;
+        }
+
+        private bool IsWifiEnabled()
+        {
+            return DeviceNetworkInformation.IsWiFiEnabled;
+        }
+
+        private bool IsNetworkAvailable()
+        {
+            return DeviceNetworkInformation.IsNetworkAvailable;
+        }
+
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3&gt;This thing is slooooow&lt;/h3&gt;
+
+&lt;p&gt;After implementing something like this in a background agent on the phone, I was surprised to see the agent frequently not running correctly, usually timing out.&lt;/p&gt;
+
+&lt;p&gt;As far as as I can tell, the call to &lt;strong&gt;NetworkInterface.NetworkInterfaceType&lt;/strong&gt; can be very slow, sometimes 20-30 seconds, and sometimes simply returning &lt;em&gt;None&lt;/em&gt;, even though the phone is clearly connected to the network.&lt;/p&gt;
+
+&lt;p&gt;People on stackoverflow suggest wrapping these calls up in some async pattern, either threadpool or whatever, as it will be a blocking call otherwise.&lt;/p&gt;
+
+&lt;p&gt;In the case of a background agent I can't see how to determine if we are on a wifi network (or connected at all) in a timely manner.  The background task must complete in, I think, 25 seconds or so.  If the network takes 20-30 seconds, well you can see the problem.&lt;/p&gt;
+
+&lt;h3&gt;WIFI is sleeping&lt;/h3&gt;
+
+&lt;p&gt;The phone has certain behaviors you must be aware of.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;wifi will turn off if the phone is asleep&lt;/li&gt;
+&lt;li&gt;the phone will preferentially use the mobile connection&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;On the windows phone 8 a recent update allows the user to specify "Keep WiFi on when screen times out".&lt;/p&gt;
+
+&lt;p&gt;On windows phone 7.5 it seems to keep WiFi on by default. I am not sure.&lt;/p&gt;
+
+&lt;p&gt;Basically, during a background task:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;if the user has wifi enabled and mobile data turned on the phone will opt for mobile data&lt;/li&gt;
+&lt;li&gt;if the user has wifi enabled and wifi enabled during sleep (and mobile data) the phone &lt;em&gt;should&lt;/em&gt; opt for wifi&lt;/li&gt;
+&lt;li&gt;if the user has wifi enabled, wifi enabled during sleep and mobile data off, the check for network will succeed (uses wifi)&lt;/li&gt;
+&lt;li&gt;if the user has wifi enabled, mobile data off, the check for network will fail (timeout)&lt;/li&gt;
+&lt;li&gt;if the user has wifi disabled, mobile data on, the check for network will  succeed (uses mobile data)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;At the end of the day the best you can do is inform your users.&lt;/p&gt;
+
+&lt;p&gt;"If you wish to use wifi for background data requests please check "Keep WiFi on when screen times out" is enabled under the advanced settings of your wifi connection." &lt;/p&gt;
+</content></entry><entry><id>2013\04\quick-caching-for-web-api\</id><title type="text">Quick n Dirty Web API Caching</title><updated>2013-04-14T07:00:00+10:00</updated><link rel="alternate" href="http://blog.benmcevoy.com.au/2013/04/quick-caching-for-web-api/" /><content type="text">&lt;h3&gt;Web Api Cache Filter&lt;/h3&gt;
+
+&lt;p&gt;Having recently been playing with the ASP.NET Web API bits lately I found I wanted to be able to cache some of the actions response.&lt;/p&gt;
+
+&lt;p&gt;The following will insert cache control headers into the response.  Perfect for responses that are the same for every user.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+
+    // in the ApiController
+    [ApiCache(600)]  // cache for 10 minutes
+    public IEnumerable&amp;lt;MyViewModel&amp;gt; Get()
+    {
+        ....
+    }
+
+
+    public class ApiCacheAttribute : ActionFilterAttribute
+    {
+        private readonly int _cacheDurationSeconds;
+
+        public ApiCacheAttribute(int seconds = 0)
+        {
+            _cacheDurationSeconds = seconds;
+        }
+
+        public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
+        {
+            // TODO: would need vary-by-param or something
+            // all users are getting the same cached response
+            actionExecutedContext
+                  .Response
+                  .Headers
+                  .Add("Cache-Control", "public, max-age=" + _cacheDurationSeconds );
+
+            base.OnActionExecuted(actionExecutedContext);
+        }
+    }
+&lt;/code&gt;
+&lt;/pre&gt;
+</content></entry><entry><id>2013\04\using-aliases-for-class-name-collisions\</id><title type="text">Using aliases for class name collisions</title><updated>2013-04-10T07:00:00+10:00</updated><link rel="alternate" href="http://blog.benmcevoy.com.au/2013/04/using-aliases-for-class-name-collisions/" /><content type="text">&lt;h2&gt;Using aliases for class name collisions&lt;/h2&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Filed under “things I did not know until resharper automatically fixed something for me”.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;If you need to use a namespace that collides with another, perhaps by having the same names for classes under both (ambiguous names) you will use a name space alias to clear up and confusion.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+using System;
+// alias the namespace
+using myAlias = NameSpace.That.Collides;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;However, you can also use an alias to change a class name directly.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+using System;
+using Namespace.With.Customer;
+// only alias the class
+using myCustomer = AnotherNameSpace.WithCustomer.Customer;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Handy.&lt;/p&gt;
+</content></entry></feed>

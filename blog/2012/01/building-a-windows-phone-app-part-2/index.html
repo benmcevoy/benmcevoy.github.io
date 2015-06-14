@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="There are a couple of methods with warnings *Do not add any additional code to this method* which look like the best place to configure this stuff: // Do not add any additional code to this method private void InitializePhoneApplication() { if (phoneApplicationInitialized) return;  } // Do not add any additional code to this method private void CompleteInitializePhoneApplication(object sender, NavigationEventArgs e) { // Set the root visual to allow the application to render if (RootVisual != RootFrame) RootVisual = RootFrame; ">
+    <meta name="keywords" content="looks, //, model, app, set, {, cache, making, code, }">
+    <meta name="author" content="ben mcevoy">
+    <title>Building a Windows Phone App Part 2 - blog.benmcevoy.com.au</title>
+    <link href="/assets/css/site.css" rel="stylesheet">
+    <link type="application/atom+xml" rel="alternate" href="/feed" />
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <!-- Navigation -->
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Home</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="http://benmcevoy.com.au/">benmcevoy.com.au</a>
+                </li>
+                <li>
+                    <a href="https://github.com/benmcevoy/">Github</a>
+                </li>
+                <li>
+                    <a href="http://benmcevoy.com.au/resume.aspx">Resume</a>
+                </li>
+                <li>
+                    <a href="/feed">Feed</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+    <div class="container">
+        <div class="row content">
+            <div class="col-lg-8 entry">
+                <h1>Building a Windows Phone App Part 2</h1>
+                <hr>
+                <p><span class="glyphicon glyphicon-time"></span> Posted on Tuesday January 2012</p>
+                <hr>
+                <h2>Building a Windows Phone App Part 2</h2>
+
+<h3>Silverlight or HTML?</h3>
+
+<p>In this case I'm going native.  XML manipulation in Javascript is not too much fun.  Plus I already have code in C# to pull and clean up the data into a reasonable format.  Just need to port it to SL, remembering that all requests are going to be async and so on.</p>
+
+<p>The model looks something like:</p>
+
+<p><img class="img-responsive" src="assets/weather-model.png" alt="model" title="" /></p>
+
+<p>A repository will return an instance of the model, checking the cache or pulling a fresh one.  I'm making it the repositories responsibility to work out where to get the data from, which sounds pretty reasonable to me.</p>
+
+<p>Thinking a little bit I may have some kind of app level message/event thing going on.</p>
+
+<p>When the app starts it should provide the model immediately from the cache.  Then asynchronously pull a fresh copy if the cache is expired.  The raise an event to tell the view to update.  If we have no cache then what?
+Return an empty model with a "loading" message for the summary and go from there.</p>
+
+<h3>MVVM</h3>
+
+<p>MVVM is a very prudent pattern to use in SL, particularly this app.  The rich binding makes MVVM rock!  I also find it makes life so much simpler if you can build the UI against a view model - it's separation of concerns, SRP and just makes things flow.</p>
+
+<p>I'll often use a RelayCommand or DelegateCommand, frequently just rip that class out of Prism or some framework and drop it in.  I'll do the same here, ripping bits from <a href="https://mvvmlight.codeplex.com/">GalaSoft's MVVM Lite toolkit</a>.  If I find I'm using the toolkit a lot then I'll take the whole thing on as a dependency, but for now let’s see how we go.</p>
+
+<h3>Startup, Lifecycle and DI</h3>
+
+<p>Ideally we want to be able to configure some DI/IOC and let it do it's thing, but...</p>
+
+<p>I am not too familar with the phone startup lifecycle (yet).  Statrtup is controlled in the usual way, with the main entry point being the App constructor.  There are a couple of methods with warnings <em>Do not add any additional code to this method</em> which look like the best place to configure this stuff:</p>
+
+<pre><code>
+        // Do not add any additional code to this method
+        private void InitializePhoneApplication()
+        {
+            if (phoneApplicationInitialized)
+                return;
+
+            // Create the frame but don't set it as RootVisual yet; this allows the splash
+            // screen to remain active until the application is ready to render.
+            RootFrame = new PhoneApplicationFrame();
+            RootFrame.Navigated += CompleteInitializePhoneApplication;
+
+            // Handle navigation failures
+            RootFrame.NavigationFailed += RootFrame_NavigationFailed;
+
+            // Ensure we don't initialize again
+            phoneApplicationInitialized = true;
+        }
+
+        // Do not add any additional code to this method
+        private void CompleteInitializePhoneApplication(object sender, NavigationEventArgs e)
+        {
+            // Set the root visual to allow the application to render
+            if (RootVisual != RootFrame)
+                RootVisual = RootFrame;
+
+            // Remove this handler since it is no longer needed
+            RootFrame.Navigated -= CompleteInitializePhoneApplication;
+        }
+</code></pre>
+
+<p>This sets up a callback for Navigation complete, and sets the RootVisual for the app to PhoneApplicationFrame.</p>
+
+<p>There are some <a href="http://social.msdn.microsoft.com/Forums/en-US/windowsphone7series/thread/2b6c0d94-8e03-4235-88b7-e77fb0911b86/">scary warnings</a> about messing with these startup objects.  Coupled with my inexperience I'm just going to skip it and set my View dataContext in the code behind of the view.  It's not ideal, but oh well.</p>
+
+<pre><code>
+    public partial class MainPage : PhoneApplicationPage
+    {
+        // Constructor
+        public MainPage()
+        {
+            InitializeComponent();
+
+            WeatherService.Current.WeatherChanged += new EventHandler(Current_WeatherChanged);
+            WeatherService.Current.Initialize();
+        }
+
+        void Current_WeatherChanged(object sender, EventArgs e)
+        {
+            this.SetValue(MainPage.DataContextProperty, WeatherService.Current.WeatherViewModel);
+        }
+    }
+</code></pre>
+
+<p>As you can see, I've chucked in an application service to handle refreshing the view model as the cache expires.  If the model changes then the view model should update automatically to reflect this.  So far all the service does is return a mock IWeatherViewModel.  This will let me set up the view and the bindings and make the pretty.</p>
+
+<p>The current solution is looking something like:</p>
+
+<p><img class="img-responsive" src="assets/weather-soloution1.png" alt="Solution at this point" title="" /></p>
+
+            </div>
+
+            <div class="col-md-4">
+                <div class="well">
+                    <h4>2014</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2014/06/less-worse-webforms/">Less Worse Webforms</a></li><li><a href="/2014/05/web-transforms-for-external-files/">Web Transforms for external files</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div><div class="col-md-4">
+                <div class="well">
+                    <h4>2013</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2013/09/simulating-contentplaceholder-without-masterpages/">Simulating Content PlaceHolder without MasterPages</a></li><li><a href="/2013/09/windows-phone-download-stats/">Windows Phone Download Stats</a></li><li><a href="/2013/09/resolve-strategy-by-key/">Resolving strategies by key</a></li><li><a href="/2013/08/synchronize-dispatcher-and-caller/">Synchronize dispatcher and caller</a></li><li><a href="/2013/07/better-csv-downloads/">Better CSV downloads</a></li><li><a href="/2013/07/detect-wifi-on-windows-phone/">Detect wifi on Windows Phone</a></li><li><a href="/2013/04/quick-caching-for-web-api/">Quick n Dirty Web API Caching</a></li><li><a href="/2013/04/using-aliases-for-class-name-collisions/">Using aliases for class name collisions</a></li><li><a href="/2013/01/test/">New post</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div><div class="col-md-4">
+                <div class="well">
+                    <h4>2012</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2012/12/app-upgrade-manager/">App Upgrade Manager</a></li><li><a href="/2012/11/classing-invalid-elements-with-webforms-validation/">Classing Invalid Elements With WebForms Validation</a></li><li><a href="/2012/11/webforms-modelbinder/">WebForms ModelBinder</a></li><li><a href="/2012/10/bookmark-to-feed/">Bookmark to RSS</a></li><li><a href="/2012/10/aspnet-webforms-modelbinding/">Budget ModelBinder for ASP.NET WebForms</a></li><li><a href="/2012/09/optimising-csharp/">Optimising C#</a></li><li><a href="/2012/07/falling-stars/">Falling Stars</a></li><li><a href="/2012/05/the-simplest-thing-event-aggregation/">the simplest thing - event aggregation</a></li><li><a href="/2012/05/you-never-get-anything-done/">You Never Get Anything Done</a></li><li><a href="/2012/05/clustering-results-with-windows-phone-bing-map-control/">Clustering Results with Windows Phone Bing Map Control</a></li><li><a href="/2012/04/csv-the-file-format-that-would-not-die/">CSV the file format that would not die</a></li><li><a href="/2012/01/building-a-windows-phone-app-part-fuuuu/">Building a Windows Phone App Part FUUUU</a></li><li><a href="/2012/01/building-a-windows-phone-app-part-3/">Building a Windows Phone App Part 3</a></li><li><a href="/2012/01/building-a-windows-phone-app-part-2/">Building a Windows Phone App Part 2</a></li><li><a href="/2012/01/build-windows-phone-app-part-1/">Building a Windows Phone App Part 1</a></li><li><a href="/2012/01/target-winmopho-css/">Target Windows Phone CSS</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div><div class="col-md-4">
+                <div class="well">
+                    <h4>2011</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2011/12/javascript-select/">JavaScript select</a></li><li><a href="/2011/11/jquery-plugin-template/">jQuery Plugin Template</a></li><li><a href="/2011/10/javascript-workers/">Mandelbrot with Workers</a></li><li><a href="/2011/10/html5-canvas-mandelbrot/">Drawing the Mandelbrot Set on HTML5 canvas</a></li><li><a href="/2011/09/metro/">Metro GOOD, url rewriting BAD</a></li><li><a href="/2011/09/simple-log-helper/">Simple Logging Helpers</a></li><li><a href="/2011/09/wpf-find-textbox/">WPF Find Textbox</a></li><li><a href="/2011/09/zero-width-space/">Zero Width Space</a></li><li><a href="/2011/08/unstructured-data/">Structuring Data</a></li><li><a href="/2011/08/getting-started-with-msmq/">Getting Started with MSMQ</a></li><li><a href="/2011/08/javascript-module-template/">JavaScript Module Visual Studio Template</a></li><li><a href="/2011/07/visualize-di/">Visualizing Dependancies</a></li><li><a href="/2011/07/fluent-file-renamer/">Fluent File Renaming API</a></li><li><a href="/2011/07/google-weather-proxy-part2/">Proxy Google Weather as JSON (Part 2)</a></li><li><a href="/2011/07/google-weather-proxy-part1/">Proxy Google Weather as JSON (Part 1)</a></li><li><a href="/2011/06/google-suggests/">What does Google suggest?</a></li><li><a href="/2011/06/wpf-screensvaer/">Basic Screen saver in WPF</a></li><li><a href="/2011/06/impersonal-search/">Un-Personalizing your google search results (in FireFox)</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+    </div>
+    <script src="/assets/js/site.js"></script>
+</body>
+</html>

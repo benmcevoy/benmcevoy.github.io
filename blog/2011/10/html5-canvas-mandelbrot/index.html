@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="// real is 1, imaginary part is 1i The function that is applied is given on Wikipedia, but for those who don’t speak mathematics it’s basically z(n+1) = z(n)^2 + c so the next value of z or z(n+1) is the square of z plus c z and c are both complex numbers.  x z(n)^2 + c // where z starts at zero // and c is a complex number // and n goes from 0 to say 100 // if the number exceeds some threshold (4) then we say it out of the set var z = new complexNumber(0, 0); ">
+    <meta name="keywords" content="=, var, //, function, set, new">
+    <meta name="author" content="ben mcevoy">
+    <title>Drawing the Mandelbrot Set on HTML5 canvas - blog.benmcevoy.com.au</title>
+    <link href="/assets/css/site.css" rel="stylesheet">
+    <link type="application/atom+xml" rel="alternate" href="/feed" />
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <!-- Navigation -->
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Home</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="http://benmcevoy.com.au/">benmcevoy.com.au</a>
+                </li>
+                <li>
+                    <a href="https://github.com/benmcevoy/">Github</a>
+                </li>
+                <li>
+                    <a href="http://benmcevoy.com.au/resume.aspx">Resume</a>
+                </li>
+                <li>
+                    <a href="/feed">Feed</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+    <div class="container">
+        <div class="row content">
+            <div class="col-lg-8 entry">
+                <h1>Drawing the Mandelbrot Set on HTML5 canvas</h1>
+                <hr>
+                <p><span class="glyphicon glyphicon-time"></span> Posted on Sunday October 2011</p>
+                <hr>
+                <p>I have been meaning to try this out for a while – draw the <a href="https://secure.wikimedia.org/wikipedia/en/wiki/Mandelbrot_set">Mandelbrot set</a> on an html canvas.
+And I have to say that I was very very pleased with the results :)  Not that it drew the set, or the speed of it or anything like that, but the technique was just fantastic.</p>
+
+<p>I am not a particular strong javascript developer, but I feel like I just ascended a level.  I’m a little bit embarrassed to say I’m actually feeling very excited, almost a bit too excited by this.</p>
+
+<p><a href="http://benmcevoy.com.au/projects/mandelbrot/default.htm">tldr;</a></p>
+
+<p>Firstly, the Mandelbrot set is basically a set of numbers on the <a href="https://secure.wikimedia.org/wikipedia/en/wiki/Complex_number#Elementary_operations">complex</a> plane (e.g. real+imaginary = complex number).  You are either in the set or out depending on whether you exceed a certain threshold after having a function applied several times.</p>
+
+<p>Hard to explain, but basically for a complex number pretend the real part is on the x axis and imaginary is y.</p>
+
+<pre><code>
+var cn = new complexNumber(1, 1);  // real is 1, imaginary part is 1i
+</code></pre>
+
+<p>The function that is applied is given on Wikipedia, but for those who don’t speak mathematics it’s basically </p>
+
+<p>z(n+1) = z(n)^2 + c</p>
+
+<p>so the next value of z or z(n+1)  is the square of z plus c</p>
+
+<p>z and c are both complex numbers.  z starts at zero or z = 0 + 0i</p>
+
+<p>c is the point on the plane we are testing</p>
+
+<p>if we write that as code it’s a bit easier to see:</p>
+
+<pre><code>
+        var z = new complexNumber(0, 0);
+        var c = new complexNumber(x, y);
+
+        for (var n = 0; n < 100; n++) {
+            z = z.multiply(z).add(c);
+        }
+</code></pre>
+
+<p>After 100 iterations of applying this function we test the value of z and see if it has exceeded some threshold.  If it is still within the threshold then it’s part of the Mandelbrot set.</p>
+
+<p>This is fine and dandy.</p>
+
+<p>The first thing that floated my boat was making use of javascript prototype to define a “class”.  I was watching some video from the Windows 8 BUILD and they advocated the use of this pattern over say the javascript module pattern.  Either way I wanted to try this out.</p>
+
+<p>A complex number class.</p>
+
+<pre><code>
+    var complexNumber = function (real, imaginary) {
+        this.r = real;
+        this.i = imaginary;
+    };
+
+    complexNumber.prototype.toString = function () {
+        return '{' + this.r + ',' + this.i + '}';
+    }
+
+    complexNumber.prototype.add = function (value) {
+        return new complexNumber(this.r + value.r, this.i + value.i);
+    };
+
+    complexNumber.prototype.subtract = function (value) {
+        return new complexNumber(this.r - value.r, this.i - value.i);
+    };
+
+    complexNumber.prototype.multiply = function (value) {
+        return new complexNumber(this.r * value.r - this.i * value.i, this.i * value.r + this.r * value.i);
+    };
+
+    complexNumber.prototype.conjugate = function () {
+        return new complexNumber(this.r, -this.i);
+    };
+
+</code></pre>
+
+<p>This is sweet.  With the prototype pattern we can declared class level members using the this keyword, so this.r and this.i are now available throughout the class. They are also available as properties or fields on the class as well.
+The other very nice thing is we can now say </p>
+
+<pre><code>
+    var cn = new complexNumber(1, 1);  // real is 1, imaginary part is 1i
+</code></pre>
+
+<p>And new it up.  Sweet.</p>
+
+<p>The next little hurdle was getting to grips with the HTML canvas.  After some trial and error I realised that it is basically like playing with a bitmap object in c#.  I want to be able to set pixels and draw the set.  There is a bit of jiggery pokery to scale the complex plane to fit the canvas as I want the origin (0,0) to be in the center of the canvas, not at top,left.</p>
+
+<p>When we wish to set a pixel we first need to grab the canvas data, essentially a big array.  We then index into the array and can then set the RGBA values and “turn the pixel on”. Or set it black.</p>
+
+<p>The code to calculate the Mandelbrot set and render it on the canvas I wrote using the module pattern.  This pattern I also really like! Mainly because it feels a lot like writing c#</p>
+
+<pre><code>
+var mandelbrot = function () {
+
+    var _options;
+    var _canvas;
+    var _context;
+    var _canvasData;
+    var _scaleX;
+    var _scaleY;
+    var _offsetX;
+    var _offsetY;
+
+    initialize = function (options) {
+        _options = options;
+
+        _canvas = document.getElementById(_options.canvasId);
+        _context = _canvas.getContext('2d');
+        _context.fillStyle = 'rgb(0,0,0)'; // initialize the canvas to be black
+        _context.fillRect(0, 0, _canvas.width, _canvas.height);
+
+        // canvasData is a bit like a writeable bitmap in WPF
+        // or a handle on that chunk of memory
+        _canvasData = _context.getImageData(0, 0, _canvas.width, _canvas.height);
+
+        // cartesian system is -2 to 2, or 4 units each axis
+        // 2x2 as that's where the interesting stuff is in mandelbrot set
+        _scaleX = _canvas.width / 4; // this many pixels per unit
+        _scaleY = _canvas.width / 4;
+        _offsetX = _scaleX * 2;
+        _offsetY = _scaleY * 2;
+    };
+
+    // main render loop
+    render = function () {
+        for (var x = -2; x < 2; x = x + 0.01) {
+            for (var y = -2; y < 2; y = y + 0.01) {
+                if (isInSet(x, y)) {
+                    setPoint(x, y);
+                }
+            }
+        }
+        // then we update it in one hit like bitblit?
+        _context.putImageData(_canvasData, 0, 0);
+    };
+
+    // determine if this point is in the set
+    isInSet = function (x, y) {
+        // series is z(n+1) => z(n)^2 + c
+        // where z starts at zero
+        // and c is a complex number
+        // and n goes from 0 to say 100
+        // if the number exceeds some threshold (4) then we say it out of the set
+
+        var z = new complexNumber(0, 0);
+        var c = new complexNumber(x, y);
+
+        for (var n = 0; n < 100; n++) {
+            z = z.multiply(z).add(c);
+        }
+
+        return (z.conjugate().r < 4);
+    }
+
+    setPoint = function (x, y) {
+        var index = cartesianToPixelIndex(x, y);
+        setCanvasIndex(index);
+    };
+
+    cartesianToPixelIndex = function (x, y) {
+        x = Math.floor(x * _scaleX + _offsetX);
+        y = Math.floor(y * _scaleY + _offsetY);
+
+        // the bitmap is like a vector in memory, each point takes 32 bits (RGBA) or 4 bytes
+        // to represent the colour depth and alpha
+        // _canvas.width is like stride
+        // multiply by four to account for the colour depth
+        // a four pixel canvas might look like
+        // [rgbargbargbargba]
+        return (x + (y * _canvas.width)) * 4;
+    };
+
+    setCanvasIndex = function (index) {
+        // set this pixel white
+        _canvasData.data[index + 0] = 255; //r
+        _canvasData.data[index + 1] = 255; //g
+        _canvasData.data[index + 2] = 255; //b
+        _canvasData.data[index + 3] = 255; //a
+    };
+
+    return {
+        init: initialize,
+        render: render
+    };
+} ();
+
+// on ready fire her up!
+$(function () {
+    mandelbrot.init({ canvasId: "canvas1" });
+    mandelbrot.render();
+});
+
+</code></pre>
+
+<p>Now this code is pretty slow.  That’s not the point.  The point is that I could write this code and on the first time I ran it it worked. Perfectly.  I think that’s proof positive for me that following these patterns is an absolute must.  My old style crappy global function javascript is dead.</p>
+
+<p>Oh and check out <a href="http://benmcevoy.com.au/projects/mandelbrot/default.htm">the demo</a></p>
+
+<p>Cheers!</p>
+
+            </div>
+
+            <div class="col-md-4">
+                <div class="well">
+                    <h4>2014</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2014/06/less-worse-webforms/">Less Worse Webforms</a></li><li><a href="/2014/05/web-transforms-for-external-files/">Web Transforms for external files</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div><div class="col-md-4">
+                <div class="well">
+                    <h4>2013</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2013/09/simulating-contentplaceholder-without-masterpages/">Simulating Content PlaceHolder without MasterPages</a></li><li><a href="/2013/09/windows-phone-download-stats/">Windows Phone Download Stats</a></li><li><a href="/2013/09/resolve-strategy-by-key/">Resolving strategies by key</a></li><li><a href="/2013/08/synchronize-dispatcher-and-caller/">Synchronize dispatcher and caller</a></li><li><a href="/2013/07/better-csv-downloads/">Better CSV downloads</a></li><li><a href="/2013/07/detect-wifi-on-windows-phone/">Detect wifi on Windows Phone</a></li><li><a href="/2013/04/quick-caching-for-web-api/">Quick n Dirty Web API Caching</a></li><li><a href="/2013/04/using-aliases-for-class-name-collisions/">Using aliases for class name collisions</a></li><li><a href="/2013/01/test/">New post</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div><div class="col-md-4">
+                <div class="well">
+                    <h4>2012</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2012/12/app-upgrade-manager/">App Upgrade Manager</a></li><li><a href="/2012/11/classing-invalid-elements-with-webforms-validation/">Classing Invalid Elements With WebForms Validation</a></li><li><a href="/2012/11/webforms-modelbinder/">WebForms ModelBinder</a></li><li><a href="/2012/10/bookmark-to-feed/">Bookmark to RSS</a></li><li><a href="/2012/10/aspnet-webforms-modelbinding/">Budget ModelBinder for ASP.NET WebForms</a></li><li><a href="/2012/09/optimising-csharp/">Optimising C#</a></li><li><a href="/2012/07/falling-stars/">Falling Stars</a></li><li><a href="/2012/05/the-simplest-thing-event-aggregation/">the simplest thing - event aggregation</a></li><li><a href="/2012/05/you-never-get-anything-done/">You Never Get Anything Done</a></li><li><a href="/2012/05/clustering-results-with-windows-phone-bing-map-control/">Clustering Results with Windows Phone Bing Map Control</a></li><li><a href="/2012/04/csv-the-file-format-that-would-not-die/">CSV the file format that would not die</a></li><li><a href="/2012/01/building-a-windows-phone-app-part-fuuuu/">Building a Windows Phone App Part FUUUU</a></li><li><a href="/2012/01/building-a-windows-phone-app-part-3/">Building a Windows Phone App Part 3</a></li><li><a href="/2012/01/building-a-windows-phone-app-part-2/">Building a Windows Phone App Part 2</a></li><li><a href="/2012/01/build-windows-phone-app-part-1/">Building a Windows Phone App Part 1</a></li><li><a href="/2012/01/target-winmopho-css/">Target Windows Phone CSS</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div><div class="col-md-4">
+                <div class="well">
+                    <h4>2011</h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                <li><a href="/2011/12/javascript-select/">JavaScript select</a></li><li><a href="/2011/11/jquery-plugin-template/">jQuery Plugin Template</a></li><li><a href="/2011/10/javascript-workers/">Mandelbrot with Workers</a></li><li><a href="/2011/10/html5-canvas-mandelbrot/">Drawing the Mandelbrot Set on HTML5 canvas</a></li><li><a href="/2011/09/metro/">Metro GOOD, url rewriting BAD</a></li><li><a href="/2011/09/simple-log-helper/">Simple Logging Helpers</a></li><li><a href="/2011/09/wpf-find-textbox/">WPF Find Textbox</a></li><li><a href="/2011/09/zero-width-space/">Zero Width Space</a></li><li><a href="/2011/08/unstructured-data/">Structuring Data</a></li><li><a href="/2011/08/getting-started-with-msmq/">Getting Started with MSMQ</a></li><li><a href="/2011/08/javascript-module-template/">JavaScript Module Visual Studio Template</a></li><li><a href="/2011/07/visualize-di/">Visualizing Dependancies</a></li><li><a href="/2011/07/fluent-file-renamer/">Fluent File Renaming API</a></li><li><a href="/2011/07/google-weather-proxy-part2/">Proxy Google Weather as JSON (Part 2)</a></li><li><a href="/2011/07/google-weather-proxy-part1/">Proxy Google Weather as JSON (Part 1)</a></li><li><a href="/2011/06/google-suggests/">What does Google suggest?</a></li><li><a href="/2011/06/wpf-screensvaer/">Basic Screen saver in WPF</a></li><li><a href="/2011/06/impersonal-search/">Un-Personalizing your google search results (in FireFox)</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+    </div>
+    <script src="/assets/js/site.js"></script>
+</body>
+</html>
