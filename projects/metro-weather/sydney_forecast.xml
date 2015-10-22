@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<product version="1.3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.bom.gov.au/weather/schema/v1.3/product.xsd">
+    <amoc>
+        <source>
+            <sender>Australian Government Bureau of Meteorology</sender>
+            <region>New South Wales</region>
+            <office>NSWRO</office>
+            <copyright>http://www.bom.gov.au/other/copyright.shtml</copyright>
+            <disclaimer>http://www.bom.gov.au/other/disclaimer.shtml</disclaimer>
+        </source>
+        <identifier>IDN10064</identifier>
+        <issue-time-utc>2013-03-17T17:45:31Z</issue-time-utc>
+        <issue-time-local tz="EDT">2013-03-18T04:45:31+11:00</issue-time-local>
+        <sent-time>2013-03-17T17:45:31Z</sent-time>
+        <expiry-time>2013-03-27T17:45:00Z</expiry-time>
+        <validity-bgn-time-local tz="EDT">2013-03-18T00:00:00+11:00</validity-bgn-time-local>
+        <validity-end-time-local tz="EDT">2013-03-24T23:59:59+11:00</validity-end-time-local>
+        <next-routine-issue-time-utc>2013-03-18T05:20:00Z</next-routine-issue-time-utc>
+        <next-routine-issue-time-local tz="EDT">2013-03-18T16:20:00+11:00</next-routine-issue-time-local>
+        <status>O</status>
+        <service>WSP</service>
+        <sub-service>FCT</sub-service>
+        <product-type>F</product-type>
+        <phase>NEW</phase>
+    </amoc>
+    <forecast>
+        <area aac="NSW_FA001" description="New South Wales" type="region">
+            <forecast-period start-time-local="2013-03-18T04:45:31+11:00" end-time-local="2013-03-18T04:45:31+11:00" start-time-utc="2013-03-17T17:45:31Z" end-time-utc="2013-03-17T17:45:31Z">
+                <text type="warning_summary_footer">Details of warnings are available on the Bureau's website www.bom.gov.au, by telephone 1300-659-218* or through some TV and radio broadcasts.</text>
+                <text type="product_footer">* Calls to 1300 numbers cost around 27.5c incl. GST, higher from mobiles or public phones.</text>
+            </forecast-period>
+        </area>
+        <area aac="NSW_ME001" description="Sydney" type="metropolitan" parent-aac="NSW_FA001">
+            <forecast-period index="0" start-time-local="2013-03-18T00:00:00+11:00" end-time-local="2013-03-19T00:00:00+11:00" start-time-utc="2013-03-17T13:00:00Z" end-time-utc="2013-03-18T13:00:00Z">
+                <text type="forecast">Mostly sunny. Winds southwesterly 15 to 25 km/h turning south to southeasterly 15 to 20 km/h in the middle of the day then becoming light in the evening.</text>
+                <text type="surf_danger">Dangerous surf conditions, hazardous for coastal activities such as swimming, surfing and rock fishing, are expected.</text>
+                <text type="fire_danger">Low-Moderate</text>
+                <text type="uv_alert">UV Alert from 9:50 am to 4:10 pm, UV Index predicted to reach 8 [Very High]</text>
+            </forecast-period>
+            <forecast-period index="1" start-time-local="2013-03-19T00:00:00+11:00" end-time-local="2013-03-20T00:00:00+11:00" start-time-utc="2013-03-18T13:00:00Z" end-time-utc="2013-03-19T13:00:00Z">
+                <text type="forecast">Partly cloudy. The chance of showers from the late morning. Winds southeast to southwesterly and light increasing to 15 to 20 km/h in the morning.</text>
+            </forecast-period>
+            <forecast-period index="2" start-time-local="2013-03-20T00:00:00+11:00" end-time-local="2013-03-21T00:00:00+11:00" start-time-utc="2013-03-19T13:00:00Z" end-time-utc="2013-03-20T13:00:00Z">
+                <text type="forecast">Partly cloudy. Light winds becoming northeasterly 15 to 25 km/h during the afternoon.</text>
+            </forecast-period>
+            <forecast-period index="3" start-time-local="2013-03-21T00:00:00+11:00" end-time-local="2013-03-22T00:00:00+11:00" start-time-utc="2013-03-20T13:00:00Z" end-time-utc="2013-03-21T13:00:00Z">
+                <text type="forecast">Partly cloudy. Winds north to northeasterly 15 to 25 km/h, increasing to 25 to 35 km/h in the afternoon.</text>
+            </forecast-period>
+            <forecast-period index="4" start-time-local="2013-03-22T00:00:00+11:00" end-time-local="2013-03-23T00:00:00+11:00" start-time-utc="2013-03-21T13:00:00Z" end-time-utc="2013-03-22T13:00:00Z">
+                <text type="forecast">Partly cloudy. Isolated showers. Winds north to northwesterly 15 to 20 km/h tending east to northeasterly during the day.</text>
+            </forecast-period>
+            <forecast-period index="5" start-time-local="2013-03-23T00:00:00+11:00" end-time-local="2013-03-24T00:00:00+11:00" start-time-utc="2013-03-22T13:00:00Z" end-time-utc="2013-03-23T13:00:00Z">
+                <text type="forecast">Cloudy. Scattered showers. Winds northerly 15 to 20 km/h increasing to 25 km/h before turning northwesterly 15 to 20 km/h during the day.</text>
+            </forecast-period>
+            <forecast-period index="6" start-time-local="2013-03-24T00:00:00+11:00" end-time-local="2013-03-25T00:00:00+11:00" start-time-utc="2013-03-23T13:00:00Z" end-time-utc="2013-03-24T13:00:00Z">
+                <text type="forecast">Isolated showers along the coastal fringe during the morning. Mostly sunny afternoon. Winds west to southwesterly and light tending south to southeasterly 15 to 25 km/h during the morning.</text>
+            </forecast-period>
+        </area>
+        <area aac="NSW_PT131" description="Sydney" type="location" parent-aac="NSW_ME001">
+            <forecast-period index="0" start-time-local="2013-03-18T05:00:00+11:00" end-time-local="2013-03-19T00:00:00+11:00" start-time-utc="2013-03-17T18:00:00Z" end-time-utc="2013-03-18T13:00:00Z">
+                <element type="forecast_icon_code">3</element>
+                <element type="air_temperature_maximum" units="Celsius">24</element>
+                <element type="precipitation_range">0 mm</element>
+                <text type="precis">Mostly sunny.</text>
+                <text type="probability_of_precipitation">20%</text>
+            </forecast-period>
+            <forecast-period index="1" start-time-local="2013-03-19T00:00:00+11:00" end-time-local="2013-03-20T00:00:00+11:00" start-time-utc="2013-03-18T13:00:00Z" end-time-utc="2013-03-19T13:00:00Z">
+                <element type="forecast_icon_code">11</element>
+                <element type="air_temperature_minimum" units="Celsius">16</element>
+                <element type="air_temperature_maximum" units="Celsius">24</element>
+                <text type="precis">Possible shower.</text>
+            </forecast-period>
+            <forecast-period index="2" start-time-local="2013-03-20T00:00:00+11:00" end-time-local="2013-03-21T00:00:00+11:00" start-time-utc="2013-03-19T13:00:00Z" end-time-utc="2013-03-20T13:00:00Z">
+                <element type="forecast_icon_code">3</element>
+                <element type="air_temperature_minimum" units="Celsius">17</element>
+                <element type="air_temperature_maximum" units="Celsius">26</element>
+                <text type="precis">Partly cloudy.</text>
+            </forecast-period>
+            <forecast-period index="3" start-time-local="2013-03-21T00:00:00+11:00" end-time-local="2013-03-22T00:00:00+11:00" start-time-utc="2013-03-20T13:00:00Z" end-time-utc="2013-03-21T13:00:00Z">
+                <element type="forecast_icon_code">3</element>
+                <element type="air_temperature_minimum" units="Celsius">18</element>
+                <element type="air_temperature_maximum" units="Celsius">29</element>
+                <text type="precis">Partly cloudy.</text>
+            </forecast-period>
+            <forecast-period index="4" start-time-local="2013-03-22T00:00:00+11:00" end-time-local="2013-03-23T00:00:00+11:00" start-time-utc="2013-03-21T13:00:00Z" end-time-utc="2013-03-22T13:00:00Z">
+                <element type="forecast_icon_code">11</element>
+                <element type="air_temperature_minimum" units="Celsius">21</element>
+                <element type="air_temperature_maximum" units="Celsius">30</element>
+                <text type="precis">Shower or two later.</text>
+            </forecast-period>
+            <forecast-period index="5" start-time-local="2013-03-23T00:00:00+11:00" end-time-local="2013-03-24T00:00:00+11:00" start-time-utc="2013-03-22T13:00:00Z" end-time-utc="2013-03-23T13:00:00Z">
+                <element type="forecast_icon_code">11</element>
+                <element type="air_temperature_minimum" units="Celsius">21</element>
+                <element type="air_temperature_maximum" units="Celsius">29</element>
+                <text type="precis">A few showers.</text>
+            </forecast-period>
+            <forecast-period index="6" start-time-local="2013-03-24T00:00:00+11:00" end-time-local="2013-03-25T00:00:00+11:00" start-time-utc="2013-03-23T13:00:00Z" end-time-utc="2013-03-24T13:00:00Z">
+                <element type="forecast_icon_code">11</element>
+                <element type="air_temperature_minimum" units="Celsius">20</element>
+                <element type="air_temperature_maximum" units="Celsius">27</element>
+                <text type="precis">Morning shower or two.</text>
+            </forecast-period>
+        </area>
+        <area aac="NSW_PT114" description="Penrith" type="location" parent-aac="NSW_ME001">
+            <forecast-period index="0" start-time-local="2013-03-18T05:00:00+11:00" end-time-local="2013-03-19T00:00:00+11:00" start-time-utc="2013-03-17T18:00:00Z" end-time-utc="2013-03-18T13:00:00Z">
+                <element type="forecast_icon_code">1</element>
+                <element type="air_temperature_maximum" units="Celsius">25</element>
+                <element type="precipitation_range">0 mm</element>
+                <text type="precis">Sunny.</text>
+                <text type="probability_of_precipitation">10%</text>
+            </forecast-period>
+            <forecast-period index="1" start-time-local="2013-03-19T00:00:00+11:00" end-time-local="2013-03-20T00:00:00+11:00" start-time-utc="2013-03-18T13:00:00Z" end-time-utc="2013-03-19T13:00:00Z">
+                <element type="forecast_icon_code">11</element>
+                <element type="air_temperature_minimum" units="Celsius">13</element>
+                <element type="air_temperature_maximum" units="Celsius">26</element>
+                <text type="precis">Possible afternoon shower.</text>
+            </forecast-period>
+            <forecast-period index="2" start-time-local="2013-03-20T00:00:00+11:00" end-time-local="2013-03-21T00:00:00+11:00" start-time-utc="2013-03-19T13:00:00Z" end-time-utc="2013-03-20T13:00:00Z">
+                <element type="forecast_icon_code">3</element>
+                <element type="air_temperature_minimum" units="Celsius">13</element>
+                <element type="air_temperature_maximum" units="Celsius">28</element>
+                <text type="precis">Partly cloudy.</text>
+            </forecast-period>
+            <forecast-period index="3" start-time-local="2013-03-21T00:00:00+11:00" end-time-local="2013-03-22T00:00:00+11:00" start-time-utc="2013-03-20T13:00:00Z" end-time-utc="2013-03-21T13:00:00Z">
+                <element type="forecast_icon_code">3</element>
+                <element type="air_temperature_minimum" units="Celsius">14</element>
+                <element type="air_temperature_maximum" units="Celsius">31</element>
+                <text type="precis">Partly cloudy.</text>
+            </forecast-period>
+            <forecast-period index="4" start-time-local="2013-03-22T00:00:00+11:00" end-time-local="2013-03-23T00:00:00+11:00" start-time-utc="2013-03-21T13:00:00Z" end-time-utc="2013-03-22T13:00:00Z">
+                <element type="forecast_icon_code">11</element>
+                <element type="air_temperature_minimum" units="Celsius">18</element>
+                <element type="air_temperature_maximum" units="Celsius">34</element>
+                <text type="precis">Shower or two.</text>
+            </forecast-period>
+            <forecast-period index="5" start-time-local="2013-03-23T00:00:00+11:00" end-time-local="2013-03-24T00:00:00+11:00" start-time-utc="2013-03-22T13:00:00Z" end-time-utc="2013-03-23T13:00:00Z">
+                <element type="forecast_icon_code">11</element>
+                <element type="air_temperature_minimum" units="Celsius">20</element>
+                <element type="air_temperature_maximum" units="Celsius">31</element>
+                <text type="precis">A few showers.</text>
+            </forecast-period>
+            <forecast-period index="6" start-time-local="2013-03-24T00:00:00+11:00" end-time-local="2013-03-25T00:00:00+11:00" start-time-utc="2013-03-23T13:00:00Z" end-time-utc="2013-03-24T13:00:00Z">
+                <element type="forecast_icon_code">3</element>
+                <element type="air_temperature_minimum" units="Celsius">18</element>
+                <element type="air_temperature_maximum" units="Celsius">29</element>
+                <text type="precis">Mostly sunny.</text>
+            </forecast-period>
+        </area>
+        <area aac="NSW_PT082" description="Liverpool" type="location" parent-aac="NSW_ME001">
+            <forecast-period index="0" start-time-local="2013-03-18T05:00:00+11:00" end-time-local="2013-03-19T00:00:00+11:00" start-time-utc="2013-03-17T18:00:00Z" end-time-utc="2013-03-18T13:00:00Z">
+                <element type="air_temperature_maximum" units="Celsius">24</element>
+            </forecast-period>
+        </area>
+        <area aac="NSW_PT139" description="Terrey Hills" type="location" parent-aac="NSW_ME001">
+            <forecast-period index="0" start-time-local="2013-03-18T05:00:00+11:00" end-time-local="2013-03-19T00:00:00+11:00" start-time-utc="2013-03-17T18:00:00Z" end-time-utc="2013-03-18T13:00:00Z">
+                <element type="air_temperature_maximum" units="Celsius">22</element>
+            </forecast-period>
+        </area>
+        <area aac="NSW_PT123" description="Richmond" type="location" parent-aac="NSW_ME001">
+            <forecast-period index="0" start-time-local="2013-03-18T05:00:00+11:00" end-time-local="2013-03-19T00:00:00+11:00" start-time-utc="2013-03-17T18:00:00Z" end-time-utc="2013-03-18T13:00:00Z">
+                <element type="air_temperature_maximum" units="Celsius">25</element>
+            </forecast-period>
+        </area>
+        <area aac="NSW_PT111" description="Parramatta" type="location" parent-aac="NSW_ME001">
+            <forecast-period index="0" start-time-local="2013-03-18T05:00:00+11:00" end-time-local="2013-03-19T00:00:00+11:00" start-time-utc="2013-03-17T18:00:00Z" end-time-utc="2013-03-18T13:00:00Z">
+                <element type="air_temperature_maximum" units="Celsius">24</element>
+            </forecast-period>
+        </area>
+        <area aac="NSW_PT026" description="Campbelltown" type="location" parent-aac="NSW_ME001">
+            <forecast-period index="0" start-time-local="2013-03-18T05:00:00+11:00" end-time-local="2013-03-19T00:00:00+11:00" start-time-utc="2013-03-17T18:00:00Z" end-time-utc="2013-03-18T13:00:00Z">
+                <element type="air_temperature_maximum" units="Celsius">24</element>
+            </forecast-period>
+        </area>
+        <area aac="NSW_PT237" description="Bondi" type="location" parent-aac="NSW_ME001">
+            <forecast-period index="0" start-time-local="2013-03-18T05:00:00+11:00" end-time-local="2013-03-19T00:00:00+11:00" start-time-utc="2013-03-17T18:00:00Z" end-time-utc="2013-03-18T13:00:00Z">
+                <element type="air_temperature_maximum" units="Celsius">22</element>
+            </forecast-period>
+        </area>
+    </forecast>
+</product>

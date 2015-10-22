@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" /> 
+    <link rel="icon" href="favicon32.png" sizes="32x32" />
+    <link rel="icon" href="favicon48.png" sizes="48x48" />
+    <link rel="icon" href="favicon64.png" sizes="64x64" />
+
+    <link href="css/reset.css" rel="stylesheet" type="text/css" />
+    <link href="css/weather.css" rel="stylesheet" type="text/css" />
+    
+    
+    <meta content="width=device-width" name="viewport">
+    <link rel="stylesheet" type="text/css" href="css/mobile.css" media="screen and (device-width: 480px)" /> 
+
+    <script src="js/jsf.js" type="text/javascript"></script>
+</head>
+<body>
+    <header>
+        <h1 id="currentTemperature"></h1>
+        <div id="location">
+            Melbourne</div>
+        <div class="clearfix">
+        </div>
+        <div id="precis">
+        </div>
+    </header>
+    <section>
+        <ul id="forecasts">
+        </ul>
+        <script id="forecastTmpl" type="text/x-jquery-tmpl">
+            <li class="forecast">
+              <div class="day">${DayLabel}</div>
+              <div class="icon">
+                <img src="images/${Icon}.png" />
+              </div>
+              <div class="temperatureRange">
+                {{if MaximumTemperature > -999}}<span class="maximum">${MaximumTemperature}&deg;</span>{{/if}}
+                {{if MinimumTemperature > -999}} / <span class="minimum">${MinimumTemperature}&deg; {{/if}}</span>
+              </div>
+              <div class="precis">${Precis}</div>
+              <div class="summary">${Summary}</div>
+            </li>
+        </script>
+    </section>
+    <div class="clearfix">
+    </div>
+    <section>
+        <div id="container">
+        </div>
+    </section>
+    <section>
+        <div id="windowsPhone7Tile" style="display:none">
+            <a href="javascript:weather.setTile();">pin to start</a>
+        </div>
+    </section>
+    <script src="js/charts/highcharts.js" type="text/javascript"></script>
+    <script src="js/weather.js" type="text/javascript"></script>
+</body>
+</html>

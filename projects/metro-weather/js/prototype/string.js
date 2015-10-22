@@ -1,0 +1,14 @@
+﻿String.prototype.startsWith = function (pattern) { return this.lastIndexOf(pattern, 0) === 0; };
+String.prototype.endsWith = function (pattern) { var d = this.length - pattern.length; return d >= 0 && this.indexOf(pattern, d) === d; };
+String.prototype.isEmpty = function () { return this == ""; };
+String.prototype.isBlank = function () { return /^\s*$/.test(this); };
+String.prototype.capitalize = function () { return this.charAt(0).toUpperCase() + this.substring(1).toLowerCase(); };
+String.prototype.strip = function () { if (String.trim) { /*native*/return this.trim(); } return this.replace(/^\s+/, "").replace(/\s+$/, ""); };
+String.prototype.underscore = function () { return this.replace(/::/g, "/").replace(/([A-Z]+)([A-Z][a-z])/g, "$1_$2").replace(/([a-z\d])([A-Z])/g, "$1_$2").replace(/-/g, "_").toLowerCase(); };
+String.prototype.dasherize = function () { return this.replace(/_/g, "-"); };
+String.prototype.camelize = function () { return this.replace(/-+(.)?/g, function (match, chr) { return chr ? chr.toUpperCase() : ""; }); };
+String.prototype.toArray = function () { return this.split(""); };
+String.prototype.stripTags = function () { return this.replace(/<\w+(\s+("[^"]*"|'[^']*'|[^>])+)?>|<\/\w+>/gi, ''); };
+String.prototype.escapeHTML = function () { return this.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); };
+String.prototype.unescapeHTML = function () { return this.stripTags().replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'); };
+String.prototype.truncate = function (length, truncation) { length = length || 30; truncation = Object.isUndefined(truncation) ? '...' : truncation; return this.length > length ? this.slice(0, length - truncation.length) + truncation : String(this); };

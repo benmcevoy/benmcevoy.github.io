@@ -1,0 +1,6 @@
+﻿header { margin: 0 0 10px 50px; }
+header h1 { font-size: 1.5em; }
+header #location { margin: 50px 0 0 50px; font-size: 2em; }
+header #precis { font-size: 1em; padding: 0; } 
+#forecasts { margin: 0; width: 220px; }
+#windowsPhone7Tile { display:block;   margin: 150px 20px;  }
