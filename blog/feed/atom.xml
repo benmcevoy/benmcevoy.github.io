@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?><feed xml:lang="en-us" xmlns="http://www.w3.org/2005/Atom"><title type="text">blog.benmcevoy.com.au</title><subtitle type="text">blog.benmcevoy.com.au</subtitle><id>FeedID</id><updated>2015-10-23T12:07:46+11:00</updated><link rel="alternate" href="http://blog.benmcevoy.com.au/feed" /><entry><id>2014\06\less-worse-webforms\</id><title type="text">Less Worse Webforms</title><updated>2014-06-16T07:00:00+10:00</updated><link rel="alternate" href="http://blog.benmcevoy.com.au/2014/06/less-worse-webforms/" /><content type="text">&lt;h2&gt;Less Worse Webforms&lt;/h2&gt;
+﻿<?xml version="1.0" encoding="utf-8"?><feed xml:lang="en-us" xmlns="http://www.w3.org/2005/Atom"><title type="text">benmcevoy.com.au/blog</title><subtitle type="text">benmcevoy.com.au/blog</subtitle><id>FeedID</id><updated>2015-10-23T12:23:08+11:00</updated><link rel="alternate" href="http://benmcevoy.com.au/blog/feed" /><entry><id>2014\06\less-worse-webforms\</id><title type="text">Less Worse Webforms</title><published>2014-06-16T07:00:00+10:00</published><updated>2014-06-16T07:00:00+10:00</updated><link rel="alternate" href="http://benmcevoy.com.au/blog/2014/06/less-worse-webforms/" /><content type="text">&lt;h2&gt;Less Worse Webforms&lt;/h2&gt;
 
 &lt;h3&gt;Routing&lt;/h3&gt;
 
@@ -62,7 +62,7 @@ Install-Package Microsoft.AspNet.FriendlyUrls
 &lt;p&gt;Unfortunately this does not seem to play well with the other children.  So adding an &lt;em&gt;about.mobile.aspx&lt;/em&gt; you &lt;em&gt;might&lt;/em&gt; expect the uh... attractive &lt;em&gt;/totallyfriendlyurl/oh/hai/&lt;/em&gt; route to dish up a mobile specific view.  It did not.  Given we stated that the route mapped to &lt;em&gt;about.aspx&lt;/em&gt; it's not that surprising, but it would have been nice if it was magic and just worked.&lt;/p&gt;
 
 &lt;p&gt;To be fair I'm not sure where I can be using this stuff.  WebForms work is either some legacy hell that would break as soon as you started doing this (and mobile support? Ha!) or is piggy backing on top of Umbraco or SiteCore which takes care of (some) of this stuff for you anyway.  No-one in their right mind would start a green fields webforms project today? Right? Amiright?&lt;/p&gt;
-</content></entry><entry><id>2014\05\web-transforms-for-external-files\</id><title type="text">Web Transforms for external files</title><updated>2014-05-05T07:00:00+10:00</updated><link rel="alternate" href="http://blog.benmcevoy.com.au/2014/05/web-transforms-for-external-files/" /><content type="text">&lt;h2&gt;Web Transforms for external files&lt;/h2&gt;
+</content></entry><entry><id>2014\05\web-transforms-for-external-files\</id><title type="text">Web Transforms for external files</title><published>2014-05-05T07:00:00+10:00</published><updated>2014-05-05T07:00:00+10:00</updated><link rel="alternate" href="http://benmcevoy.com.au/blog/2014/05/web-transforms-for-external-files/" /><content type="text">&lt;h2&gt;Web Transforms for external files&lt;/h2&gt;
 
 &lt;p&gt;So often it's easy to come up with the complex solution and hard to do the simplest thing. And sometimes it's a case of just not seeing the wood for the trees.&lt;/p&gt;
 
@@ -99,7 +99,7 @@ Install-Package Microsoft.AspNet.FriendlyUrls
 &lt;p&gt;You will end up deploying multiple config files, e.g. myModule.config, mymodule.staging.config etc. and that might be an issue if there are sensitive settings in there, like connection strings or passwords. &lt;/p&gt;
 
 &lt;p&gt;Cheers.&lt;/p&gt;
-</content></entry><entry><id>2013\09\simulating-contentplaceholder-without-masterpages\</id><title type="text">Simulating Content PlaceHolder without MasterPages</title><updated>2013-09-29T07:00:00+10:00</updated><link rel="alternate" href="http://blog.benmcevoy.com.au/2013/09/simulating-contentplaceholder-without-masterpages/" /><content type="text">&lt;h2&gt;Simulating Content PlaceHolder without MasterPages&lt;/h2&gt;
+</content></entry><entry><id>2013\09\simulating-contentplaceholder-without-masterpages\</id><title type="text">Simulating Content PlaceHolder without MasterPages</title><published>2013-09-29T07:00:00+10:00</published><updated>2013-09-29T07:00:00+10:00</updated><link rel="alternate" href="http://benmcevoy.com.au/blog/2013/09/simulating-contentplaceholder-without-masterpages/" /><content type="text">&lt;h2&gt;Simulating Content PlaceHolder without MasterPages&lt;/h2&gt;
 
 &lt;p&gt;Oh back in the deeply wrong world of WebForms...&lt;/p&gt;
 
@@ -152,7 +152,7 @@ Install-Package Microsoft.AspNet.FriendlyUrls
     }
 
 &lt;/code&gt;&lt;/pre&gt;
-</content></entry><entry><id>2013\09\windows-phone-download-stats\</id><title type="text">Windows Phone Download Stats</title><updated>2013-09-16T07:00:00+10:00</updated><link rel="alternate" href="http://blog.benmcevoy.com.au/2013/09/windows-phone-download-stats/" /><content type="text">&lt;p&gt;&lt;a href="http://www.windowsphone.com/en-au/store/app/melbourne-weather/856400ad-2f7e-4780-b080-3eae8902ecca"&gt;Melbourne weather&lt;/a&gt;, I'm sure that's a correlation between temperature and downloads.&lt;/p&gt;
+</content></entry><entry><id>2013\09\windows-phone-download-stats\</id><title type="text">Windows Phone Download Stats</title><published>2013-09-16T07:00:00+10:00</published><updated>2013-09-16T07:00:00+10:00</updated><link rel="alternate" href="http://benmcevoy.com.au/blog/2013/09/windows-phone-download-stats/" /><content type="text">&lt;p&gt;&lt;a href="http://www.windowsphone.com/en-au/store/app/melbourne-weather/856400ad-2f7e-4780-b080-3eae8902ecca"&gt;Melbourne weather&lt;/a&gt;, I'm sure that's a correlation between temperature and downloads.&lt;/p&gt;
 
 &lt;p&gt;&lt;img class="img-responsive" src="assets/melbweather.png" alt="alt text" /&gt;&lt;/p&gt;
 
@@ -179,7 +179,7 @@ Install-Package Microsoft.AspNet.FriendlyUrls
 &lt;p&gt;At least i don't crash as much. 400+ crashes in a day? Ouch! &lt;a href="http://www.windowsphone.com/en-au/store/app/myki-balance/f21f2943-51a1-4b00-bb97-a4d0fdd4aa1a"&gt;Myki&lt;/a&gt; was down I think...&lt;/p&gt;
 
 &lt;p&gt;&lt;img class="img-responsive" src="assets/crash.png" alt="alt text" /&gt;&lt;/p&gt;
-</content></entry><entry><id>2013\09\resolve-strategy-by-key\</id><title type="text">Resolving strategies by key</title><updated>2013-09-07T07:00:00+10:00</updated><link rel="alternate" href="http://blog.benmcevoy.com.au/2013/09/resolve-strategy-by-key/" /><content type="text">&lt;p&gt;I have been abusing the strategy pattern of late, and ended up writing a StrategyResolver class.&lt;/p&gt;
+</content></entry><entry><id>2013\09\resolve-strategy-by-key\</id><title type="text">Resolving strategies by key</title><published>2013-09-07T07:00:00+10:00</published><updated>2013-09-07T07:00:00+10:00</updated><link rel="alternate" href="http://benmcevoy.com.au/blog/2013/09/resolve-strategy-by-key/" /><content type="text">&lt;p&gt;I have been abusing the strategy pattern of late, and ended up writing a StrategyResolver class.&lt;/p&gt;
 
 &lt;p&gt;This sort of thing is probably best left to a DI container, using a factory to resolve. But anyways...&lt;/p&gt;
 
@@ -285,7 +285,7 @@ Install-Package Microsoft.AspNet.FriendlyUrls
     }
 
 &lt;/code&gt;&lt;/pre&gt;
-</content></entry><entry><id>2013\08\synchronize-dispatcher-and-caller\</id><title type="text">Synchronize dispatcher and caller</title><updated>2013-08-05T07:00:00+10:00</updated><link rel="alternate" href="http://blog.benmcevoy.com.au/2013/08/synchronize-dispatcher-and-caller/" /><content type="text">&lt;p&gt;More Windows Phone/Silverlight/WPF/(and probably WinRT) goodness.&lt;/p&gt;
+</content></entry><entry><id>2013\08\synchronize-dispatcher-and-caller\</id><title type="text">Synchronize dispatcher and caller</title><published>2013-08-05T07:00:00+10:00</published><updated>2013-08-05T07:00:00+10:00</updated><link rel="alternate" href="http://benmcevoy.com.au/blog/2013/08/synchronize-dispatcher-and-caller/" /><content type="text">&lt;p&gt;More Windows Phone/Silverlight/WPF/(and probably WinRT) goodness.&lt;/p&gt;
 
 &lt;p&gt;Sometimes you want to know that any work pushed to the UI dispatcher has completed.  For awhile I worked with the idea that &lt;a href="http://msdn.microsoft.com/en-us/library/d00bd51t(v=vs.95).aspx"&gt;Thread.Sleep(1)&lt;/a&gt; would let any pending work complete. It doesn't.&lt;/p&gt;
 
@@ -332,7 +332,7 @@ Install-Package Microsoft.AspNet.FriendlyUrls
         }
 
 &lt;/code&gt;&lt;/pre&gt;
-</content></entry><entry><id>2013\07\better-csv-downloads\</id><title type="text">Better CSV downloads</title><updated>2013-07-27T07:00:00+10:00</updated><link rel="alternate" href="http://blog.benmcevoy.com.au/2013/07/better-csv-downloads/" /><content type="text">&lt;p&gt;To often when offering a simple "save as CSV" function I see code that simply makes the database request, strings it up and sends it down the wire.&lt;/p&gt;
+</content></entry><entry><id>2013\07\better-csv-downloads\</id><title type="text">Better CSV downloads</title><published>2013-07-27T07:00:00+10:00</published><updated>2013-07-27T07:00:00+10:00</updated><link rel="alternate" href="http://benmcevoy.com.au/blog/2013/07/better-csv-downloads/" /><content type="text">&lt;p&gt;To often when offering a simple "save as CSV" function I see code that simply makes the database request, strings it up and sends it down the wire.&lt;/p&gt;
 
 &lt;p&gt;And more than once I have written code like this.&lt;/p&gt;
 
@@ -456,7 +456,7 @@ Install-Package Microsoft.AspNet.FriendlyUrls
 
 
 &lt;/code&gt;&lt;/pre&gt;
-</content></entry><entry><id>2013\07\detect-wifi-on-windows-phone\</id><title type="text">Detect wifi on Windows Phone</title><updated>2013-07-23T07:00:00+10:00</updated><link rel="alternate" href="http://blog.benmcevoy.com.au/2013/07/detect-wifi-on-windows-phone/" /><content type="text">&lt;p&gt;If you are making web requests on the windows phone you should check network availability first.  &lt;/p&gt;
+</content></entry><entry><id>2013\07\detect-wifi-on-windows-phone\</id><title type="text">Detect wifi on Windows Phone</title><published>2013-07-23T07:00:00+10:00</published><updated>2013-07-23T07:00:00+10:00</updated><link rel="alternate" href="http://benmcevoy.com.au/blog/2013/07/detect-wifi-on-windows-phone/" /><content type="text">&lt;p&gt;If you are making web requests on the windows phone you should check network availability first.  &lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;
      Microsoft.Phone.Net.NetworkInformation.DeviceNetworkInformation.IsNetworkAvailable
@@ -541,7 +541,7 @@ Install-Package Microsoft.AspNet.FriendlyUrls
 &lt;p&gt;At the end of the day the best you can do is inform your users.&lt;/p&gt;
 
 &lt;p&gt;"If you wish to use wifi for background data requests please check "Keep WiFi on when screen times out" is enabled under the advanced settings of your wifi connection." &lt;/p&gt;
-</content></entry><entry><id>2013\04\quick-caching-for-web-api\</id><title type="text">Quick n Dirty Web API Caching</title><updated>2013-04-14T07:00:00+10:00</updated><link rel="alternate" href="http://blog.benmcevoy.com.au/2013/04/quick-caching-for-web-api/" /><content type="text">&lt;h3&gt;Web Api Cache Filter&lt;/h3&gt;
+</content></entry><entry><id>2013\04\quick-caching-for-web-api\</id><title type="text">Quick n Dirty Web API Caching</title><published>2013-04-14T07:00:00+10:00</published><updated>2013-04-14T07:00:00+10:00</updated><link rel="alternate" href="http://benmcevoy.com.au/blog/2013/04/quick-caching-for-web-api/" /><content type="text">&lt;h3&gt;Web Api Cache Filter&lt;/h3&gt;
 
 &lt;p&gt;Having recently been playing with the ASP.NET Web API bits lately I found I wanted to be able to cache some of the actions response.&lt;/p&gt;
 
@@ -580,7 +580,7 @@ Install-Package Microsoft.AspNet.FriendlyUrls
     }
 &lt;/code&gt;
 &lt;/pre&gt;
-</content></entry><entry><id>2013\04\using-aliases-for-class-name-collisions\</id><title type="text">Using aliases for class name collisions</title><updated>2013-04-10T07:00:00+10:00</updated><link rel="alternate" href="http://blog.benmcevoy.com.au/2013/04/using-aliases-for-class-name-collisions/" /><content type="text">&lt;h2&gt;Using aliases for class name collisions&lt;/h2&gt;
+</content></entry><entry><id>2013\04\using-aliases-for-class-name-collisions\</id><title type="text">Using aliases for class name collisions</title><published>2013-04-10T07:00:00+10:00</published><updated>2013-04-10T07:00:00+10:00</updated><link rel="alternate" href="http://benmcevoy.com.au/blog/2013/04/using-aliases-for-class-name-collisions/" /><content type="text">&lt;h2&gt;Using aliases for class name collisions&lt;/h2&gt;
 
 &lt;blockquote&gt;
   &lt;p&gt;Filed under “things I did not know until resharper automatically fixed something for me”.&lt;/p&gt;
