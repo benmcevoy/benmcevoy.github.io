@@ -1,4 +1,4 @@
-let  _canvasBitmap, _isRendering;
+let  _canvasBitmap;
 let seed = 17;
 let c = 2;
 const HEIGHT = 64, WIDTH = 64;
@@ -83,8 +83,7 @@ const renderer = {
 
         _canvasBitmap.putImageData(bmp, 0, 0);
 
-        if (_isRendering)
-            requestAnimationFrame(renderer.render);
+        requestAnimationFrame(renderer.render);
     },
 
     run: () => {
@@ -137,8 +136,6 @@ export const init = (canvasBitmap) => {
     _canvasBitmap = canvasBitmap.getContext('2d');
 
     renderer.clear();
-
-    _isRendering = false;
 
     for (let i = 0; i < HEIGHT; i++) {
         context.pixels[i] = new
