@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <title>test</title>
+    <style>
+        body { background-color: black;}
+
+        canvas {
+            width: 800px;
+            margin: auto;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    
+    <canvas id="bitmap" height="64" width="64"></canvas>
+    
+    <script type="module">
+        import * as harness from "./harness.js";
+
+        const $ = document.querySelector.bind(document);
+
+        harness.init( $('#bitmap'));
+    </script>
+</body>
+
+
+
+</html>
