@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <title>test</title>
+    <style>
+        .field label {
+            display: block
+        }
+
+        #id {
+            overflow-y: scroll;
+            height: 200px;
+        }
+
+        canvas {
+            float: left;
+            width:600px;
+            
+            margin: 30px;
+        }
+    </style>
+    <script type="text/javascript">
+
+        function setPreset(e){
+            var preset = e.value;
+            
+            var init = document.getElementById("pattern_init");
+            var update = document.getElementById("pattern_update");
+
+            init.value = document.getElementById(preset+"_pattern_init").innerHTML;
+            update.value = document.getElementById(preset+"_pattern_update").innerHTML;
+            
+        }
+    </script>
+</head>
+
+<body>
+    <canvas id="bitmap" height="64" width="64"></canvas>
+    <div class="field">
+        <label for="pattern_init">pattern_init:</label>
+        <textarea id="pattern_init" name="pattern_init" rows="10" cols="100" autocorrect="off" spellcheck="false">
+// just add a property to use it later
+context.color = 1;
+context.speed = 0.001;
+context.weights = new Array(64).fill(0); 
+        </textarea>
+    </div>
+    <div class="field">
+        <label for="pattern_update">pattern_update:</label>
+        <textarea id="pattern_update" name="pattern_update" rows="20" cols="100" autocorrect="off" spellcheck="false">
+const TWOPI = 2 * Math.PI;
+
+context.color = ++context.color;
+
+if(context.color > 15) context.color = 1;
+
+let ratio = 0;
+
+for (let r = 1; r < 32; r++) {
+    let w = context.weights[r] + ratio;
+
+    if (w >= TWOPI) w -= TWOPI;
+
+    context.weights[r] = w;
+
+    let px = Math.trunc(32 + r * Math.sin(w));
+    let py = Math.trunc(32 + r * Math.cos(w));
+
+    context.pixels[px][py] = context.color;
+
+    ratio += context.speed;
+}
+
+context.pattern.fade();
+        </textarea>
+    </div>
+    <div class="field">
+        <button id="runstop" name="runstop">Run</button>
+        <button id="clearConsole" name="clearConsole">Clear console</button>
+        <select id="preset" onchange="setPreset(this)">
+            <option selected="select" value="">--none--</option>
+            <option value="maurer">Maurer Rose</option>
+            <option value="plasma">Plasma</option>
+            <option value="drift">Drift</option>
+        </select>
+    </div>
+    
+    <div id="out" width="300">
+    </div>
+    <script type="module">
+        import * as harness from "./harness.js";
+
+        const $ = document.querySelector.bind(document);
+
+        harness.init($('#out'), $('#pattern_init'), $('#pattern_update'), $('#bitmap'), $('#runstop'), $('#clearConsole'));
+    </script>
+</body>
+
+<script type="preset" id="_pattern_init">
+    // just add variables to the context to use later
+    context.myBool = true;
+    context.myVar = "hello";
+</script>
+
+<script type="preset" id="_pattern_update">
+    if(context.myBool){
+        context.myBool = false;
+        context.log(context.myVar);
+        context.log(JSON.stringify(context));
+    }
+</script>
+
+<script type="preset" id="plasma_pattern_init">
+// reset time
+context.frameCount = 0;
+</script>
+
+<script type="preset" id="plasma_pattern_update">
+for (let x = 0; x < 64; x++) {
+    for (let y = 0; y < 64; y++) {
+        let time = context.frameCount / 64;
+        value = Math.sin(0.014*x * time + time) + Math.cos(0.017* y * time - time) + Math.sin(1.4*time+time)*0.5 ;
+        context.pixels[x][y] = Math.trunc(value*6.7);
+    }
+}
+
+context.pattern.fade();
+</script>
+
+
+<script type="preset" id="drift_pattern_init">
+context.color = 1;
+context.speed = 0.001;
+context.weights = new Array(64).fill(0); 
+</script>
+
+<script type="preset" id="drift_pattern_update">
+const TWOPI = 2 * Math.PI;
+
+context.color = ++context.color;
+
+if(context.color > 15) context.color = 1;
+
+let ratio = 0;
+
+for (let r = 1; r < 32; r++) {
+    let w = context.weights[r] + ratio;
+
+    if (w >= TWOPI) w -= TWOPI;
+
+    context.weights[r] = w;
+
+    let px = Math.trunc(32 + r * Math.sin(w));
+    let py = Math.trunc(32 + r * Math.cos(w));
+
+    context.pixels[px][py] = context.color;
+
+    ratio += context.speed;
+}
+
+context.pattern.fade();
+        
+</script><script type="preset" id="maurer_pattern_init">
+context.n = 1.001
+context.d = 1
+context.a = 0
+context.delay = 0
+</script>
+
+<script type="preset" id="maurer_pattern_update">
+const TWOPI = 2 * Math.PI;
+
+let x = 0.0;
+let y = 0.0;
+let r = 0.0;
+
+// get polar - radius
+r = Math.sin(context.n * context.a);
+
+// convert to cartesian
+x = Math.trunc((r * Math.cos(context.a) + 1.0) * 32);
+y = Math.trunc((r * Math.sin(context.a) + 1.0) * 32);
+
+context.pixels[x][y] = 15;
+context.a += context.d;
+
+if (context.a >= TWOPI) context.a -= TWOPI;
+
+context.delay--;
+
+if(context.delay <= 0){
+context.delay = 80
+context.d += 1.67;
+}
+
+
+
+context.pattern.fade();
+</script>
+
+
+</html>
