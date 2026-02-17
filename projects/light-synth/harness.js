@@ -18,7 +18,7 @@ const clearOut = () => _outElement.innerText = 'ready.\r\n';
 
 const renderer = {
     clear: () => {
-        _canvasBitmap.fillStyle = 'green';
+        _canvasBitmap.fillStyle = 'black';
         _canvasBitmap.fillRect(0, 0, WIDTH, HEIGHT);
     },
 
@@ -64,12 +64,12 @@ const renderer = {
 
     run: () => {
         _isRendering = true;
-_initFunc = new Function("{ return function(context) {" + _initCodeBlock.value + "}}");
-    _updateFunc = new Function("{ return function(context) {" + _updateCodeBlock.value + "}}");
+        _initFunc = new Function("{ return function(context) {" + _initCodeBlock.value + "}}");
+        _updateFunc = new Function("{ return function(context) {" + _updateCodeBlock.value + "}}");
 
         out('started rendering\r\n');
         _runButton.innerText = 'Stop';
-        
+
         try {
             // eval pattern_init
             invoke(_initFunc);
@@ -78,7 +78,7 @@ _initFunc = new Function("{ return function(context) {" + _initCodeBlock.value +
             out('error in pattern_init:\r\n');
             out(error);
             out('\r\n');
-            
+
             return;
         }
         renderer.render();
@@ -100,20 +100,20 @@ const context = {
     frameCount: 0,
     pixels: new Array(WIDTH),
     log: (msg) => out(msg + "\r\n"),
-    rnd_lfsr: ( a,  b) => {
+    rnd_lfsr: (a, b) => {
         seed ^= (seed << a);
         seed ^= (seed >> b);
         seed ^= (seed << c);
         // just return it as it's random anyways...
         return seed;
-      },
+    },
     renderer: renderer,
     out: out,
     pattern: {
         fadeDelay: 0,
-        fade: (delay = 0)=>{
+        fade: (delay = 0) => {
             context.pattern.fadeDelay--;
-            if(context.pattern.fadeDelay <= 0) {
+            if (context.pattern.fadeDelay <= 0) {
                 context.pattern.fadeDelay = delay;
                 for (let x = 0; x < WIDTH; x++) {
                     for (let y = 0; y < HEIGHT; y++) {
@@ -122,6 +122,12 @@ const context = {
                         context.pixels[x][y] = sample;
                     }
                 }
+            }
+        },
+        clear: () => {
+            for (let i = 0; i < HEIGHT; i++) {
+                context.pixels[i] = new
+                    Array(WIDTH).fill(0);
             }
         }
     }
@@ -151,10 +157,7 @@ export const init = (outElement, initCodeBlock, updateCodeBlock, canvasBitmap, r
     _runButton.addEventListener('click', runStop);
     _clearConsoleButton.addEventListener('click', clearOut);
 
-    for (let i = 0; i < HEIGHT; i++) {
-        context.pixels[i] = new
-            Array(WIDTH).fill(0);
-    }
+    context.pattern.clear();
 
     out('ready.\r\n\r\n');
 }

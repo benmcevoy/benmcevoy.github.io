@@ -49,6 +49,8 @@ context.weights = new Array(64).fill(0);
     <div class="field">
         <label for="pattern_update">pattern_update:</label>
         <textarea id="pattern_update" name="pattern_update" rows="20" cols="100" autocorrect="off" spellcheck="false">
+context.pattern.clear();
+
 const TWOPI = 2 * Math.PI;
 
 context.color = ++context.color;
@@ -71,8 +73,6 @@ for (let r = 1; r < 32; r++) {
 
     ratio += context.speed;
 }
-
-context.pattern.fade();
         </textarea>
     </div>
     <div class="field">
@@ -83,6 +83,7 @@ context.pattern.fade();
             <option value="maurer">Maurer Rose</option>
             <option value="plasma">Plasma</option>
             <option value="drift">Drift</option>
+            <option value="fjalldata">Fjälldata</option>
         </select>
     </div>
     
@@ -117,6 +118,7 @@ context.frameCount = 0;
 </script>
 
 <script type="preset" id="plasma_pattern_update">
+context.pattern.fade();
 for (let x = 0; x < 64; x++) {
     for (let y = 0; y < 64; y++) {
         let time = context.frameCount / 64;
@@ -124,25 +126,19 @@ for (let x = 0; x < 64; x++) {
         context.pixels[x][y] = Math.trunc(value*6.7);
     }
 }
-
-context.pattern.fade();
 </script>
 
-
 <script type="preset" id="drift_pattern_init">
-context.color = 1;
 context.speed = 0.001;
 context.weights = new Array(64).fill(0); 
 </script>
 
 <script type="preset" id="drift_pattern_update">
+context.pattern.clear();
 const TWOPI = 2 * Math.PI;
 
-context.color = ++context.color;
-
-if(context.color > 15) context.color = 1;
-
 let ratio = 0;
+let color = 1;
 
 for (let r = 1; r < 32; r++) {
     let w = context.weights[r] + ratio;
@@ -154,14 +150,16 @@ for (let r = 1; r < 32; r++) {
     let px = Math.trunc(32 + r * Math.sin(w));
     let py = Math.trunc(32 + r * Math.cos(w));
 
-    context.pixels[px][py] = context.color;
+    context.pixels[px][py] = color++;
+
+    if(color > 15) color = 1;
 
     ratio += context.speed;
 }
+      
+</script>
 
-context.pattern.fade();
-        
-</script><script type="preset" id="maurer_pattern_init">
+<script type="preset" id="maurer_pattern_init">
 context.n = 1.001
 context.d = 1
 context.a = 0
@@ -169,6 +167,7 @@ context.delay = 0
 </script>
 
 <script type="preset" id="maurer_pattern_update">
+context.pattern.fade();
 const TWOPI = 2 * Math.PI;
 
 let x = 0.0;
@@ -190,14 +189,58 @@ if (context.a >= TWOPI) context.a -= TWOPI;
 context.delay--;
 
 if(context.delay <= 0){
-context.delay = 80
-context.d += 1.67;
+    context.delay = 80
+    context.d += 1.67;
 }
-
-
-
-context.pattern.fade();
 </script>
 
+<script type="preset" id="fjalldata_pattern_init">
+context.offset = 0;
+</script>
 
+<script type="preset" id="fjalldata_pattern_update">
+context.pattern.clear();
+
+const TWOPI = 2 * Math.PI;
+
+context.offset += 0.06;
+if(context.offset > TWOPI) context.offset -= TWOPI;
+
+let cx = 4 * Math.sin(context.offset);
+let cy = 4 * Math.cos(context.offset);
+
+for (let r = 4; r < 30; r += 6) {
+    for(let w = 0; w < TWOPI; w += 0.523598776) {
+        let px = Math.trunc(32 + cx + r * Math.sin(w));
+        let py = Math.trunc(32 + cy + r * Math.cos(w));
+
+        context.pixels[px][py] = 1;
+    }
+}
+
+cx = 4 * Math.sin(context.offset+1);
+cy = 4 * Math.cos(context.offset+1);
+
+for (let r = 4; r < 30; r += 6) {
+    for(let w = 0; w < TWOPI; w += 0.523598776) {
+        let px = Math.trunc(32 + cx + r * Math.sin(w));
+        let py = Math.trunc(32 + cy + r * Math.cos(w));
+
+        context.pixels[px][py] = 6;
+    }
+}
+
+cx = 4 * Math.sin(context.offset+2);
+cy = 4 * Math.cos(context.offset+2);
+
+for (let r = 4; r < 30; r += 6) {
+    for(let w = 0; w < TWOPI; w += 0.523598776) {
+        let px = Math.trunc(32 + cx + r * Math.sin(w));
+        let py = Math.trunc(32 + cy + r * Math.cos(w));
+
+        context.pixels[px][py] = 12;
+    }
+}
+
+</script>
 </html>
