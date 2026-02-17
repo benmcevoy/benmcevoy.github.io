@@ -15,10 +15,10 @@
         _canvas = document.getElementById(_options.canvasId);
         _context = _canvas.getContext('2d');
 
-        _worker1 = new Worker('js/mandelbrot.worker.js');
-        _worker2 = new Worker('js/mandelbrot.worker.js');
-        _worker3 = new Worker('js/mandelbrot.worker.js');
-        _worker4 = new Worker('js/mandelbrot.worker.js');
+        _worker1 = new Worker('js/mandelbrot-worker.js');
+        _worker2 = new Worker('js/mandelbrot-worker.js');
+        _worker3 = new Worker('js/mandelbrot-worker.js');
+        _worker4 = new Worker('js/mandelbrot-worker.js');
 
         // callback
         // workers are operating over four quadrants
