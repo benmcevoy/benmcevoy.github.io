@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Countdown Timer</title>
+  <style>
+    * {
+      font-size: 1.5rem;
+    }
+
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    h1 {
+      font-size: 4rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1 id="display">READY</h1>
+
+  <div>
+    <h3>Glute bridges</h3>
+    <p>3 sets of 12 </p>
+  </div>
+
+  <div>
+    <h3>Crab walks bridges</h3>
+    <p>3 sets of 12 </p>
+  </div>
+
+  <div>
+    <h3>Single leg calf raise</h3>
+    <p>2 sets of 40 seconds, each leg</p>
+    <p>rest in between</p>
+  </div>
+
+  <div>
+    <h3>Squats with 16Kg weight</h3>
+    <p>3 sets of 10</p>
+    <p>Reduce squat depth slightly, Focus on moving hips back first</p>
+  </div>
+
+  <div>
+    <h3>Plank</h3>
+    <p>3 max-effort holds</p>
+    <p>rest in between</p>
+    <p>at least a minute each</p>
+  </div>
+
+  <div>
+    <h3>Bent-Over Row 16Kg</h3>
+    <p>3 sets of 8</p>
+    <p>Start from floor each rep, Full extension at bottom, Pause briefly before rowing</p>
+  </div>
+
+  <div>
+    <h3>Back Foot Raised Lunge, smaller weight</h3>
+    <p>2 sets of 8, each side</p>
+    <p>base of foot on edge of seat</p>
+  </div>
+
+  <script>
+    const display = document.getElementById("display");
+
+    let mode = "ready"; // "ready" or "countdown"
+    let timeLeft = 3;
+
+    function updateDisplay() {
+      display.textContent =
+        mode === "countdown" ? timeLeft : "READY";
+    }
+
+    function tick() {
+      timeLeft--;
+
+      if (timeLeft <= 0) {
+        if (mode === "ready") {
+          mode = "countdown";
+          timeLeft = 40;
+        } else {
+          mode = "ready";
+          timeLeft = 3;
+        }
+      }
+
+      updateDisplay();
+    }
+
+    updateDisplay();
+    setInterval(tick, 1000);
+
+    let wakeLock = null;
+
+    // create an async function to request a wake lock
+    const requestWakeLock = async () => {
+
+      wakeLock = await navigator.wakeLock.request('screen');
+
+      // listen for our release event
+      wakeLock.onrelease = function (ev) { console.log(ev); }
+    };
+
+    const handleVisibilityChange = () => {
+      if (wakeLock !== null && document.visibilityState === 'visible') {
+        requestWakeLock();
+      }
+    };
+  </script>
+</body>
+
+</html>
