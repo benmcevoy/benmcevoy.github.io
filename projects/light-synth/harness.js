@@ -5,11 +5,11 @@ let c = 2;
 const HEIGHT = 64, WIDTH = 64;
 
 // fire
-// const _palette = [0x000000, 0x000011, 0x000022, 0x000033, 0x000044, 0x000055, 0x000066, 0x000077,
-//     0x000088, 0x000099, 0x0000aa, 0x0000bb, 0x0000cc, 0x0000dd, 0x0000ee, 0x0000ff];
+const fire = [0x000000, 0x070707, 0x07071F, 0x071757, 0x071F77, 0x072F9F, 0x074FDF, 0x075FD7,
+        0x0F6FCF, 0x178FC7, 0x1F9FBF, 0x27A7BF, 0x2FAFB7, 0x37B7B7, 0xC7EFEF, 0xFFFFFF];
 
 // rainbow
-const _palette = [0x000000, 0xff453a, 0xff923a, 0xfec7, 0xffdb3a, 0x8cff3a, 0x42ff3a, 0x3aff73,
+const rainbow = [0x000000, 0xff453a, 0xff923a, 0xfec7, 0xffdb3a, 0x8cff3a, 0x42ff3a, 0x3aff73,
     0x3affbd, 0x3af3ff, 0x3aa6ff, 0x3a5dff, 0x5a39ff, 0xa539ff, 0xf739ff, 0xff39bd];
 
 const out = (value) => _outElement.innerText += value;
@@ -49,9 +49,9 @@ const renderer = {
 
                 // some bit-twiddling here to convert that 24 bit number in the palette to RGB
                 // RGBA
-                bmp.data[index++] = (0x0000ff & _palette[pixel]);
-                bmp.data[index++] = (0x00ff00 & _palette[pixel]) >> 8;
-                bmp.data[index++] = (0xff0000 & _palette[pixel]) >> 16;
+                bmp.data[index++] = (0x0000ff & context.palette[pixel]);
+                bmp.data[index++] = (0x00ff00 & context.palette[pixel]) >> 8;
+                bmp.data[index++] = (0xff0000 & context.palette[pixel]) >> 16;
                 bmp.data[index++] = 255;
             }
         }
@@ -64,7 +64,7 @@ const renderer = {
 
     run: () => {
         _isRendering = true;
-        _initFunc = new Function("{ return function(context) {" + _initCodeBlock.value + "}}");
+        _initFunc = new Function("{ return function(context) { context.palette = context.palettes.rainbow;" + _initCodeBlock.value + "}}");
         _updateFunc = new Function("{ return function(context) {" + _updateCodeBlock.value + "}}");
 
         out('started rendering\r\n');
@@ -109,6 +109,8 @@ const context = {
     },
     renderer: renderer,
     out: out,
+    palettes: { rainbow: rainbow, fire: fire},
+    palette: rainbow,
     pattern: {
         fadeDelay: 0,
         fade: (delay = 0) => {
@@ -149,6 +151,7 @@ export const init = (outElement, initCodeBlock, updateCodeBlock, canvasBitmap, r
     out('\u00a0\u00a0\u00a0\u00a0     log(msg), \r\n');
     out('\u00a0\u00a0\u00a0\u00a0     pattern.fade(), \r\n');
     out('\u00a0\u00a0\u00a0\u00a0     pattern.fadeDelay: number, \r\n');
+    out('\u00a0\u00a0\u00a0\u00a0     context.palettes: { rainbow (default), fire }, \r\n');
     out('}\r\n\r\n');
 
     renderer.clear();
