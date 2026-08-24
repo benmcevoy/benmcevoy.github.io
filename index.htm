@@ -9,7 +9,7 @@
     <meta name="keywords" content="Custom Software Developer and Website Developer Melbourne." />
     <meta name="robots" content="index,follow,noodp,noydir" />
     <link rel="icon" type="image/png" href="/favicon.ico" />
-    <link rel="canonical" href="http://benmcevoy.com.au/" />
+    <link rel="canonical" href="https://benmcevoy.com.au/" />
     <link href='//fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -134,7 +134,7 @@
         </div>
 
         <div class="tile accent2">
-            <a href="http://github.com/benmcevoy/">
+            <a href="https://github.com/benmcevoy/">
                 <div class="content">
                     <h2>Github</h2>
                     <div class="caption">
@@ -159,7 +159,7 @@
         
 
         <div class="tile accent5">
-            <a href="http://benmcevoy.com.au/blog/">
+            <a href="/blog/">
                 <div class="content">
                     <h2>Blog</h2>
                     <div class="caption">
@@ -184,20 +184,10 @@
 
     <script type="text/javascript">
         $(function () {
-            $.get("http://benmcevoy.com.au/blog/feed/atom.xml", function (data) {
+            $.get("//benmcevoy.com.au/blog/feed/atom.xml", function (data) {
                 $('#blog').html($(data).find('entry').first().find('title').text());
             });
         });
-
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-32032039-1']);
-        _gaq.push(['_trackPageview']);
-
-        (function () {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-        })();
     </script>
 </body>
 </html>
