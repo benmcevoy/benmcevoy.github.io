@@ -1,0 +1,46 @@
+import { Dimension } from "./dimension.js";
+import { Tags, LoadTagsAsync } from "./tags.js";
+import { LoadObservationsAsync, SaveObservationsAsync } from "./observations.js";
+const saveButton = document.getElementById("save-button");
+const exportButton = document.getElementById("export-button");
+const saveStatus = document.getElementById("save-status");
+exportButton?.addEventListener("click", async () => {
+    const observations = await LoadObservationsAsync();
+    const tags = await LoadTagsAsync();
+    const data = { observations, tags };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "observations.json";
+    link.click();
+    URL.revokeObjectURL(url);
+});
+saveButton?.addEventListener("click", async (event) => {
+    const observation = {
+        timestamp: new Date(Math.floor(Date.now() / (5 * 60 * 1000)) * (5 * 60 * 1000)),
+        values: {
+            fatigue: document.querySelector("#fatigueDimension").valueAsNumber,
+            cognition: document.querySelector("#cognitionDimension").valueAsNumber,
+            physicalCapacity: document.querySelector("#physicalCapacityDimension").valueAsNumber,
+            mood: document.querySelector("#moodDimension").valueAsNumber,
+            PEM: document.querySelector("#pemDimension").valueAsNumber,
+        },
+        tags: document.querySelector("x-tags").selectedTags,
+    };
+    const observations = await LoadObservationsAsync();
+    const index = observations.findIndex(o => o.timestamp.getTime() === observation.timestamp.getTime());
+    if (index >= 0) {
+        observations[index] = observation;
+    }
+    else {
+        observations.push(observation);
+    }
+    await SaveObservationsAsync(observations);
+    if (saveStatus) {
+        saveStatus.textContent = "Saved";
+        setTimeout(() => saveStatus.textContent = "", 2000);
+    }
+});
+export { Dimension, Tags };
+//# sourceMappingURL=app.js.map

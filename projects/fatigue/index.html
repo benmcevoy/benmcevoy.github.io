@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Dimensions</title>
+    <script type="module" type="text/javascript" src="./scripts/app.js"></script>
+    <link rel="stylesheet" href="./css/main.css" type="text/css">
+</head>
+
+<body>
+    <h3>Observations</h3>
+    <x-dimension id="fatigueDimension" label="Fatigue"></x-dimension>
+    <x-dimension id="cognitionDimension" label="Cognition"></x-dimension>
+    <x-dimension id="physicalCapacityDimension" label="Physical capacity"></x-dimension>
+    <x-dimension id="moodDimension" label="Mood"></x-dimension>
+    <x-dimension id="pemDimension" label="PEM" quantization="Boolean"></x-dimension>
+
+    <h3>Activity</h3>
+    <x-tags></x-tags>
+
+    <div class="submit-actions">
+        <button id="export-button" type="button">Export</button>
+        <button id="save-button" type="submit">Save observation</button>
+        <span id="save-status" aria-live="polite"></span>
+    </div>
+</body>
+
+</html>
