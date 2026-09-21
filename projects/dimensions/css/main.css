@@ -1,82 +1,108 @@
 :root {
-    --accent-color: #28ce5a;
+    --accent-color: #167a35;   /* darker green so white text is readable */
+    --text: #1f1f1f;
+    --bg: rgb(240, 239, 234);
+    --track: #cfd3d8;
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
-    font-family: sans-serif;
-    font-weight: 300;
+    font-family: system-ui, sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 1.4;
     margin: 0 auto;
     max-width: 800px;
-    padding: 12px;
-    background: rgb(240, 239, 234);
-    color: #4d4d4d;
+    padding: 16px 20px 0;
+    background: var(--bg);
+    color: var(--text);
+}
+
+h3 {
+    margin: 20px 0 20px;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+/* Dimensions */
+
+x-dimension {
+    display: block;
 }
 
 x-dimension div {
-    margin-bottom: 20px;
+    margin-bottom: 32px;
 }
 
 x-dimension label {
     display: block;
-    margin-bottom: 8px;
-    font-size: 1rem;
+    margin-bottom: 4px;
+    font-size: 1.2rem;
+    font-weight: 500;
 }
+
+/* Slider */
 
 x-dimension input[type="range"] {
     appearance: none;
     -webkit-appearance: none;
+    display: block;
     width: 100%;
-    height: 32px;
+    height: 56px;
+    margin: 0;
     padding: 0;
     background: transparent;
     cursor: pointer;
+    touch-action: pan-y;   /* horizontal drags move the slider, vertical still scrolls */
 }
 
-/* Range track */
 x-dimension input[type="range"]::-webkit-slider-runnable-track {
-    height: 8px;
-    background: #e7e9ec;
+    height: 14px;
+    background: var(--track);
     border-radius: 999px;
-    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
 }
 
 x-dimension input[type="range"]::-moz-range-track {
-    height: 8px;
-    background: #e7e9ec;
+    height: 14px;
+    background: var(--track);
     border-radius: 999px;
-    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
 }
 
-/* Range thumb */
 x-dimension input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
     -webkit-appearance: none;
-    width: 28px;
-    height: 28px;
-    margin-top: -10px;
+    width: 44px;
+    height: 44px;
+    margin-top: -15px;   /* (track 14 - thumb 44) / 2 */
     background: var(--accent-color);
-    border: 2px solid white;
+    border: 3px solid white;
     border-radius: 50%;
-    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
 }
 
 x-dimension input[type="range"]::-moz-range-thumb {
-    width: 28px;
-    height: 28px;
+    width: 44px;
+    height: 44px;
     background: var(--accent-color);
-    border: 2px solid white;
+    border: 3px solid white;
     border-radius: 50%;
-    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
 }
 
-x-dimension label {
-    min-width: 140px;
-    display: inline-block
+/* Tags */
+
+x-tags {
+    display: block;
 }
 
 x-tags div.tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 12px;
 }
 
 x-tags input[type="checkbox"] {
@@ -86,115 +112,119 @@ x-tags input[type="checkbox"] {
 }
 
 x-tags label {
-    padding: 0.4rem 0.8rem;
-    border: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 10px 20px;
+    border: 2px solid #b5b5b5;
     border-radius: 999px;
-    background: #f5f5f5;
+    background: #fafafa;
+    font-size: 1.1rem;
     cursor: pointer;
     user-select: none;
+    touch-action: manipulation;
 }
 
-x-tags label:hover {
-    background: #eaeaea;
-}
-
-x-tags input[type="checkbox"]:checked+label {
+x-tags input[type="checkbox"]:checked + label {
     background: var(--accent-color);
     color: white;
     border-color: var(--accent-color);
+    font-weight: 500;
 }
 
-x-tags input[type="checkbox"]:focus-visible+label {
-    outline: 2px solid #2684ff;
+x-tags input[type="checkbox"]:focus-visible + label {
+    outline: 3px solid #2684ff;
     outline-offset: 2px;
 }
 
 x-tags .tag-add {
     display: flex;
-    align-items: center;
-    margin-top: 10px;
+    align-items: stretch;
+    margin-top: 20px;
 }
 
 x-tags .tag-add input {
-    width: 6rem;
-    padding: 0.35rem 0.5rem;
-    border: 1px solid #ccc;
+    flex: 1;
+    min-width: 0;
+    min-height: 48px;
+    padding: 10px 16px;
+    border: 2px solid #b5b5b5;
     border-radius: 999px 0 0 999px;
+    font: inherit;
+    font-size: 1.1rem;
+    background: white;
 }
 
 x-tags .tag-add button {
-    padding: 0.35rem 0.6rem;
-    border: 1px solid #ccc;
+    min-height: 48px;
+    padding: 10px 20px;
+    border: 2px solid #b5b5b5;
     border-left: 0;
     border-radius: 0 999px 999px 0;
+    background: #fafafa;
+    font: inherit;
+    font-size: 1.1rem;
     cursor: pointer;
 }
 
+/* Actions: pinned to the bottom so Save is always reachable */
+
 .submit-actions {
-    text-align: right;
-    margin: 10px;
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 32px -20px 0;
+    padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
+    background: var(--bg);
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+#save-status {
+    order: -1;              /* status message appears above the buttons */
+    flex-basis: 100%;
+    min-height: 1.4em;
+    font-size: 1rem;
+    font-weight: 500;
 }
 
 .submit-actions button {
-    padding: 0.45rem 1rem;
-    border: 1px solid var(--accent-color);
+    flex: 1;
+    min-height: 56px;
+    padding: 12px 20px;
+    border: 2px solid var(--accent-color);
     border-radius: 999px;
     background: var(--accent-color);
     color: white;
     font: inherit;
+    font-size: 1.1rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: box-shadow 0.1s ease, background 0.1s ease;
+    touch-action: manipulation;
 }
 
-.submit-actions button:hover {
-    background: var(--accent-color);
-    border: 1px solid white;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+#export-button {
+    background: transparent;
+    color: var(--accent-color);
 }
 
 .submit-actions button:active {
-    background: var(--accent-color);
-    border: 1px solid white;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+    transform: scale(0.98);
 }
 
 .submit-actions button:focus-visible {
-    outline: 2px solid #2684ff;
+    outline: 3px solid #2684ff;
     outline-offset: 2px;
 }
 
-#save-status {
-    margin-left: 0.75rem;
-    font-size: 0.9rem;
-}
+/* Larger screens: keep buttons compact and right-aligned */
 
-@media (max-width: 480px) {
-    body {
-        padding: 12px;
-    }
-
-    x-dimension div {
-        margin-bottom: 24px;
-    }
-
-    x-dimension label {
-        margin-bottom: 6px;
-    }
-
-    x-tags div.tags {
-        gap: 7px;
-    }
-
-    x-tags label {
-        padding: 8px 12px;
-    }
-
+@media (min-width: 600px) {
     .submit-actions {
         justify-content: flex-end;
-        margin-top: 20px;
     }
-
     .submit-actions button {
-        padding: 10px 20px;
+        flex: 0 0 auto;
     }
 }
