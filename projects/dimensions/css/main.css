@@ -32,9 +32,6 @@ h3 {
 
 x-dimension {
     display: block;
-}
-
-x-dimension div {
     margin-bottom: 32px;
 }
 
@@ -202,11 +199,6 @@ x-tags .tag-add button {
     font-weight: 500;
     cursor: pointer;
     touch-action: manipulation;
-}
-
-#export-button {
-    background: transparent;
-    color: var(--accent-color);
 }
 
 .submit-actions button:active {

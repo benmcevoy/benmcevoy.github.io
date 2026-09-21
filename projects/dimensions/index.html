@@ -10,11 +10,21 @@
 
 <body>
     <h3>Observations</h3>
-    <x-dimension id="fatigueDimension" label="Fatigue"></x-dimension>
-    <x-dimension id="cognitionDimension" label="Cognition"></x-dimension>
-    <x-dimension id="physicalCapacityDimension" label="Physical capacity"></x-dimension>
-    <x-dimension id="moodDimension" label="Mood"></x-dimension>
-    <x-dimension id="pemDimension" label="PEM" quantization="Boolean"></x-dimension>
+
+    <x-dimension id="fatigueDimension" label="Fatigue" value="1" min-label="completely exhausted"
+        max-label="normal energy"></x-dimension>
+
+    <x-dimension id="cognitionDimension" label="Cognition" value="1" min-label="severe brain fog"
+        max-label="clear/normal"></x-dimension>
+
+    <x-dimension id="physicalCapacityDimension" label="Physical capacity" value="1" min-label="barely able physically"
+        max-label="normal"></x-dimension>
+
+    <x-dimension id="moodDimension" label="Mood" value="0.5" min-label="very low/distressed"
+        max-label="good/settled"></x-dimension>
+
+    <x-dimension id="pemDimension" label="PEM" quantization="Boolean" value="0" title="Post-exertional malaise"
+        min-label="no current PEM" max-label="currently experiencing PEM"></x-dimension>
 
     <h3>Activity</h3>
     <x-tags></x-tags>
