@@ -4,6 +4,7 @@ var Quantization;
     Quantization["Boolean"] = "Boolean";
 })(Quantization || (Quantization = {}));
 class Dimension extends HTMLElement {
+    static observedAttributes = ["value"];
     defaultValue = "0.5";
     container = document.createElement("div");
     rangeInput = document.createElement("input");
@@ -48,6 +49,10 @@ class Dimension extends HTMLElement {
         this.rangeInput.step = step;
         this.rangeInput.value = this.getAttribute("value") ?? this.defaultValue;
         this.append(this.container);
+    }
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === "value")
+            this.value = newValue;
     }
 }
 export { Dimension };

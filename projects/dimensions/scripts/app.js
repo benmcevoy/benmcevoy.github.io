@@ -4,6 +4,7 @@ import { LoadObservationsAsync, SaveObservationsAsync } from "./observations.js"
 const saveButton = document.getElementById("save-button");
 const exportButton = document.getElementById("export-button");
 const saveStatus = document.getElementById("save-status");
+const getDimension = (id) => document.querySelector(id);
 exportButton?.addEventListener("click", async () => {
     const observations = await LoadObservationsAsync();
     const tags = await LoadTagsAsync();
@@ -20,11 +21,11 @@ saveButton?.addEventListener("click", async (event) => {
     const observation = {
         timestamp: new Date(Math.floor(Date.now() / (5 * 60 * 1000)) * (5 * 60 * 1000)),
         values: {
-            fatigue: document.querySelector("#fatigueDimension").valueAsNumber,
-            cognition: document.querySelector("#cognitionDimension").valueAsNumber,
-            physicalCapacity: document.querySelector("#physicalCapacityDimension").valueAsNumber,
-            mood: document.querySelector("#moodDimension").valueAsNumber,
-            PEM: document.querySelector("#pemDimension").valueAsNumber,
+            fatigue: getDimension("#fatigueDimension").valueAsNumber,
+            cognition: getDimension("#cognitionDimension").valueAsNumber,
+            physicalCapacity: getDimension("#physicalCapacityDimension").valueAsNumber,
+            mood: getDimension("#moodDimension").valueAsNumber,
+            PEM: getDimension("#pemDimension").valueAsNumber,
         },
         tags: document.querySelector("x-tags").selectedTags,
     };
@@ -40,6 +41,12 @@ saveButton?.addEventListener("click", async (event) => {
     if (saveStatus) {
         saveStatus.textContent = "Saved";
         setTimeout(() => saveStatus.textContent = "", 2000);
+        getDimension("#fatigueDimension").value = getDimension("#fatigueDimension").getAttribute("value") || "0.5";
+        getDimension("#cognitionDimension").value = getDimension("#cognitionDimension").getAttribute("value") || "0.5";
+        getDimension("#physicalCapacityDimension").value = getDimension("#physicalCapacityDimension").getAttribute("value") || "0.5";
+        getDimension("#moodDimension").value = getDimension("#moodDimension").getAttribute("value") || "0.5";
+        getDimension("#pemDimension").value = getDimension("#pemDimension").getAttribute("value") || "0.5";
+        document.querySelector("x-tags").clearSelectedTags();
     }
 });
 export { Dimension, Tags };

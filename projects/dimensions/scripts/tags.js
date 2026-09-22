@@ -62,6 +62,9 @@ class Tags extends HTMLElement {
             this.tagItems.append(tagInput, tagLabel);
         });
     };
+    clearSelectedTags = () => {
+        return Array.from(this.tagItems.querySelectorAll('input[type="checkbox"]:checked')).forEach(input => input.checked = false);
+    };
     async connectedCallback() {
         if (this.querySelector("div.tags"))
             return;
