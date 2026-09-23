@@ -28,8 +28,7 @@ class Dimension extends HTMLElement {
     set label(value) { this.setAttribute("label", value); }
     get value() { return this.rangeInput.value; }
     set value(value) {
-        this.rangeInput.value =
-            value;
+        this.rangeInput.value = value;
         this.setAttribute("value", value);
     }
     get valueAsNumber() { return this.rangeInput.valueAsNumber; }
@@ -56,7 +55,7 @@ class Dimension extends HTMLElement {
     }
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === "value")
-            this.value = newValue;
+            this.rangeInput.value = newValue;
     }
     resetValue = () => this.value = this.getAttribute("value") ?? this.defaultValue;
 }
