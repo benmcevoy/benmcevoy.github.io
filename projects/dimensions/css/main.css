@@ -1,8 +1,10 @@
 :root {
-    --accent-color: #167a35;   /* darker green so white text is readable */
+    --accent-color: #167a35;
+    /* darker green so white text is readable */
     --text: #1f1f1f;
     --bg: rgb(240, 239, 234);
     --track: #cfd3d8;
+    --border: 2px solid #b5b5b5;
 }
 
 * {
@@ -23,9 +25,17 @@ body {
 }
 
 h3 {
-    margin: 20px 0 20px;
-    font-size: 1.4rem;
+    margin: 10px 0 10px;
+    font-size: 1.2rem;
     font-weight: 600;
+}
+
+textarea {
+    width: 100%;
+    height: 96px;
+    padding: 10px 16px;
+    border: var(--border);
+    border-radius: 10px;
 }
 
 /* Dimensions */
@@ -38,7 +48,7 @@ x-dimension {
 x-dimension label {
     display: block;
     margin-bottom: 4px;
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: 500;
 }
 
@@ -54,7 +64,8 @@ x-dimension input[type="range"] {
     padding: 0;
     background: transparent;
     cursor: pointer;
-    touch-action: pan-y;   /* horizontal drags move the slider, vertical still scrolls */
+    touch-action: pan-y;
+    /* horizontal drags move the slider, vertical still scrolls */
 }
 
 x-dimension input[type="range"]::-webkit-slider-runnable-track {
@@ -74,7 +85,8 @@ x-dimension input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     width: 44px;
     height: 44px;
-    margin-top: -15px;   /* (track 14 - thumb 44) / 2 */
+    margin-top: -15px;
+    /* (track 14 - thumb 44) / 2 */
     background: var(--accent-color);
     border: 3px solid white;
     border-radius: 50%;
@@ -113,7 +125,7 @@ x-tags label {
     align-items: center;
     min-height: 48px;
     padding: 10px 20px;
-    border: 2px solid #b5b5b5;
+    border: var(--border);
     border-radius: 999px;
     background: #fafafa;
     font-size: 1.1rem;
@@ -122,14 +134,14 @@ x-tags label {
     touch-action: manipulation;
 }
 
-x-tags input[type="checkbox"]:checked + label {
+x-tags input[type="checkbox"]:checked+label {
     background: var(--accent-color);
     color: white;
     border-color: var(--accent-color);
     font-weight: 500;
 }
 
-x-tags input[type="checkbox"]:focus-visible + label {
+x-tags input[type="checkbox"]:focus-visible+label {
     outline: 3px solid #2684ff;
     outline-offset: 2px;
 }
@@ -145,7 +157,7 @@ x-tags .tag-add input {
     min-width: 0;
     min-height: 48px;
     padding: 10px 16px;
-    border: 2px solid #b5b5b5;
+    border: var(--border);
     border-radius: 999px 0 0 999px;
     font: inherit;
     font-size: 1.1rem;
@@ -155,7 +167,7 @@ x-tags .tag-add input {
 x-tags .tag-add button {
     min-height: 48px;
     padding: 10px 20px;
-    border: 2px solid #b5b5b5;
+    border: var(--border);
     border-left: 0;
     border-radius: 0 999px 999px 0;
     background: #fafafa;
@@ -179,7 +191,8 @@ x-tags .tag-add button {
 }
 
 #save-status {
-    order: -1;              /* status message appears above the buttons */
+    order: -1;
+    /* status message appears above the buttons */
     flex-basis: 100%;
     min-height: 1.4em;
     font-size: 1rem;
@@ -216,6 +229,7 @@ x-tags .tag-add button {
     .submit-actions {
         justify-content: flex-end;
     }
+
     .submit-actions button {
         flex: 0 0 auto;
     }

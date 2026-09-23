@@ -20,7 +20,7 @@
     <x-dimension id="physicalCapacityDimension" label="Physical capacity" value="1" min-label="barely able physically"
         max-label="normal"></x-dimension>
 
-    <x-dimension id="moodDimension" label="Mood" value="0.5" min-label="very low/distressed"
+    <x-dimension id="moodDimension" label="Mood" value="1" min-label="very low/distressed"
         max-label="good/settled"></x-dimension>
 
     <x-dimension id="pemDimension" label="PEM" quantization="Boolean" value="0" title="Post-exertional malaise"
@@ -28,6 +28,11 @@
 
     <h3>Activity</h3>
     <x-tags></x-tags>
+
+    <h3>Notes</h3>
+    <div>
+        <textarea id="notes"></textarea> 
+    </div>
 
     <div class="submit-actions">
         <button id="export-button" type="button">Export</button>

@@ -4,7 +4,17 @@ import { LoadObservationsAsync, SaveObservationsAsync } from "./observations.js"
 const saveButton = document.getElementById("save-button");
 const exportButton = document.getElementById("export-button");
 const saveStatus = document.getElementById("save-status");
-const getDimension = (id) => document.querySelector(id);
+const viewModel = {
+    tags: document.querySelector("x-tags"),
+    notes: document.querySelector("#notes"),
+    dimensions: {
+        fatigue: document.querySelector("#fatigueDimension"),
+        cognition: document.querySelector("#cognitionDimension"),
+        physicalCapacity: document.querySelector("#physicalCapacityDimension"),
+        mood: document.querySelector("#moodDimension"),
+        PEM: document.querySelector("#pemDimension")
+    }
+};
 exportButton?.addEventListener("click", async () => {
     const observations = await LoadObservationsAsync();
     const tags = await LoadTagsAsync();
@@ -21,13 +31,14 @@ saveButton?.addEventListener("click", async (event) => {
     const observation = {
         timestamp: new Date(Math.floor(Date.now() / (5 * 60 * 1000)) * (5 * 60 * 1000)),
         values: {
-            fatigue: getDimension("#fatigueDimension").valueAsNumber,
-            cognition: getDimension("#cognitionDimension").valueAsNumber,
-            physicalCapacity: getDimension("#physicalCapacityDimension").valueAsNumber,
-            mood: getDimension("#moodDimension").valueAsNumber,
-            PEM: getDimension("#pemDimension").valueAsNumber,
+            fatigue: viewModel.dimensions.fatigue.valueAsNumber,
+            cognition: viewModel.dimensions.cognition.valueAsNumber,
+            physicalCapacity: viewModel.dimensions.physicalCapacity.valueAsNumber,
+            mood: viewModel.dimensions.mood.valueAsNumber,
+            PEM: viewModel.dimensions.PEM.valueAsNumber,
         },
-        tags: document.querySelector("x-tags").selectedTags,
+        tags: viewModel.tags.selectedTags,
+        notes: viewModel.notes.value
     };
     const observations = await LoadObservationsAsync();
     const index = observations.findIndex(o => o.timestamp.getTime() === observation.timestamp.getTime());
@@ -41,12 +52,13 @@ saveButton?.addEventListener("click", async (event) => {
     if (saveStatus) {
         saveStatus.textContent = "Saved";
         setTimeout(() => saveStatus.textContent = "", 2000);
-        getDimension("#fatigueDimension").value = getDimension("#fatigueDimension").getAttribute("value") || "0.5";
-        getDimension("#cognitionDimension").value = getDimension("#cognitionDimension").getAttribute("value") || "0.5";
-        getDimension("#physicalCapacityDimension").value = getDimension("#physicalCapacityDimension").getAttribute("value") || "0.5";
-        getDimension("#moodDimension").value = getDimension("#moodDimension").getAttribute("value") || "0.5";
-        getDimension("#pemDimension").value = getDimension("#pemDimension").getAttribute("value") || "0.5";
-        document.querySelector("x-tags").clearSelectedTags();
+        viewModel.dimensions.fatigue.resetValue();
+        viewModel.dimensions.cognition.resetValue();
+        viewModel.dimensions.physicalCapacity.resetValue();
+        viewModel.dimensions.mood.resetValue();
+        viewModel.dimensions.PEM.resetValue();
+        viewModel.tags.clearSelectedTags();
+        viewModel.notes.value = "";
     }
 });
 export { Dimension, Tags };
