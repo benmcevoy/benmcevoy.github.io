@@ -62,4 +62,3 @@ saveButton?.addEventListener("click", async (event) => {
     }
 });
 export { Dimension, Tags };
-//# sourceMappingURL=app.js.map

@@ -74,4 +74,3 @@ class Tags extends HTMLElement {
 }
 export { Tags, LoadTagsAsync };
 customElements.define('x-tags', Tags);
-//# sourceMappingURL=tags.js.map

@@ -61,4 +61,3 @@ class Dimension extends HTMLElement {
 }
 export { Dimension };
 customElements.define('x-dimension', Dimension);
-//# sourceMappingURL=dimension.js.map

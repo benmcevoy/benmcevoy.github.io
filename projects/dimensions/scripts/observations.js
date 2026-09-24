@@ -9,4 +9,3 @@ const LoadObservationsAsync = async () => {
 };
 const SaveObservationsAsync = async (data) => await Store.setAsync(dataKey, data);
 export { LoadObservationsAsync, SaveObservationsAsync };
-//# sourceMappingURL=observations.js.map
