@@ -7,5 +7,9 @@ const LoadObservationsAsync = async () => {
         timestamp: new Date(o.timestamp)
     }));
 };
-const SaveObservationsAsync = async (data) => await Store.setAsync(dataKey, data);
+const SaveObservationsAsync = async (data) => {
+    if (data.length === 0)
+        throw new Error("Observation data is missing");
+    await Store.setAsync(dataKey, data);
+};
 export { LoadObservationsAsync, SaveObservationsAsync };

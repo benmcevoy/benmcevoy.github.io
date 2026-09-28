@@ -15,6 +15,17 @@ const viewModel = {
         PEM: document.querySelector("#pemDimension")
     }
 };
+window.addEventListener("error", (event) => {
+    const { message, filename, lineno, colno, error } = event;
+    alert(`${message}\n\n` +
+        `at ${filename}:${lineno}:${colno}\n\n` +
+        `${error?.stack ?? ""}`);
+});
+window.addEventListener("unhandledrejection", (event) => {
+    const reason = event.reason;
+    alert(`Unhandled rejection:\n\n` +
+        (reason instanceof Error ? `${reason.message}\n\n${reason.stack}` : String(reason)));
+});
 exportButton?.addEventListener("click", async () => {
     const observations = await LoadObservationsAsync();
     const tags = await LoadTagsAsync();
