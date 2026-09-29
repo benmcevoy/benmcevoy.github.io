@@ -2,28 +2,27 @@
 <html>
 
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dimensions</title>
-    <script type="module" type="text/javascript" src="./scripts/app.js"></script>
     <link rel="stylesheet" href="./css/main.css" type="text/css">
 </head>
 
 <body>
     <h3>Observations</h3>
 
-    <x-dimension id="fatigueDimension" label="Fatigue" value="1" min-label="completely exhausted"
+    <x-dimension id="fatigueDimension" label="Fatigue" default="1" min-label="completely exhausted"
         max-label="normal energy"></x-dimension>
 
-    <x-dimension id="cognitionDimension" label="Cognition" value="1" min-label="severe brain fog"
+    <x-dimension id="cognitionDimension" label="Cognition" default="1" min-label="severe brain fog"
         max-label="clear/normal"></x-dimension>
 
-    <x-dimension id="physicalCapacityDimension" label="Physical capacity" value="1" min-label="barely able physically"
+    <x-dimension id="physicalCapacityDimension" label="Physical capacity" default="1" min-label="barely able physically"
         max-label="normal"></x-dimension>
 
-    <x-dimension id="moodDimension" label="Mood" value="1" min-label="very low/distressed"
+    <x-dimension id="moodDimension" label="Mood" default="1" min-label="very low/distressed"
         max-label="good/settled"></x-dimension>
 
-    <x-dimension id="pemDimension" label="PEM" quantization="Boolean" value="0" title="Post-exertional malaise"
+    <x-dimension id="pemDimension" label="PEM" quantization="Boolean" default="0" title="Post-exertional malaise"
         min-label="no current PEM" max-label="currently experiencing PEM"></x-dimension>
 
     <h3>Activity</h3>
@@ -31,7 +30,7 @@
 
     <h3>Notes</h3>
     <div>
-        <textarea id="notes"></textarea> 
+        <textarea id="notes"></textarea>
     </div>
 
     <div class="submit-actions">
@@ -39,6 +38,7 @@
         <button id="save-button" type="submit">Save observation</button>
         <span id="save-status" aria-live="polite"></span>
     </div>
+    <script type="module" src="./scripts/app.js"></script>
 </body>
 
 </html>

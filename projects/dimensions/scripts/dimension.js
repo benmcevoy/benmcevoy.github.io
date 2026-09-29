@@ -4,60 +4,59 @@ var Quantization;
     Quantization["Boolean"] = "Boolean";
 })(Quantization || (Quantization = {}));
 class Dimension extends HTMLElement {
-    static observedAttributes = ["value"];
-    defaultValue = "0.5";
-    container = document.createElement("div");
+    static DEFAULT_VALUE = 0.5;
+    _defaultValue;
+    inputId = `x-dimension-${crypto.randomUUID()}`;
+    root = document.createElement("div");
     rangeInput = document.createElement("input");
     rangeLabel = document.createElement("label");
     minRangeLabel = document.createElement("small");
     maxRangeLabel = document.createElement("small");
     constructor() {
         super();
+        this.rangeInput.id = this.inputId;
         this.rangeInput.type = "range";
         this.rangeInput.min = "0";
         this.rangeInput.max = "1";
-        this.container.className = "x-dimension";
-        this.container.title = this.title;
+        this.rangeLabel.htmlFor = this.inputId;
         this.maxRangeLabel.style.float = "right";
-        this.container.appendChild(this.rangeLabel);
-        this.container.appendChild(this.minRangeLabel);
-        this.container.appendChild(this.maxRangeLabel);
-        this.container.appendChild(this.rangeInput);
+        this.root.className = "x-dimension";
+        this.root.appendChild(this.rangeLabel);
+        this.root.appendChild(this.minRangeLabel);
+        this.root.appendChild(this.maxRangeLabel);
+        this.root.appendChild(this.rangeInput);
     }
     get label() { return this.getAttribute("label") ?? ""; }
     set label(value) { this.setAttribute("label", value); }
-    get value() { return this.rangeInput.value; }
-    set value(value) {
-        this.rangeInput.value = value;
-        this.setAttribute("value", value);
+    get value() { return this.rangeInput.valueAsNumber; }
+    get quantization() {
+        return this.getAttribute("quantization") === Quantization.Boolean
+            ? Quantization.Boolean
+            : Quantization.Continuous;
     }
-    get valueAsNumber() { return this.rangeInput.valueAsNumber; }
-    get quantization() { return Quantization[(this.getAttribute("quantization") ?? Quantization.Continuous)]; }
     set quantization(value) { this.setAttribute("quantization", value); }
     get minLabel() { return this.getAttribute("min-label") ?? ""; }
     set minLabel(value) { this.setAttribute("min-label", value); }
     get maxLabel() { return this.getAttribute("max-label") ?? ""; }
     set maxLabel(value) { this.setAttribute("max-label", value); }
-    connectedCallback() {
-        if (this.querySelector("div.x-dimension"))
-            return;
-        const step = (this.quantization == Quantization.Boolean)
+    render() {
+        const step = (this.quantization === Quantization.Boolean)
             ? "1" : "any";
-        const id = `${this.id}-input`;
-        this.rangeLabel.htmlFor = id;
+        this.root.title = this.title;
         this.rangeLabel.textContent = `${this.label}:`;
         this.minRangeLabel.textContent = `${this.minLabel}`;
         this.maxRangeLabel.textContent = `${this.maxLabel}`;
-        this.rangeInput.id = id;
         this.rangeInput.step = step;
-        this.rangeInput.value = this.getAttribute("value") ?? this.defaultValue;
-        this.append(this.container);
     }
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (name === "value")
-            this.rangeInput.value = newValue;
+    connectedCallback() {
+        if (!this.contains(this.root))
+            this.append(this.root);
+        if (this._defaultValue === undefined) {
+            this._defaultValue = Number(this.getAttribute("default") ?? Dimension.DEFAULT_VALUE);
+            this.rangeInput.value = String(this._defaultValue);
+        }
+        this.render();
     }
-    resetValue = () => this.value = this.getAttribute("value") ?? this.defaultValue;
+    resetValue = () => this.rangeInput.value = String(this._defaultValue);
 }
 export { Dimension };
-customElements.define('x-dimension', Dimension);
