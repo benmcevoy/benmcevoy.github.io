@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?><feed xml:lang="en-us" xmlns="http://www.w3.org/2005/Atom"><title type="text">Ben McEvoy</title><subtitle type="text">Just stuff for fun</subtitle><id>https://benmcevoy.com.au/blog/feed</id><updated>2026-10-14T10:47:25+11:00</updated><link rel="alternate" href="https://benmcevoy.com.au/blog/feed" /><entry><id>2014/07/recover-password-on-a-vm/</id><title type="text">Recover password on a vm</title><published>2014-07-21T19:00:00+10:00</published><updated>2014-07-21T19:00:00+10:00</updated><link rel="alternate" href="https://benmcevoy.com.au/blog/2014/07/recover-password-on-a-vm/" /><content type="text">&lt;h2&gt;Recover password on a VM.&lt;/h2&gt;
+﻿<?xml version="1.0" encoding="utf-8"?><feed xml:lang="en-us" xmlns="http://www.w3.org/2005/Atom"><title type="text">Ben McEvoy</title><subtitle type="text">Just stuff for fun</subtitle><id>https://benmcevoy.com.au/blog/feed</id><updated>2026-10-14T10:53:09+11:00</updated><link rel="alternate" href="https://benmcevoy.com.au/blog/feed" /><entry><id>2014/07/recover-password-on-a-vm/</id><title type="text">Recover password on a vm</title><published>2014-07-21T19:00:00+10:00</published><updated>2014-07-21T19:00:00+10:00</updated><link rel="alternate" href="https://benmcevoy.com.au/blog/2014/07/recover-password-on-a-vm/" /><content type="text">&lt;h2&gt;Recover password on a VM.&lt;/h2&gt;
 
 &lt;p&gt;Recover password on a VM. Or any machine you have physical access to.&lt;/p&gt;
 
@@ -46,7 +46,7 @@ copy cmd.exe utilman.exe
  whoami
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;I am &lt;a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms684190(v=vs.85"&gt;system&lt;/a&gt;.aspx). That's handy.&lt;/p&gt;
+&lt;p&gt;I am &lt;a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms684190(v=vs.85%29.aspx"&gt;system&lt;/a&gt;. That's handy.&lt;/p&gt;
 
 &lt;h3&gt;Update password&lt;/h3&gt;
 
