@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Pipes</RootNamespace>
+    <AssemblyName>Pipes</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Example package reference -->
+    <!-- <PackageReference Include="Newtonsoft.Json" Version="13.0.3" /> -->
+  </ItemGroup>
+
+</Project>

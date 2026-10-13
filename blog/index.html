@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Less Worse Webforms Routing I seem to be unable to escape the horrific pit of despair that is ASP.NET WebForms, it's really starting to look like the Classic ASP of the um...  The friendly url package also allows to do something that MVC 4 (or was it from an earlier version?) can do out of the box, namely chuck a device specific view in, e.g. ">
-    <meta name="keywords" content="urls, webforms, routing, friendly, starting, pages">
+    <meta name="description" content="Recover password from a VM or physical windows machine with a little hackery. ">
+    <meta name="keywords" content="virtual machine, windows, password, vm">
     <meta name="author" content="ben mcevoy">
-    <title>Less Worse Webforms - blog.benmcevoy.com.au</title>
+    <title>Recover password on a vm - blog.benmcevoy.com.au</title>
     <link href="/blog/assets/css/site.css" rel="stylesheet">
     <link type="application/atom+xml" rel="alternate" href="/blog/feed/atom.xml" />
     <!--[if lt IE 9]>
@@ -51,74 +51,69 @@
     <div class="container">
         <div class="row content">
             <div class="col-lg-8 entry">
-                <h1>Less Worse Webforms</h1>
+                <h1>Recover password on a vm</h1>
                 <hr>
-                <p><span class="glyphicon glyphicon-time"></span> Posted on Monday June 2014</p>
+                <p><span class="glyphicon glyphicon-time"></span> Posted on Monday July 2014</p>
                 <hr>
-                <h2>Less Worse Webforms</h2>
+                <h2>Recover password on a VM.</h2>
 
-<h3>Routing</h3>
+<p>Recover password on a VM. Or any machine you have physical access to.</p>
 
-<p>I seem to be unable to escape the horrific pit of despair that is ASP.NET WebForms, it's really starting to look like the Classic ASP of the um... noughties? Millennial something something? At any rate, there have at least been a couple of nice(r) features introduced to ease our suffering.</p>
+<p>Oh I forgot my password.  Not sure what happened really, copied the VM and now I cannot login.</p>
 
-<p>Routing is one of these, but to get the best out of it you'll also want to nuget in some Friendly Urls:</p>
+<p>Beware if you have EFS or encrypted files.  You will probably have a bad time.</p>
 
-<pre><code>
-Install-Package Microsoft.AspNet.FriendlyUrls
-</code></pre>
+<h3>Create a WinPE ISO</h3>
 
-<p>A vanilla asp.net web application (in VS2013 at least) is kind enough to include this by default.</p>
-
-<p>The Friendly Urls package <a href="http://www.hanselman.com/blog/IntroducingASPNETFriendlyUrlsCleanerURLsEasierRoutingAndMobileViewsForASPNETWebForms.aspx">includes a few things</a>, and supports .NET 4, but for my purposes I care only for <em>EnableFriendlyUrls()</em> which will effectively turn on extensionless urls for a webforms project.  Probably in your RouteConfig class:</p>
+<p>Install the <a href="https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/download-winpe--windows-pe">ADK</a>, run Deployment tool as admin then run</p>
 
 <pre><code>
-    var settings = new FriendlyUrlSettings();
-    routes.EnableFriendlyUrls(settings);
+ copype amd64 C:\WinPE_amd64
+ MakeWinPEMedia /ISO C:\WinPE_amd64 C:\WinPE_amd64\WinPE_amd64.iso
 </code></pre>
 
-<p>Armed with this and System.Web.Routing we can start to do less sucky things.</p>
+<h3>Mount that ISO as a CD/DVD</h3>
 
-<p>From .NET 4 System.Web.Routing is in the System.Web assembly, and so should be available to most new Web Forms applications.  The <a href="http://msdn.microsoft.com/en-us/library/system.web.routing.routecollection.mappageroute(v=vs.100">MapPageRoute</a>.aspx) method lets us start to do nice(r) things.</p>
+<p>Something something VM settings.</p>
 
-<p>For instance, we can map request values (query string or form) to placeholders in the url:</p>
+<h3>Force the VM to boot from CD</h3>
+
+<p>Edit the <a href="https://kb.vmware.com/s/article/1004129">.vmx of your VM</a> and add</p>
 
 <pre><code>
-    routes.MapPageRoute("AboutRoute", "About/{param1}/{*param2}", "~/about.aspx");
+ bios.forceSetupOnce = "TRUE"
 </code></pre>
 
-<p>And we can map arbitrary friendly urls to existing pages:</p>
+<p>Now the fun.  I found my VM drive, D:</p>
+
+<h3>Hijack a system utility</h3>
 
 <pre><code>
-    routes.MapPageRoute("AnotherRoute", "TotallyFriendlyUrl/{param1}/{*param2}", "~/about.aspx");
+D:
+cd D:\windows\system32
+ren utilman.exe utilman.exe.old
+copy cmd.exe utilman.exe
 </code></pre>
 
-<p>In the second case there is no underlying page at <em>TotallyFriendlyUrl.aspx</em> so if the route is not matched correctly, i.e. <em>/TotallyFriendlyUrl/this_bit_is_mandatory/this_bit_is_optional</em> then a 404 will result.</p>
+<h3>Reboot.</h3>
 
-<p>Calls to <em>/About/</em> will succeed for pretty much any parameters as 1) there is a page at about.aspx and 2) the <em>param2</em> is a catch all.  </p>
-
-<h3>Other bits</h3>
-
-<p>Quick, my beer is getting warm, we have an expression builder so we can make friendly urls declaratively in an aspx page:</p>
+<p>At the password prompt open the accessibilty tools, that little icon at the bottom.</p>
 
 <pre><code>
-&lt;asp:HyperLink ID="HyperLink5" runat="server" 
-    NavigateUrl="&lt;%$RouteUrl:locale=CA,year=2009,routename=salesroute%&gt;"&gt;
-    Sales Report - CA, 2009
-&lt;/asp:HyperLink&gt;
+ whoami
 </code></pre>
 
-<p>And [FriendlyUrlSegments] parameter attribute for um.. doing things like <a href="http://www.asp.net/web-forms/tutorials/data-access/model-binding/retrieving-data">model binding to a method and junk</a>. And also [Form] and [QueryString] to boot.</p>
+<p>I am <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms684190(v=vs.85">system</a>.aspx). That's handy.</p>
 
-<p>The friendly url package also allows to do something that MVC 4 (or was it from an earlier version?) can do out of the box, namely chuck a device specific view in, e.g.  </p>
+<h3>Update password</h3>
 
-<ul>
-<li>about.aspx</li>
-<li>about.mobile.aspx</li>
-</ul>
+<pre><code>
+ net user Administrator Password123
+</code></pre>
 
-<p>Unfortunately this does not seem to play well with the other children.  So adding an <em>about.mobile.aspx</em> you <em>might</em> expect the uh... attractive <em>/totallyfriendlyurl/oh/hai/</em> route to dish up a mobile specific view.  It did not.  Given we stated that the route mapped to <em>about.aspx</em> it's not that surprising, but it would have been nice if it was magic and just worked.</p>
+<h3>And login.</h3>
 
-<p>To be fair I'm not sure where I can be using this stuff.  WebForms work is either some legacy hell that would break as soon as you started doing this (and mobile support? Ha!) or is piggy backing on top of Umbraco or SiteCore which takes care of (some) of this stuff for you anyway.  No-one in their right mind would start a green fields webforms project today? Right? Amiright?</p>
+<p>Voila.</p>
 
             </div>
 
@@ -128,7 +123,7 @@ Install-Package Microsoft.AspNet.FriendlyUrls
                     <div class="row">
                         <div class="col-lg-12">
                             <ul class="list-unstyled">
-                                <li><a href="/blog/2014/06/less-worse-webforms/">Less Worse Webforms</a></li><li><a href="/blog/2014/05/web-transforms-for-external-files/">Web Transforms for external files</a></li>
+                                <li><a href="/blog/2014/07/recover-password-on-a-vm/">Recover password on a vm</a></li><li><a href="/blog/2014/06/less-worse-webforms/">Less Worse Webforms</a></li><li><a href="/blog/2014/05/web-transforms-for-external-files/">Web Transforms for external files</a></li>
                             </ul>
                         </div>
                     </div>
