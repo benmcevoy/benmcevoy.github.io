@@ -1,0 +1,7 @@
+{
+    "published": "2026-10-15T12:00:00",
+    "summary": "Customise XigmaNas build to bake in realtek NIC drivers and add Navidrome",
+    "keywords": "xigmanas, nas, freebsd, navidrome, RTL8125, realtek 2.5Gbe",
+    "slug": "custom-xigmanas-build",
+    "title": "Customise XigmaNas build, adding drivers and Navidrome"
+}
