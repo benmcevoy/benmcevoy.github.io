@@ -9,9 +9,9 @@ Firstly, the Mandelbrot set is basically a set of numbers on the [complex]( http
 
 Hard to explain, but basically for a complex number pretend the real part is on the x axis and imaginary is y.
 
-<pre><code>
+```
 var cn = new complexNumber(1, 1);  // real is 1, imaginary part is 1i
-</code></pre>
+```
 
 The function that is applied is given on Wikipedia, but for those who don’t speak mathematics it’s basically 
 
@@ -25,14 +25,14 @@ c is the point on the plane we are testing
 
 if we write that as code it’s a bit easier to see:
 
-<pre><code>
+```
         var z = new complexNumber(0, 0);
         var c = new complexNumber(x, y);
 
         for (var n = 0; n < 100; n++) {
             z = z.multiply(z).add(c);
         }
-</code></pre>
+```
 
 After 100 iterations of applying this function we test the value of z and see if it has exceeded some threshold.  If it is still within the threshold then it’s part of the Mandelbrot set.
 
@@ -42,7 +42,7 @@ The first thing that floated my boat was making use of javascript prototype to d
 
 A complex number class.
 
-<pre><code>
+```
     var complexNumber = function (real, imaginary) {
         this.r = real;
         this.i = imaginary;
@@ -68,13 +68,13 @@ A complex number class.
         return new complexNumber(this.r, -this.i);
     };
 
-</code></pre>
+```
 This is sweet.  With the prototype pattern we can declared class level members using the this keyword, so this.r and this.i are now available throughout the class. They are also available as properties or fields on the class as well.
 The other very nice thing is we can now say 
 
-<pre><code>
+```
     var cn = new complexNumber(1, 1);  // real is 1, imaginary part is 1i
-</code></pre>
+```
 
 And new it up.  Sweet.
 
@@ -84,7 +84,7 @@ When we wish to set a pixel we first need to grab the canvas data, essentially a
 
 The code to calculate the Mandelbrot set and render it on the canvas I wrote using the module pattern.  This pattern I also really like! Mainly because it feels a lot like writing c#
 
-<pre><code>
+```
 var mandelbrot = function () {
 
     var _options;
@@ -185,7 +185,7 @@ $(function () {
     mandelbrot.render();
 });
 
-</code></pre>
+```
 
 Now this code is pretty slow.  That’s not the point.  The point is that I could write this code and on the first time I ran it it worked. Perfectly.  I think that’s proof positive for me that following these patterns is an absolute must.  My old style crappy global function javascript is dead.
 

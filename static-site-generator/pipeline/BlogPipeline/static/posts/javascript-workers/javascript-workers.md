@@ -8,7 +8,7 @@ So today I cranked it out for a couple of hours and got workers working.
 
 [demo](http://benmcevoy.com.au/projects/mandelbrotworker/default.htm)
 
-##Messaging
+## Messaging
 
 Javascript is single threaded. You can fake a bit of multithreaded action by using the setInterval and setTimeout, but this is really a bit like the old interrupt programming we did way back in the day.
 
@@ -25,26 +25,26 @@ In order to make use of workers I pulled the render code out into a separate fil
 
 We set up a worker in the UI:
 
-<pre><code>
+```
     _worker1 = new Worker('/js/mandelbrot.worker.js');
     // listen for messages coming back
     _worker1.addEventListener('message', function (event) {
             var message = event.data;
             _context.putImageData(event.data.canvasData, 0, 0);
         }, false);
-</code></pre>
+```
 
 Then we must pass some data to operate on.  The canvas data is really just a big array of data, so I grab out a chunk, work out where we are in the set and then fire it off:
 
-<pre><code>
+```
         _worker1.postMessage({ canvasData: _context.getImageData(0, 0, width, height),
             options: { width: width, height: height, origin: origin1, zoom: _options.zoom }
         });
-</code></pre>
+```
 
 The _canvas.getImageData just grabs out the subset of the array for this quadrant.  We post this message to the worker who immediately starts calculating.
 
-<pre><code>
+```
     // this event is raised when a message is received on the worker
 onmessage = function (event) {
         _canvasData = event.data.canvasData;
@@ -52,7 +52,7 @@ onmessage = function (event) {
 
         render(_options.width, _options.height);
     };
-</code></pre>
+```
 
 When the work is complete the worker posts a message back using [“self”]( http://www.alistapart.com/articles/getoutbindingsituations) - self.postMessage({ canvasData: _canvasData, x: 0, y: 0 });
 

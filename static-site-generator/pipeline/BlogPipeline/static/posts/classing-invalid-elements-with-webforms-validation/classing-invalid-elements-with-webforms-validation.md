@@ -1,4 +1,3 @@
-# Enhancing Web Forms Validation #
 
 *Oh woe. I am working (at work at least) pretty much exclusively in the land of legacy .NET WebForms. This has lead me to build a kind of ["remedial framework"][1]. I haven't had the courage to inflict that on any production system, but writing it has helped me deepen my understanding, particularly around validation and reflection. The following is a little bit more of that.*
 
@@ -24,7 +23,7 @@ After a bit of *noseying* around I *picked* on window.ValidatorValidate as a lik
 
 My first attempt went something like:
 
-<pre><code>
+```
   var original = window.ValidatorValidate;
 
   window.ValidatorValidate = function(){
@@ -34,14 +33,14 @@ My first attempt went something like:
 	// do more stuff like apply a class
 	alert('hey, this seems to work');
   };
-</code></pre>
+```
 
 This seems dodgy... Some googling "override javascript functions" later yielded a [nicer proxy pattern, courtesy of 
 the jQuery API docs][2].
 
 In the end I've settled on the following.  It adds an "error" class to invalid elements. I took a dependency on jQuery as I couldn't be bothered writing addClass/removeClass functions. This function should be run onready, or after webuivalidation.js has loaded.  It's self executing so just drop it in and see what breaks!
 
-<pre><code>
+```
   (function ($) {
     if (window.ValidatorUpdateDisplay) {
         var proxied = window.ValidatorUpdateDisplay;
@@ -64,7 +63,7 @@ In the end I've settled on the following.  It adds an "error" class to invalid e
             var validators = control.Validators;
             var isValid = true;
 
-            for (var i = 0; i &lt; validators.length; i++) {
+            for (var i = 0; i < validators.length; i++) {
                 if (!validators[i].isvalid) {
                     isValid = false;
                     break;
@@ -79,7 +78,7 @@ In the end I've settled on the following.  It adds an "error" class to invalid e
         };
     }
   })(jQuery);
-</code></pre>
+```
 
 
   [1]: https://bitbucket.org/benmcevoy/webforms.framework

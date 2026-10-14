@@ -40,7 +40,7 @@ And for laughs, let's chuck in some <a href="http://dev.w3.org/geo/api/spec-sour
         }
     }
 
-</code></pre>
+```
 
 <p>Veeery budget.  And not very useful.  All we have done is request some XML, and then written that back to the client.</p>
 
@@ -69,7 +69,7 @@ And for laughs, let's chuck in some <a href="http://dev.w3.org/geo/api/spec-sour
             return JsonConvert.SerializeXmlNode(doc);
         }
 
-</code></pre>
+```
 
 <p>Now we are in a position where we can consume that JSON in javascript.  Albeit only from the same domain. And only in Melbourne (hey, guess where I live!).
 Firebug has let me easily inspect the returned JSON and hoover out the path.  It’s <a href="http://www.youtube.com/watch?v=4r7wHMg5Yjg">nasty</a>, but it mostly works.  </p>
@@ -95,6 +95,6 @@ Firebug has let me easily inspect the returned JSON and hoover out the path.  It
 
     &lt;/script&gt;
 
-</code></pre>
+```
 
 <p>That is enough for one day. I think I need to score a google api key next for the geo location stuff.</p>

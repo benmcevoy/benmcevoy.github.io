@@ -2,7 +2,7 @@
 
 <pre class='prettyprint'><code>
      Microsoft.Phone.Net.NetworkInformation.DeviceNetworkInformation.IsNetworkAvailable
-</code></pre>
+```
 
 <p>If you are trying to be a conscientious developer you may only want to make web requests when the phone is connected to a wifi network, for instance in a background agent update.</p>
 
@@ -10,7 +10,7 @@
 
 <pre class='prettyprint'><code>
      DeviceNetworkInformation.IsWiFiEnabled
-</code></pre>
+```
 
 <p>This, however only tells you the user has wifi enabled.  It does not tell you if the phone is connected and using a wifi network. </p>
 
@@ -18,7 +18,7 @@
 
 <pre class='prettyprint'><code>
     NetworkInterface.NetworkInterfaceType == NetworkInterfaceType.Wireless80211
-</code></pre>
+```
 
 <p>Put it all together.</p>
 
@@ -45,7 +45,7 @@
         }
 
 
-</code></pre>
+```
 
 <h3>This thing is slooooow</h3>
 

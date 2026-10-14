@@ -8,7 +8,7 @@ Then when you add a new item in a c# project :
 
 It will create a JavaScript module:  (notice the file name gets replaced into the script!)
 
-<pre><code>
+```
     var helloWorld = (function() {
 
        "use strict";
@@ -26,7 +26,7 @@ It will create a JavaScript module:  (notice the file name gets replaced into th
        };
 
     }());
-</code></pre> 
+``` 
 
 Then you can start doing this
 

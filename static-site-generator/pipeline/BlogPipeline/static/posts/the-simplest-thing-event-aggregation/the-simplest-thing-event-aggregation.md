@@ -2,20 +2,20 @@ I have started looking at some of the event aggregation and messaging patterns a
 
 This is EXPERIMENTAL - the actual implementation has WeakReferences, thread safety etc which are not present here.  However, this is simple and it works (to a degree) and, I think, captures the essence of the PRISM event aggregation code.
 
-## The Aggregator ##
+## The Aggregator 
 
-<pre><code>
+```
 
     public class Aggregator
     {
-        private readonly Dictionary&lt;Type, EventBase&gt; _events;
+        private readonly Dictionary<Type, EventBase> _events;
 
         public Aggregator()
         {
-            _events = new Dictionary&lt;Type, EventBase&gt;();
+            _events = new Dictionary<Type, EventBase>();
         }
 
-        public TEventType Get&lt;TEventType&gt;() where TEventType : EventBase, new()
+        public TEventType Get<TEventType>() where TEventType : EventBase, new()
         {
             EventBase newEvent = null;
 
@@ -29,19 +29,19 @@ This is EXPERIMENTAL - the actual implementation has WeakReferences, thread safe
         }
     }
 
-</code></pre>
+```
 
-## The Event ##
+## The Event 
 
-<pre><code>
+```
 
     public abstract class EventBase
     {
-        private readonly List&lt;Action&lt;object&gt;&gt; _subscriptions;
+        private readonly List<Action<object>> _subscriptions;
 
         public EventBase()
         {
-            _subscriptions = new List&lt;Action&lt;object&gt;&gt;();
+            _subscriptions = new List<Action<object>>();
         }
 
         protected void PublishImpl(object payload)
@@ -52,17 +52,17 @@ This is EXPERIMENTAL - the actual implementation has WeakReferences, thread safe
             }
         }
 
-        protected void SubscribeImpl(Action&lt;object&gt; subscription)
+        protected void SubscribeImpl(Action<object> subscription)
         {
             _subscriptions.Add(subscription);
         }
     }
 
-</code></pre>
+```
 
-## An Event and Usage ##
+## An Event and Usage 
 
-<pre><code>
+```
 
     public class NotificationEvent : EventBase
     {
@@ -71,22 +71,22 @@ This is EXPERIMENTAL - the actual implementation has WeakReferences, thread safe
             base.PublishImpl(message);
         }
 
-        public void Subscribe(Action&lt;string&gt; action)
+        public void Subscribe(Action<string> action)
         {
-            var subscription = new Action&lt;object&gt;((payload) =&gt; action((string)payload));
+            var subscription = new Action<object>((payload) => action((string)payload));
             base.SubscribeImpl(subscription);
         }
     }
 
     ...
 
-    _aggregator.Get&lt;NotificationEvent&gt;().Publish("sending a message...");
+    _aggregator.Get<NotificationEvent>().Publish("sending a message...");
 
-    _aggregator.Get&lt;NotificationEvent&gt;().Subscribe((message) =&gt; { DoSomethingWithTheMessage(message); });
+    _aggregator.Get<NotificationEvent>().Subscribe((message) => { DoSomethingWithTheMessage(message); });
 
     ...
 
-</code></pre>
+```
 
 
 That's it.  My intention is to dissect the GalaSoft MMVM Light Messenger implementation and do a bit of a compare and contrast.  Let's see how I go.

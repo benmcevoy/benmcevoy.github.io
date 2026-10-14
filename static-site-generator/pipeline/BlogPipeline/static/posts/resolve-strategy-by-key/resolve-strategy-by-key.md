@@ -8,7 +8,7 @@ This lets use resolve the strategy through data.  For example, I've been doing a
 
 I guess I'm really just injecting a factory. Sort of.
 
-<pre><code>
+```
 	// create a resolver (or inject one)
     StrategyResolver _strategyResolver = new StrategyResolver<IMyStrategyInterface>();
 	
@@ -19,7 +19,7 @@ I guess I'm really just injecting a factory. Sort of.
     [StrategyFor("news.ycombinator.com")]
     public class HackerNewsStrategy : IMyStrategyInterface
 
-</code></pre>
+```
 
 The resolver scans the calling assembly for implementations of TStrategy.  When any are found they are stashed away in a dictionary.
 
@@ -28,10 +28,10 @@ Later we can retrieve them by the key.  If nothing is found then we will return 
 Whether this is a good implementation or idea or not, I am finding it quite nice to be able to just add a new class implementing my IStrategy, decorate it and... that's it. Done.
 
 The resolver class:
-<pre><code>
-    public class StrategyResolver&lt;TStrategy&gt; 
+```
+    public class StrategyResolver<TStrategy> 
     {
-        private static Dictionary&lt;string, TStrategy&gt; _strategies;
+        private static Dictionary<string, TStrategy> _strategies;
 
         public TStrategy Resolve(string key)
         {
@@ -63,12 +63,12 @@ The resolver class:
 
         private static void Load(Assembly assembly)
         {
-            _strategies = new Dictionary&lt;string, TStrategy&gt;();
+            _strategies = new Dictionary<string, TStrategy>();
 
             var strategyType = typeof(TStrategy);
             var types = assembly
                 .GetTypes()
-                .Where(t =&gt; strategyType.IsAssignableFrom(t) && t.IsClass)
+                .Where(t => strategyType.IsAssignableFrom(t) && t.IsClass)
                 .ToList();
 
             foreach (var type in types)
@@ -86,11 +86,11 @@ The resolver class:
         }
     }
 
-</code></pre>
+```
 
 Each strategy implementation is decorated with the [StrategyFor] attribute.
 
-<pre><code>
+```
     [AttributeUsage(AttributeTargets.Class)]
     public class StrategyForAttribute : Attribute
     {
@@ -102,4 +102,4 @@ Each strategy implementation is decorated with the [StrategyFor] attribute.
         public string Key { get; private set; }
     }
 
-</code></pre>
+```

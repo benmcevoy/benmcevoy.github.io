@@ -4,7 +4,7 @@ As usual and as per the last time - creating a VS template is easy - just hit "E
 
 You can copy this into C:\Users*yourname*\Documents\Visual Studio 2010\Templates\ItemTemplates\
 
-<pre><code>
+```
 (function ($) {
     "use strict";
 
@@ -21,7 +21,7 @@ You can copy this into C:\Users*yourname*\Documents\Visual Studio 2010\Templates
         });
     };
 })(jQuery);
-</pre></code>
+```
 
 Happily my understanding has improved since the last time I wrote a jQuery plugin. What was once mysterious invocation is now clear - we got ourselves a self executing anonymous function that imports the jQuery namespace and extends it.  What could be clearer?  Returning "this" makes it fluent or chainable and we are good.
 

@@ -33,7 +33,7 @@
         &lt;/Label&gt;
     &lt;/Grid&gt;
 &lt;/Window&gt;
-</code></pre>
+```
 
 <p>Note the settings to hide all the chrome and startup the app maximised.  Also the sweet “glow” effect using the hardware accelerated DropShadowEffect.
 In the code behind we just have a timer that updates the Label content every second with the current time. No problem.</p>
@@ -63,7 +63,7 @@ In the code behind we just have a timer that updates the Label content every sec
         {
             this.Dispatcher.Invoke(new Action(SetTime));
         }
-</code></pre>
+```
 
 <p>I did want a nice monospace digital font, and preferably free and legit. A quick google search yielded up the <a href="http://www.dailyfreefonts.com/fonts/info/4774-Digital-7-Mono.html">Digital-7 Mono font</a></p>
 
@@ -102,7 +102,7 @@ In the code behind we just have a timer that updates the Label content every sec
                         break;
 
                // and so on
-</code></pre>
+```
 
 <p>And so on...  <a href="http://scorbs.com/2006/12/21/wpf-screen-saver-template/">I stole this code from here</a></p>
 
@@ -124,6 +124,6 @@ In the code behind we just have a timer that updates the Label content every sec
             Application.Current.Shutdown();
         }
   }
-</code></pre>
+```
 
 <p>Now just build and change the .exe extension.  On my Windows 7 machine I can right click and “Install” the screensaver and I’m pretty sure you can do that on Vista and probably XP as well. Otherwise you may need to copy the .scr and and font file to the %windows%\system32 folder.</p>

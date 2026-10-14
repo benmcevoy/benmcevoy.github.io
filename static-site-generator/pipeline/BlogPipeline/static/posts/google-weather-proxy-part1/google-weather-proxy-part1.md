@@ -9,7 +9,7 @@ And for laughs, let's chuck in some [geo location](http://dev.w3.org/geo/api/spe
 [Check out the demo here](/../projects/google-weather/)
 
 But first, let’s get a handler together and make the request.
-<pre><code>
+```
     public class WeatherProxy : IHttpHandler
     {
         private string _googleWeatherUrl = "http://www.google.com/ig/api?weather={0}";
@@ -37,13 +37,13 @@ But first, let’s get a handler together and make the request.
         }
     }
 
-</code></pre>
+```
 Veeery budget.  And not very useful.  All we have done is request some XML, and then written that back to the client.
 
 OK - JSON. Nuget [NewtonSoft](http://json.codeplex.com/). NewtonSoft provides a [converter](http://stackoverflow.com/questions/814001/json-net-convert-json-string-to-xml-or-xml-to-json-string).  Nice.
 
 Change the mime type and a little refactoring and we should be good.
-<pre><code>
+```
         private void WriteJsonResponse(HttpContext context, string result)
         {
             context.Response.Clear();
@@ -64,30 +64,30 @@ Change the mime type and a little refactoring and we should be good.
             return JsonConvert.SerializeXmlNode(doc);
         }
 
-</code></pre>
+```
 Now we are in a position where we can consume that JSON in javascript.  Albeit only from the same domain. And only in Melbourne (hey, guess where I live!).
 Firebug has let me easily inspect the returned JSON and hoover out the path.  It’s [nasty](http://www.youtube.com/watch?v=4r7wHMg5Yjg), but it mostly works.  
-<pre><code>
-    &lt;h2&gt;How's the weather?&lt;/h2&gt;
+```
+    <h2>How's the weather?</h2>
 
-    &lt;div id="weather"&gt;
-    &lt;/div&gt;
+    <div id="weather">
+    </div>
 
-    &lt;script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"&gt;&lt;/script&gt;
-    &lt;script type="text/javascript"&gt;
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+    <script type="text/javascript">
 
         $().ready(function () {
             $.getJSON('WeatherProxy.ashx', function (data) {
-                $('&lt;p&gt;' + data.xml_api_reply.weather.current_conditions.condition["@data"] + '&lt;/p&gt;').appendTo('#weather');
+                $('<p>' + data.xml_api_reply.weather.current_conditions.condition["@data"] + '</p>').appendTo('#weather');
 
-                $('&lt;p&gt;The temperature is ' + data.xml_api_reply.weather.current_conditions.temp_c["@data"] + '&deg;C&lt;/p&gt;').appendTo('#weather');
+                $('<p>The temperature is ' + data.xml_api_reply.weather.current_conditions.temp_c["@data"] + '&deg;C</p>').appendTo('#weather');
 
-                $('&lt;span&gt;Look&rsquo;s a bit like this: &lt;image src="http://www.google.com/' + data.xml_api_reply.weather.current_conditions.icon["@data"] + '"&gt;&lt;/image&gt;&lt;/span&gt;').appendTo('#weather');
+                $('<span>Look&rsquo;s a bit like this: <image src="http://www.google.com/' + data.xml_api_reply.weather.current_conditions.icon["@data"] + '"></image></span>').appendTo('#weather');
             });
         });
 
-    &lt;/script&gt;
+    </script>
 
-</code></pre>
+```
 
 That is enough for one day. I think I need to score a google api key next for the geo location stuff.

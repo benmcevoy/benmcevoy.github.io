@@ -12,7 +12,7 @@
 
 <pre class='prettyprint'><code>
 &lt;asp:PlaceHolder runat="server" ID="ScriptsPlaceHolder"&gt;&lt;/asp:PlaceHolder&gt;
-</code></pre>
+```
 
 <p>In the user control we have a little javascript snippet, prehaps to hook up a click event. Who knows.</p>
 
@@ -27,7 +27,7 @@
            &lt;/script&gt;        
         &lt;/content&gt;
     &lt;/my:RenderPlaceHolder&gt;
-</code></pre>
+```
 
 <p>The RenderPlaceHolder control will look up into the page and find the corresponding PlaceHolder control, dumping it's content into it.</p>
 
@@ -50,4 +50,4 @@
         public string PlaceHolderId { get; set; }
     }
 
-</code></pre>
+```

@@ -56,7 +56,7 @@ Return an empty model with a "loading" message for the summary and go from there
             // Remove this handler since it is no longer needed
             RootFrame.Navigated -= CompleteInitializePhoneApplication;
         }
-</code></pre>
+```
 
 <p>This sets up a callback for Navigation complete, and sets the RootVisual for the app to PhoneApplicationFrame.</p>
 
@@ -79,7 +79,7 @@ Return an empty model with a "loading" message for the summary and go from there
             this.SetValue(MainPage.DataContextProperty, WeatherService.Current.WeatherViewModel);
         }
     }
-</code></pre>
+```
 
 <p>As you can see, I've chucked in an application service to handle refreshing the view model as the cache expires.  If the model changes then the view model should update automatically to reflect this.  So far all the service does is return a mock IWeatherViewModel.  This will let me set up the view and the bindings and make the pretty.</p>
 

@@ -19,14 +19,14 @@
 <pre class='prettyprint'><code>&lt;!--[if IEMobile]&gt;
 &lt;p>Welcome to Internet Explorer Mobile.&lt;/p&gt;
 &lt;![endif]--&gt;
-</code></pre>
+```
 
 <p>(Un)fortunately this has no effect.  Much googling later and we discover WinMoPho 7.5, with its IE9 based browser, does not support this.  But it does support media queries:</p>
 
 <pre class='prettyprint'><code>&lt;link rel="stylesheet" type="text/css"
   media="screen and (max-device-width: 480px)"
   href="mobile.css" /&gt;
-</code></pre>
+```
 
 <p>And my mobile.css styles suddenly kick in.  Or at least, some of them do.  WinMoPho is still scaling the page and pretending it's 1024 by something.</p>
 
@@ -36,7 +36,7 @@
 &lt;link rel="stylesheet" type="text/css" 
     media="screen and (device-width: 480px)" 
     href="mobile.css" /&gt;
-</code></pre>
+```
 
 <p>And lo! it is working as expected.  And quite probably on an iPhone too!</p>
 

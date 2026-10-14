@@ -80,7 +80,7 @@
             return (_oldVersionNumber < this.VersionNumber);
         }
     }
-</code></pre>
+```
 
 <h3>Version Numbers</h3>
 
@@ -106,13 +106,13 @@
 
         public int VersionNumber { get; set; }
     }
-</code></pre>
+```
 
 <p>The app's version is represented as an Assembly attribute, in the AssemblyInfo.cs class of the Upgrade assembly.</p>
 
 <pre class='prettyprint'><code>
     [assembly: Radio7.Phone.Version.Version(1)]
-</code></pre>
+```
 
 <p>Each Upgrade class with have a version as well.  This represents the version this class will upgrade the app to.</p>
 
@@ -125,7 +125,7 @@
             // do what you do best
         }
     }
-</code></pre>
+```
 
 <p>When an upgrade is complete the new version number is committed to isolated storage.  This allows us to know if updates have been applied and avoid continuously attempting to rerun them.</p>
 
@@ -157,7 +157,7 @@
             // handle your problems
         }
     }
-</code></pre>
+```
 
 <p>Here we pass a reference to the assembly that contains the upgrade code.</p>
 

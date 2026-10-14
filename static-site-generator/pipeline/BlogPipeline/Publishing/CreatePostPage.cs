@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using Pipes;
+﻿using Pipes;
 
 namespace BlogPipeline.Publishing
 {

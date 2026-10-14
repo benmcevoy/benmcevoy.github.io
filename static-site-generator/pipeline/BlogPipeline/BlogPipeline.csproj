@@ -13,6 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Markdig" Version="1.4.0" />
+    <PackageReference Include="Markdown.ColorCode" Version="3.0.1" />
     <PackageReference Include="System.ServiceModel.Syndication" Version="10.0.2" />
   </ItemGroup>
 
@@ -24,8 +26,7 @@
   <ItemGroup>
     <ContentFiles Include="static\**\*" />
   </ItemGroup>
-  <Copy SourceFiles="@(ContentFiles)"
-        DestinationFiles="@(ContentFiles->'$(OutDir)static\%(RecursiveDir)%(Filename)%(Extension)')" />
+  <Copy SourceFiles="@(ContentFiles)" DestinationFiles="@(ContentFiles->'$(OutDir)static\%(RecursiveDir)%(Filename)%(Extension)')" />
 </Target>
 
 </Project>

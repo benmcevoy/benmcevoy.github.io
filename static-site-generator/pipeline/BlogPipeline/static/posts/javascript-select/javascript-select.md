@@ -4,7 +4,7 @@ And that sparked me to thinkings: "If I can apply a function to every value in a
 
 And the answer is yes, yes you can:
 
-<pre><code>
+```
   var select = function (property, array) {
        var result = { p: property, output: [] };
        __select.apply(result, array);
@@ -18,7 +18,7 @@ And the answer is yes, yes you can:
            }
        }
    };
-</code></pre>
+```
 
 And I was very chuffed and turned round to my co-worker David to show him.
 
@@ -26,7 +26,7 @@ And I was very chuffed and turned round to my co-worker David to show him.
 
 Oh. Yeah.  No need to complicate things.  Damn.  Not so chuffed anymore.  Still this is a handy little function.   The poor mans LINQ select, allowing you to "project" a property out of an array of objects.
 
-<pre><code>
+```
    var select = function (property, array) {
        var result [];
 
@@ -38,11 +38,11 @@ Oh. Yeah.  No need to complicate things.  Damn.  Not so chuffed anymore.  Still 
 
        return result;
    };
-</code></pre>
+```
 
 And to solve my original problem of finding the max value:
 
-<pre><code>
+```
     var orders = [
 	    { orderNo: 1, orderValue:  123 },
     	{ orderNo: 1, orderValue:  321 },
@@ -52,7 +52,7 @@ And to solve my original problem of finding the max value:
     var orderValues = select(‘orderValue’, orders);
     // returns [123, 321, 456]
     Math.max.apply(Math, orderValues);
-</code></pre>
+```
 
 There are of course plenty of "real" [LINQ](https://jslinq.codeplex.com/) for [JavaScript](https://linqjs.codeplex.com/) and [variations](https://code.google.com/p/arrayzing/) about. Cheers.
 

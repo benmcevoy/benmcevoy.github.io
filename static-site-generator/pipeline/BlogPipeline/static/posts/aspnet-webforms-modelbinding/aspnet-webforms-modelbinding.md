@@ -1,13 +1,13 @@
 I'm stuck in WebForms land at the moment.  Using asp:Repeaters to render a collection of objects, repeater is bound to an collection of viewmodels in the code behind (datasource/databind):
 
-<pre><code>
-      &lt;asp:Repeater runat="server"&gt;
-         &lt;ItemTemplate&gt;
-            &lt;label&gt;Product&lt;/label&gt;
-            &lt;input type="text" name="product[&lt;%#Container.ItemIndex %&gt;].Name" value="AsProductViewModel(Container).Name" /&gt
-         &lt;/ItemTemplate&gt;
-      &lt;/asp:Repeater&gt;
-</code></pre>
+```
+      <asp:Repeater runat="server">
+         <ItemTemplate>
+            <label>Product</label>
+            <input type="text" name="product[<%#Container.ItemIndex %>].Name" value="AsProductViewModel(Container).Name" /&gt
+         </ItemTemplate>
+      </asp:Repeater>
+```
 
 I *really* don't like OnItemBound and all that crap. Nor FindControl or any of that.
 
@@ -29,11 +29,11 @@ Not too sure if this or something like this will see production, but good fun.  
 
 I believe WebForms 4.5 has something like this built in. Did I mention I'm stuck in .NET 2.0?  And surely AutoMapper does this?
 
-<pre><code>
-    public static IEnumerable&lt;T&gt; Bind&lt;T&gt;(string prefix, NameValueCollection form)
+```
+    public static IEnumerable<T> Bind<T>(string prefix, NameValueCollection form)
            where T : new()
         {
-            var results = new List&lt;T&gt;();
+            var results = new List<T>();
             var properties = new T().GetType().GetProperties();
             int index = -1;
             var indexRegex = new Regex(string.Format(@"^{0}\[(\d?)\].*$", prefix));
@@ -99,4 +99,4 @@ I believe WebForms 4.5 has something like this built in. Did I mention I'm stuck
 
             return value;
         }
-</code></pre>
+```

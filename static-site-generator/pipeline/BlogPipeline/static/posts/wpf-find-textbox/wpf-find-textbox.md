@@ -4,16 +4,16 @@ Unfortunately I like playing too much, I guess I like seeing the hours of the da
 
 Firstly – KeyBindings:
 
-<pre><code>
-    &lt;Window.InputBindings&gt;
-        &lt;KeyBinding Command="{Binding NextDayCommand}" Gesture="ALT+RIGHT"/&gt;
-        &lt;KeyBinding Command="{Binding PreviousDayCommand}" Gesture="ALT+LEFT"/&gt;
-        &lt;KeyBinding Command="{Binding SaveCommand}" Gesture="CTRL+S"/&gt;
-        &lt;KeyBinding Command="{Binding SyncCommand}" Gesture="F5"/&gt;
-        &lt;KeyBinding Command="{Binding FindNextCommand}" Gesture="F3"/&gt;
-        &lt;KeyBinding Command="{Binding FindCommand}" Gesture="CTRL+F"/&gt;
-    &lt;/Window.InputBindings&gt;
-</code></pre>
+```
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding NextDayCommand}" Gesture="ALT+RIGHT"/>
+        <KeyBinding Command="{Binding PreviousDayCommand}" Gesture="ALT+LEFT"/>
+        <KeyBinding Command="{Binding SaveCommand}" Gesture="CTRL+S"/>
+        <KeyBinding Command="{Binding SyncCommand}" Gesture="F5"/>
+        <KeyBinding Command="{Binding FindNextCommand}" Gesture="F3"/>
+        <KeyBinding Command="{Binding FindCommand}" Gesture="CTRL+F"/>
+    </Window.InputBindings>
+```
 
 So you can quickly see what I’ve been upto.  InputBindings are sweet.  WPF allows gestures, which can include key presses, mouse movements and events and touch events.  Very sci-fi.
 
@@ -23,7 +23,7 @@ The Select method jumped out at me.  That was enough to kick off a very budget i
 
 I give you the FindTextBox control:
 
-<pre><code>
+```
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -74,7 +74,7 @@ namespace FindTextBox
     }
 }
 
-</code></pre>
+```
 
 
 

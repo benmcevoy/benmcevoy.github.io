@@ -1,4 +1,3 @@
-# CSV the file format that would not die #
 
 The comma seperated value format is ubiquitous, simple and yet at the same time quite a massive pain to work with.  The lack of a standard, even to the point of "comma" meaning a comma, tab or any old delimiter, or how a record can have varying columns, or the use of the *reserved* delimiter as data makes parsing CSV fun fun fun! FUN!
 
@@ -28,23 +27,22 @@ I'm pretty pleased to say I managed to ignore all convential wisdom, squeezing s
 
 In some ways I've replicated [LINQ to CSV](http://www.codeproject.com/Articles/25133/LINQ-to-CSV-library), but without the tight coupling and attribute decoration.  And probably also without the functionality, testing and performance, but that's a different issue.
 
-<pre>
-<code>
+```
 public static class CsvMapper
     {
-        /// &lt;summary&gt;
+        /// <summary>
         /// Map CSV records to an object
-        /// &lt;/summary&gt;
-        /// &lt;typeparam name="T"&gt;The type to map&lt;/typeparam&gt;
-        /// &lt;param name="mapping"&gt;A map of Property names to the CSV column ordinal&lt;/param&gt;
-        /// &lt;param name="csv"&gt;The raw CSV&lt;/param&gt;
-        /// &lt;returns&gt;&lt;/returns&gt;
-        public static IEnumerable&lt;T&gt; MapCsvTo&lt;T&gt;(Dictionary&lt;string, int&gt; mapping, string csv, bool skipFirstRow)
+        /// </summary>
+        /// <typeparam name="T">The type to map</typeparam>
+        /// <param name="mapping">A map of Property names to the CSV column ordinal</param>
+        /// <param name="csv">The raw CSV</param>
+        /// <returns></returns>
+        public static IEnumerable<T> MapCsvTo<T>(Dictionary<string, int> mapping, string csv, bool skipFirstRow)
             where T : new()
         {
             var properties = new T().GetType().GetProperties();
             var propertyMap = GetPropertyMap(properties);
-            var results = new List&lt;T&gt;();
+            var results = new List<T>();
             var records = Regex.Split(csv, "\r\n");
 
             foreach (var row in records)
@@ -81,9 +79,9 @@ public static class CsvMapper
             return results;
         }
 
-        private static Dictionary&lt;string, PropertyInfo&gt; GetPropertyMap(PropertyInfo[] properties)
+        private static Dictionary<string, PropertyInfo> GetPropertyMap(PropertyInfo[] properties)
         {
-            var propertyMap = new Dictionary&lt;string, PropertyInfo&gt;();
+            var propertyMap = new Dictionary<string, PropertyInfo>();
 
             foreach (var property in properties)
             {
@@ -118,11 +116,11 @@ public static class CsvMapper
         // might work out OK if combined with a stream
         private static string[] ParseRow(string row)
         {
-            var results = new List&lt;string&gt;();
+            var results = new List<string>();
 
             int position = 0;
 
-            while (position &lt; row.Length)
+            while (position < row.Length)
             {
                 string value;
 
@@ -134,7 +132,7 @@ public static class CsvMapper
 
                     // Parse quoted value
                     int start = position;
-                    while (position &lt; row.Length)
+                    while (position < row.Length)
                     {
                         // Test for quote character
                         if (row[position] == '"')
@@ -144,7 +142,7 @@ public static class CsvMapper
 
                             // If two quotes together, keep one
                             // Otherwise, indicates end of value
-                            if (position &gt;= row.Length || row[position] != '"')
+                            if (position >= row.Length || row[position] != '"')
                             {
                                 position--;
                                 break;
@@ -160,7 +158,7 @@ public static class CsvMapper
                     // Parse unquoted value
                     int start = position;
 
-                    while (position &lt; row.Length && row[position] != ',')
+                    while (position < row.Length && row[position] != ',')
                     {
                         position++;
                     }
@@ -171,11 +169,11 @@ public static class CsvMapper
                 results.Add(value);
 
                 // Eat up to and including next comma
-                while (position &lt; row.Length && row[position] != ',')
+                while (position < row.Length && row[position] != ',')
                 {
                     position++;
                 }
-                if (position &lt; row.Length)
+                if (position < row.Length)
                 {
                     position++;
                 }
@@ -184,5 +182,4 @@ public static class CsvMapper
             return results.ToArray();
         }
     }
-</code>
-</pre>
+```

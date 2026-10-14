@@ -4,7 +4,7 @@ I do most of my online reading via RSS and Google Reader. So I though it would b
 
 We need to POST a bookmark or GET the RSS feed.  This is quick and dirty - a handler:
 
-<pre><code>
+```
  public class Bookmarks : IHttpHandler
     {
         public void ProcessRequest(HttpContext context)
@@ -98,7 +98,7 @@ We need to POST a bookmark or GET the RSS feed.  This is quick and dirty - a han
                 return false;
             }
         }
-</code></pre>
+```
 
 [RSS creation taken from here][2]
 
@@ -106,7 +106,7 @@ The repository just serialize to and from disk. The list is ordered by date and 
 
 The javascriptlet just POSTs the current location.href and document.title, something like this, but minified:
 
-<pre><code>
+```
 var http = new XMLHttpRequest();
 var url = "http://www.theinternets.com/bookmarks.ashx";
 var params = "bm=" + location.href + "&t=" + document.title;
@@ -117,7 +117,7 @@ http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 http.setRequestHeader("Content-length", params.length);
 http.setRequestHeader("Connection", "close");
 http.send(params);
-</code></pre>
+```
 
 [Mostly nicked from here][3]
 

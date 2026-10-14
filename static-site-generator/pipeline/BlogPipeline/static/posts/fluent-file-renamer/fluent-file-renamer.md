@@ -4,16 +4,16 @@ A fluent API is one where we always return the same instance, allowing chaining 
 
 e.g.:
 
-<pre><code>
+```
     var renamer = new Renamer("my dODgy file Name.leet.720p.s01E02.mkv")
                 .ChangeExtension("avi")
                 .MakeTitle()
                 .Replace("leet", "");
-</code></pre>
+```
 
 The esssence of it is, always return **this** or an object of the same type.
 
-<pre><code>
+```
     public class Renamer
     {
         public FileName FileName { get; set; }
@@ -60,7 +60,7 @@ The esssence of it is, always return **this** or an object of the same type.
             return this;
         }
     }
-</code></pre>
+```
 
 I had intentions of providing a little WPF app over the top of this to open a directory and clean up all the file names therein.  The user would be able to add multiple rules, provide any arguments required and chain them all up for processing.
 

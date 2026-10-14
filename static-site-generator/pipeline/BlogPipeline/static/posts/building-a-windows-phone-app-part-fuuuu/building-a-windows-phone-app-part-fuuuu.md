@@ -1,6 +1,4 @@
-# Building a Windows Phone App Part FUUUU!!!! #
-
-## I Give Up ##
+## I Give Up
 
 I really feel quite despondent, like I've failed.  It just isn't possible to use the BOM FTP.
 
@@ -10,7 +8,7 @@ In passive we create a control channel, in which we connect, log in, and send co
 
 The FTP server responds with the message:
 
-227 Entering Passive Mode (134,178,63,130,233,247)
+`227 Entering Passive Mode (134,178,63,130,233,247)`
 
 This provides an IP Address (134.178.63.130) and port (233*256 + 247).  We open a second connection to this server port.  When we send a RETR message, for instance, the server streams the file back on this transmission port.
 
@@ -26,7 +24,7 @@ Unfortunately the rest of the internet cares not one hoot about Windows Phone 7 
 
 The logic for the port restriction is to make it easier for admins to lock down Silverlight apps and the Phone.  But not much use to me.
 
-## What about Active? ##
+## What about Active?
 
 Ah-ha! I think, How about active?
 
@@ -36,7 +34,7 @@ Only the socket on the Phone has no Listen abilities.
 
 Which again, is reasonable, from a security perspective.   More reasonable than the arbitrary port restrictions on outgoing traffic.
 
-## So Fuuuu!!! ##
+## So Fuuuu!!! 
 
 It's really depressing.  I can connect to the FTP server, list files and directories, change directory, hell even request a file.
 
@@ -46,7 +44,7 @@ It just isn't allowed.  Unless you elevate to trusted. Which isn't allow on the 
 
 So I give up on this idea.  I can't (won't) provide a proxy.  If this worked out OK I'd want to extend it to pull the weather based on location, or for multiple locations.  Then I have to start proxying large amounts of the BOM's copyright data. So no go.
 
-## Sign up  at Marketplace ##
+## Sign up  at Marketplace 
 
 So what the hell, I went and signed up at the market place.  I had been given a free 12 month subscription, and registration unlocks the phone to allow app deployment locally.
 
@@ -54,7 +52,7 @@ There are some things to be aware of when registering.  You are signing up for X
 
 If you wanna get paid you also have to fill out a bunch of forms to tell the United States tax office not to tax your income.  It's obviously not an Australian marketplace as such, but a US one.
 
-## Deploy to a Real Phone ##
+## Deploy to a Real Phone 
 
 Once signed up your apphub account will be associated with a windows live ID.  You can then use the Windows Phone Developer Registration tool from the 7.1 SDK to register the phone as developer unlocked.
 
@@ -73,7 +71,7 @@ Now we can use the Application Deployment tool form the SDK to deploy the XAP to
 
 Just that I have no working application and I am giving up for the time being.
 
-## The End ##
+## The End 
 
 I need some new ideas.  This time I'll:
 

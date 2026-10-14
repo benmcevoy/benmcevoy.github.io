@@ -1,5 +1,3 @@
-#Clustering Results on the Windows Phone Bing Map Control#
-
 I have been having fun today with the Bing Map Control for Silverlight/Windows Phone 7.
 
 Having knocked up a couple of apps that use the map control, I sat down and refactored some common functionality out of them, and implemented a nice Clusterer, that will group points on the map together if they are within certain thresholds.
@@ -8,13 +6,13 @@ There are a few implementations of clustering around, mainly for the AJAX contro
 
 [Get the all the code and more][1] 
 
-##Clustering Location Items##
+## Clustering Location Items
 
 ![alt text][2] ![alt text][3] ![alt text][4] ![alt text][5]
 
 For each point on the map I am interested in I have a model item that implements ILocationItem
 
-<pre><code>
+```
     public interface ILocationItem
     {
         int Id { get;  }
@@ -25,25 +23,24 @@ For each point on the map I am interested in I have a model item that implements
         
         string Name { get;  }
     }
-</code></pre>
+```
 
 In order to cluster these items I provide the set of location items, the geographic boundary we are interested in (the map boundary) and some threshold to control the level of clustering:
 
-<pre><code>
+```
     public interface ILocationItemClusterer
     {
-        IEnumerable&lt;ClusteredLocationItem&gt; Cluster(IEnumerable&lt;ILocationItem&gt; items, 
+        IEnumerable<ClusteredLocationItem> Cluster(IEnumerable<ILocationItem> items, 
 			LocationRect boundingRectangle, double threshold);
     }
-</code></pre>
+```
 
 In any algorithm the first thing I'd want to do is discard points that are outside that boundary.  Other implementations might retain all points, some might calcuate the cluster for a zoom level and cache it and so on.  My implementation reclusters each time, so I guess there is some room for improvement there.
 
 I have a nice way to filter the items, taking advantage of yield:
 
-<pre>
-<code>
-        public static IEnumerable&lt;ILocationItem&gt; IsInBoundary(this IEnumerable&lt;ILocationItem&gt; items, LocationRect boundary)
+```
+        public static IEnumerable<ILocationItem> IsInBoundary(this IEnumerable<ILocationItem> items, LocationRect boundary)
         {
             foreach (ILocationItem item in items)
             {
@@ -53,16 +50,14 @@ I have a nice way to filter the items, taking advantage of yield:
                 }
             }
         }
-</code>
-</pre>
-
+```
 So only those items that intersect with the map boundary will be processed.
 
 Incidently, each item has an arbitrary LocationRect, or area. As we are essentially dealing with points on a map I have just given them a small area, of maybe a couple of square meters.  It's just to ensure they have a non-zero area.
 
 We can group or cluster these location items together inside a ClusteredLocationItem
 
-<pre><code>
+```
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,7 +71,7 @@ namespace Radio7.Phone.Common.Location
         public ClusteredLocationItem(map.LocationRect sector)
         {
             SectorLocationRect = sector;
-            _locationItems = new List&lt;ILocationItem&gt;();
+            _locationItems = new List<ILocationItem>();
         }
 
         public void AddLocationItem(ILocationItem item)
@@ -99,8 +94,8 @@ namespace Radio7.Phone.Common.Location
 
         public map.LocationRect SectorLocationRect { get; private set; }
 
-        private List&lt;ILocationItem&gt; _locationItems;
-        public IEnumerable&lt;ILocationItem&gt; LocationItems { get { return _locationItems; } }
+        private List<ILocationItem> _locationItems;
+        public IEnumerable<ILocationItem> LocationItems { get { return _locationItems; } }
 
         public int Count { get { return LocationItems.Count(); } }
 
@@ -140,11 +135,11 @@ namespace Radio7.Phone.Common.Location
         }
     }
 }
-</code></pre>
+```
 
 A ClusteredLocationItem is basically another ILocationItem, representing where on the map the cluster is.  It also contains the collection of items that comprise the cluster. If the cluster only has a single item then it will behave like it is that single item.
 
-##Grid Clustering##
+## Grid Clustering
 
 The most common, and most obvious algorithm is to use a regular grid over the map.  If one or more points are in a common cell of the grid then they will be clustered.
 
@@ -152,17 +147,17 @@ As the map pans and zooms however, the number of cells in the cluster will be mo
 
 Firstly we split our bounding rectangle up into a grid of cells, or sectors.
 
-<pre><code>
-        private IEnumerable&lt;LocationRect&gt; GetSectorRects(LocationRect boundingRectangle, double sectorOrdinal)
+```
+        private IEnumerable<LocationRect> GetSectorRects(LocationRect boundingRectangle, double sectorOrdinal)
         {
-            var sectors = new List&lt;LocationRect&gt;();
+            var sectors = new List<LocationRect>();
 
             var strideX = (boundingRectangle.West - boundingRectangle.East) / sectorOrdinal;
             var strideY = (boundingRectangle.North - boundingRectangle.South) / sectorOrdinal;
 
-            for (int x = 0; x &lt; sectorOrdinal; x++)
+            for (int x = 0; x < sectorOrdinal; x++)
             {
-                for (int y = 0; y &lt; sectorOrdinal; y++)
+                for (int y = 0; y < sectorOrdinal; y++)
                 {
                     sectors.Add(new LocationRect(
                             boundingRectangle.North - (y * strideY),
@@ -174,7 +169,7 @@ Firstly we split our bounding rectangle up into a grid of cells, or sectors.
 
             return sectors;
         }
-</code></pre>
+```
 
 Here the sectorOrdinal indicates the number of cells to create - e.g. 10 by 10.  This splits the map up in to sectorOrdinal^2 cells.
 
@@ -184,10 +179,10 @@ I guess that's another item on the TODO list :)
 
 Now that we have our sectors we need to check if a point belongs to one and start actually clustering results.
 
-<pre><code>
-        public IEnumerable&lt;ClusteredLocationItem&gt; Cluster(IEnumerable&lt;ILocationItem&gt; items, LocationRect boundingRectangle, double sectorOrdinal)
+```
+        public IEnumerable<ClusteredLocationItem> Cluster(IEnumerable<ILocationItem> items, LocationRect boundingRectangle, double sectorOrdinal)
         {
-            var clusters = new List&lt;ClusteredLocationItem&gt;();
+            var clusters = new List<ClusteredLocationItem>();
             var sectorRects = GetSectorRects(boundingRectangle, sectorOrdinal);
             
             foreach (var item in items.IsInBoundary(boundingRectangle))
@@ -206,7 +201,7 @@ Now that we have our sectors we need to check if a point belongs to one and star
             return clusters;
         }
 
-        private ClusteredLocationItem GetClusterForThisSector(List&lt;ClusteredLocationItem&gt; clusters, LocationRect sector)
+        private ClusteredLocationItem GetClusterForThisSector(List<ClusteredLocationItem> clusters, LocationRect sector)
         {
             foreach (var cluster in clusters)
             {
@@ -222,11 +217,11 @@ Now that we have our sectors we need to check if a point belongs to one and star
 
             return newCluster;
         }
-</code></pre>
+```
 
 Once we find the sector the item belongs to we add it to a cluster, creating one if need be, then move on to the next item.
 
-##Distance Clustering##
+## Distance Clustering
 
 As clustering on a grid produced some unpleasant effects when paning and zooming I looked for alteratives.
 
@@ -234,7 +229,7 @@ We can cluster on distance instead.  For location item we are interested in we f
 
 This algorithm turns out be simpler, faster and produces more aesthetically pleasing results.
 
-<pre><code>
+```
 using System;
 using System.Collections.Generic;
 using Microsoft.Phone.Controls.Maps;
@@ -243,10 +238,10 @@ namespace Radio7.Phone.Common.Location
 {
     public class LocationItemDistanceClusterer : ILocationItemClusterer
     {
-        public IEnumerable&lt;ClusteredLocationItem&gt; Cluster(IEnumerable&lt;ILocationItem&gt; items, LocationRect boundingRectangle, double zoomLevel)
+        public IEnumerable<ClusteredLocationItem> Cluster(IEnumerable<ILocationItem> items, LocationRect boundingRectangle, double zoomLevel)
         {
             var threshold = 8192 / Math.Exp(zoomLevel);
-            var clusters = new List&lt;ClusteredLocationItem&gt;();
+            var clusters = new List<ClusteredLocationItem>();
 
             foreach (var item in items.IsInBoundary(boundingRectangle))
             {
@@ -257,7 +252,7 @@ namespace Radio7.Phone.Common.Location
             return clusters;
         }
 
-        private ClusteredLocationItem GetClusterForThisPoint(List&lt;ClusteredLocationItem&gt; clusters, LocationRect locationRect, double threshold)
+        private ClusteredLocationItem GetClusterForThisPoint(List<ClusteredLocationItem> clusters, LocationRect locationRect, double threshold)
         {
             foreach (var cluster in clusters)
             {
@@ -277,21 +272,21 @@ namespace Radio7.Phone.Common.Location
         }
     }
 }
-</code></pre>
+```
 
 The threshold value of var threshold = 8192 / Math.Exp(zoomLevel) is something I arrived at by trial and error.  It works pretty good on the phone in portrait mode, I would suggest you test it with different resolutions and layouts.
 
 
-##More Betterer Grid Clusterer##
+## More Betterer Grid Clusterer
 
 After building these two implementations it occoured to me that a better grid clusterer is most likely.  By aligning the grid to the underlying co-ordinate system - the latitude and longitude - the cells would move in sync with the map.  Changing the zoom level would change the size of the cells, but panning should look good.  To be fair I'm pretty happy with the distance Clusterer for now, so I'll leave this for another day.
 
-##Using the Clusterer##
+## Using the Clusterer
 
-<pre><code>
+```
        private void UpdateMap()
         {
-            var clusters = _clusterer.Cluster(_repository.Get().Cast&lt;ILocationItem&gt;(), MapControl.BoundingRectangle, MapControl.ZoomLevel);
+            var clusters = _clusterer.Cluster(_repository.Get().Cast<ILocationItem>(), MapControl.BoundingRectangle, MapControl.ZoomLevel);
 
             _pinLayer.Children.Clear();
 
@@ -305,7 +300,7 @@ After building these two implementations it occoured to me that a better grid cl
                     p.Name = string.Format("pin_{0}", cluster.Id);
 
                     p.Tag = cluster.LocationItems.First() as Shop;
-                    p.Tap += new EventHandler&lt;GestureEventArgs&gt;(PinTap);
+                    p.Tap += new EventHandler<GestureEventArgs>(PinTap);
 
                     _pinLayer.AddChild(p, cluster.Location, PositionOrigin.Center);
                 }
@@ -323,7 +318,7 @@ After building these two implementations it occoured to me that a better grid cl
 
             UpdateLabel();
         }
-</code></pre>
+```
 
 
   [1]: https://bitbucket.org/benmcevoy/radio7.phone.common

@@ -25,7 +25,7 @@
 
         string Name { get;  }
     }
-</code></pre>
+```
 
 In order to cluster these items I provide the set of location items, the geographic boundary we are interested in (the map boundary) and some threshold to control the level of clustering:
 
@@ -35,7 +35,7 @@ In order to cluster these items I provide the set of location items, the geograp
         IEnumerable&lt;ClusteredLocationItem&gt; Cluster(IEnumerable&lt;ILocationItem&gt; items, 
     		LocationRect boundingRectangle, double threshold);
     }
-</code></pre>
+```
 
 In any algorithm the first thing I'd want to do is discard points that are outside that boundary.  Other implementations might retain all points, some might calcuate the cluster for a zoom level and cache it and so on.  My implementation reclusters each time, so I guess there is some room for improvement there.
 
@@ -140,7 +140,7 @@ namespace Radio7.Phone.Common.Location
         }
     }
 }
-</code></pre>
+```
 
 <p>A ClusteredLocationItem is basically another ILocationItem, representing where on the map the cluster is.  It also contains the collection of items that comprise the cluster. If the cluster only has a single item then it will behave like it is that single item.</p>
 
@@ -174,7 +174,7 @@ namespace Radio7.Phone.Common.Location
 
             return sectors;
         }
-</code></pre>
+```
 
 <p>Here the sectorOrdinal indicates the number of cells to create - e.g. 10 by 10.  This splits the map up in to sectorOrdinal^2 cells.</p>
 
@@ -222,7 +222,7 @@ namespace Radio7.Phone.Common.Location
 
             return newCluster;
         }
-</code></pre>
+```
 
 <p>Once we find the sector the item belongs to we add it to a cluster, creating one if need be, then move on to the next item.</p>
 
@@ -277,7 +277,7 @@ namespace Radio7.Phone.Common.Location
         }
     }
 }
-</code></pre>
+```
 
 <p>The threshold value of var threshold = 8192 / Math.Exp(zoomLevel) is something I arrived at by trial and error.  It works pretty good on the phone in portrait mode, I would suggest you test it with different resolutions and layouts.</p>
 
@@ -322,4 +322,4 @@ namespace Radio7.Phone.Common.Location
 
             UpdateLabel();
         }
-</code></pre>
+```

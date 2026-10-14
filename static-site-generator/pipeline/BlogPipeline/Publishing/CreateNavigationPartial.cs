@@ -44,17 +44,17 @@ namespace BlogPipeline.Publishing
 
         private const string Inner = @"<li><a href=""{0}/"">{1}</a></li>";
 
-        private const string Outer = @"<div class=""col-md-4"">
-                <div class=""well"">
+        private const string Outer = @"
+                <div>
                     <h4>{0}</h4>
-                    <div class=""row"">
-                        <div class=""col-lg-12"">
-                            <ul class=""list-unstyled"">
+                    <div>
+                        <div>
+                            <ul>
                                 {1}
                             </ul>
                         </div>
                     </div>
                 </div>
-            </div>";
+            ";
     }
 }

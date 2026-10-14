@@ -10,7 +10,7 @@
 
 <pre class='prettyprint'><code>
     var threshold = 8192 / Math.Exp(zoomLevel); 
-</code></pre>
+```
 
 <p>The 8192 term seemed to fix things up a bit, and what the hey it's a nice round number. In binary. So that was as good a reason to use it as any :)</p>
 
@@ -38,7 +38,7 @@
 
 <pre class='prettyprint'><code>
     var threshold = 560 * Math.Exp(-0.854 * zoomLevel); 
-</code></pre>
+```
 
 <p>And life was good for the rest of the afternoon.</p>
 
@@ -76,7 +76,7 @@
 
 <pre class='prettyprint'><code>
     var threshold = Math.Pow(2f, 16f - zoomLevel) / 1113.2;
-</code></pre>
+```
 
 <p>Which lets me define that at zoom level 16 my area will be 1/1113.2 degrees long or</p>
 
@@ -120,4 +120,4 @@
         return 150f * Math.Pow(2f, 16f - zoomLevel);
     }
 
-</code></pre>
+```

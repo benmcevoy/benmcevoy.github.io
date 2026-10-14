@@ -1,19 +1,17 @@
-# Optimising C# #
-
 Premature optimisation man! YAGNI man!
 
 Well sometimes you do need it.  I've been writing a little game on the windows phone and I needed MORE POWER! Trying to get more explosions on screen at once.
 
-## Accessing a member ##
+## Accessing a member 
 
 Now someone on the internet had said that accessing a class member was slow.
 
-<pre><code>
+```
 	private float _member;
 	
 	// do something with that class member
 	_member++;
-</code></pre>
+```
 
 With a release compiled console app, accessing that member 100000000 times:
 
@@ -22,11 +20,11 @@ With a release compiled console app, accessing that member 100000000 times:
 
 OK, so that's our base line.
 
-## Inlining member access ##
+## Inlining member access 
 
 So the wisdom is to inline that reference:
 
-<pre><code>
+```
 	private float _member;
 	
 	// inline it
@@ -34,7 +32,7 @@ So the wisdom is to inline that reference:
 
 	// do something with that local reference
 	m++;
-</code></pre>
+```
 
 and we get....
 
@@ -56,17 +54,17 @@ And, I'd like to point out, running on a REAL phone the results are similarly go
 - Member reference about 3.51 seconds
 - Inline reference **about 2.12 seconds!**
 
-## Accessing a property ##
+## Accessing a property 
 
 OK, so the wise internet monkeys also pronounce that property access is killer. And you could reason easily that property access probably involves more CPU, as it must go to the backing member.  But surely compiler optimisations will make that cool?
 
-<pre><code>
+```
 	public float Member { get; set; }
 
 	// do something with that property
 	Member++;
 
-</code></pre>
+```
 
 And for Property Get
 
@@ -96,10 +94,10 @@ So.... no noticeable difference...
 
 However, if your properties are doing more than just getting and setting a backing member, well you should probably turn them into methods anyway.  For the common and trivial case of something like:
 
-<pre><code>
+```
         private float _myProperty;
         public float MyProperty { get { return _myProperty; } set { _myProperty = value; } }
-</code></pre>
+```
 
 You probably ain't gonna need it, man!
 
@@ -111,8 +109,8 @@ It's a nice feeling to write code that is noticeably faster in release than debu
 
 These optimisations made a noticeable difference on the running game but... unfortunately there was still not enough explosions, so it's off to XNA anyways...
 
-## Test Harness ##
-<pre><code>
+## Test Harness 
+```
     static void Main(string[] args)
     {
         var tc = new TestClass();
@@ -121,7 +119,7 @@ These optimisations made a noticeable difference on the running game but... unfo
         tc.TestMember();
         tc.TestInlineMember();
 
-        for (int i = 0; i &lt; 10; i++)
+        for (int i = 0; i < 10; i++)
         {
             var sw = Stopwatch.StartNew();
 
@@ -169,10 +167,10 @@ These optimisations made a noticeable difference on the running game but... unfo
 
         Console.ReadKey();
     }
-</code></pre>
+```
 
-## Test Class ##
-<pre><code>
+## Test Class 
+```
     class TestClass
     {
         private float _member;
@@ -256,4 +254,4 @@ These optimisations made a noticeable difference on the running game but... unfo
             _member = value;
         }
     }
-</code></pre>
+```

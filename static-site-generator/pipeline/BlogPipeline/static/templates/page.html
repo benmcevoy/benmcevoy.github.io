@@ -1,8 +1,8 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="{{summary}}">
     <meta name="keywords" content="{{keywords}}">
@@ -10,27 +10,57 @@
     <title>{{title}} - blog.benmcevoy.com.au</title>
     <link href="/blog/assets/css/site.css" rel="stylesheet">
     <link type="application/atom+xml" rel="alternate" href="/blog/feed/atom.xml" />
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
 </head>
+
 <body>
     {{nav}}
-    <div class="container">
-        <div class="row content">
-            <div class="col-lg-8 entry">
-                <h1>{{title}}</h1>
-                <hr>
-                <p><span class="glyphicon glyphicon-time"></span> Posted on {{published}}</p>
-                <hr>
+    <div class="layout">
+        <div class="main">
+            <div class="markdown-body">
+                <div class="title">
+                    <h1>{{title}}</h1>
+                </div>
+                <div class="date-line">
+                    <span> &#x23F2;</span> Posted on {{published}}
+                </div>
+
                 {{renderbody}}
             </div>
-
-            {{navigation}}
         </div>
-        <hr>
+        <aside class="secondary-nav">
+            {{navigation}}
+        </aside>
     </div>
-    <script src="/blog/assets/js/site.js"></script>
+    <hr>
+    </div>
+    <script type='module'>
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+    <!-- KaTeX -->
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css'>
+    <script src='https://cdn.jsdelivr.net/npm/katex/dist/katex.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/katex/dist/contrib/auto-render.min.js'></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            renderMathInElement(document.body, {
+                // customised options
+                // • auto-render specific keys, e.g.:
+                delimiters: [
+                    { left: '$$', right: '$$', display: true },
+                    { left: '$', right: '$', display: false },
+                    { left: '\\(', right: '\\)', display: false },
+                    { left: '\\[', right: '\\]', display: true }
+                ],
+                // • rendering keys, e.g.:
+                throwOnError: false
+            });
+        });
+
+        const toggle = document.querySelector('.toggle'), menu = document.querySelector('.menu');
+        toggle.addEventListener('click', () =>
+            toggle.setAttribute('aria-expanded', menu.classList.toggle('open')));
+    </script>
 </body>
+
 </html>

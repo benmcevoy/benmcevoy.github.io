@@ -4,38 +4,38 @@ I was a bit unhappy with my previous attempt at model binding, so I've had a bit
 
 Firstly, it's great to see the RepeaterItem has an [ItemType][2] property. Up until now I would do something like:
 
-<pre><code>
+```
 
-       &lt;asp:Repeater runat="server"&gt;
-          &lt;ItemTemplate&gt;
-            &lt;label&gt;Product&lt;/label&gt;
-            &lt;input type="text" value="AsProductViewModel(Container).Name" /&gt;
-          &lt;/ItemTemplate&gt;
-       &lt;/asp:Repeater&gt;
+       <asp:Repeater runat="server">
+          <ItemTemplate>
+            <label>Product</label>
+            <input type="text" value="AsProductViewModel(Container).Name" />
+          </ItemTemplate>
+       </asp:Repeater>
 
-</code></pre>
+```
 
-<pre><code>
+```
 
        protected ProductViewModel AsProductViewModel(RepeaterItem item)
        {
            return item.DataItem as ProductViewModel;
        }
 
-</code></pre>
+```
 
 By setting ItemType I can now access the properties directly.
 
-<pre><code>
+```
 
-&lt;asp:Repeater runat="server" ItemType="WebApplication2.ProductViewModel"&gt;
-   &lt;ItemTemplate&gt;
-      &lt;label&gt;Product&lt;/label&gt;
-      &lt;input type="text" value="&lt;%# Item.Name %&gt;" /&gt;
-   &lt;/ItemTemplate&gt;
-&lt;/asp:Repeater&gt;
+<asp:Repeater runat="server" ItemType="WebApplication2.ProductViewModel">
+   <ItemTemplate>
+      <label>Product</label>
+      <input type="text" value="<%# Item.Name %>" />
+   </ItemTemplate>
+</asp:Repeater>
 
-</code></pre>
+```
 
 And that makes me pretty happy.
 
@@ -45,25 +45,25 @@ But better (maybe if you think using the built in WebControls is better...) was 
 
 On reflection (ha!) I think the original authors idea might be better.  It's fairly conventional to have a .Text property if you have some sort of text editing control, but there is no guarantee you derived from TextBox... ah well, back to the drawing board.   
 
-<pre><code>
-    &lt;asp:Repeater ID="TestRepeater" runat="server" ItemType="WebApplication2.Product"&gt;
-        &lt;ItemTemplate&gt;
-            &lt;asp:TextBox runat="server" ID="name" Text="&lt;%# Item.name %&gt;" /&gt;
-            &lt;asp:TextBox ID="id" runat="server" Text="&lt;%# Item.id %&gt;" /&gt;
-            &lt;asp:CheckBox runat="Server" ID="isSelected" Checked="&lt;%# Item.isSelected %&gt;" /&gt;
-            &lt;asp:DropDownList runat="server" ID="age" name="product[0].age" SelectedValue='&lt;%# Item.age %&gt;'&gt;
-                &lt;asp:ListItem Value="21" /&gt;
-                &lt;asp:ListItem Value="31" /&gt;
-                &lt;asp:ListItem Value="41" /&gt;
-            &lt;/asp:DropDownList&gt;
-            &lt;asp:Calendar runat="server" ID="MyDate" SelectedDate="&lt;%# Item.MyDate %&gt;" /&gt;
-        &lt;/ItemTemplate&gt;
-    &lt;/asp:Repeater&gt;
+```
+    <asp:Repeater ID="TestRepeater" runat="server" ItemType="WebApplication2.Product">
+        <ItemTemplate>
+            <asp:TextBox runat="server" ID="name" Text="<%# Item.name %>" />
+            <asp:TextBox ID="id" runat="server" Text="<%# Item.id %>" />
+            <asp:CheckBox runat="Server" ID="isSelected" Checked="<%# Item.isSelected %>" />
+            <asp:DropDownList runat="server" ID="age" name="product[0].age" SelectedValue='<%# Item.age %>'>
+                <asp:ListItem Value="21" />
+                <asp:ListItem Value="31" />
+                <asp:ListItem Value="41" />
+            </asp:DropDownList>
+            <asp:Calendar runat="server" ID="MyDate" SelectedDate="<%# Item.MyDate %>" />
+        </ItemTemplate>
+    </asp:Repeater>
 
-</code></pre>
+```
 
 
-<pre><code>
+```
 
 using System;
 using System.Collections.Generic;
@@ -82,12 +82,12 @@ namespace WebApplication2
 
         protected void SomeButton_Click(object sender, EventArgs e)
         {
-            var pp = RepeaterToModel&lt;Product&gt;(TestRepeater);
+            var pp = RepeaterToModel<Product>(TestRepeater);
         }
 
         private void Bind()
         {
-            var products = new List&lt;Product&gt;();
+            var products = new List<Product>();
 
             products.Add(new Product() { name = "test1", id = 1, age = 31 });
             products.Add(new Product() { name = "test2", id = 2, age = 31 });
@@ -97,13 +97,13 @@ namespace WebApplication2
             TestRepeater.DataBind();
         }
 
-        private IEnumerable&lt;T&gt; RepeaterToModel&lt;T&gt;(Repeater repeater) where T : new()
+        private IEnumerable<T> RepeaterToModel<T>(Repeater repeater) where T : new()
         {
-            var results = new List&lt;T&gt;();
+            var results = new List<T>();
 
             foreach (RepeaterItem item in repeater.Items)
             {
-                var result = ControlToModel&lt;T&gt;(item);
+                var result = ControlToModel<T>(item);
 
                 results.Add(result);
             }
@@ -111,7 +111,7 @@ namespace WebApplication2
             return results;
         }
 
-        private T ControlToModel&lt;T&gt;(Control source) where T : new()
+        private T ControlToModel<T>(Control source) where T : new()
         {
             var result = new T();
             var properties = typeof(T).GetProperties();
@@ -160,11 +160,11 @@ namespace WebApplication2
         }
     }
 }
-</code></pre>
+```
 
 After a little more wine and a little benchmarking I now have this:
 
-<pre><code>
+```
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -175,21 +175,21 @@ namespace WebApplication2
 {
     public class WebFormModelBinder
     {
-        private readonly Dictionary&lt;string, PropertyInfo&gt; _controlPropertyCache = new Dictionary&lt;string, PropertyInfo&gt;();
+        private readonly Dictionary<string, PropertyInfo> _controlPropertyCache = new Dictionary<string, PropertyInfo>();
 
-        public IEnumerable&lt;T&gt; RepeaterToObjects&lt;T&gt;(Repeater repeater) where T : new()
+        public IEnumerable<T> RepeaterToObjects<T>(Repeater repeater) where T : new()
         {
-            var results = new List&lt;T&gt;();
+            var results = new List<T>();
 
             foreach (RepeaterItem item in repeater.Items)
             {
-                results.Add(ControlToObject&lt;T&gt;(item));
+                results.Add(ControlToObject<T>(item));
             }
 
             return results;
         }
 
-        public T ControlToObject&lt;T&gt;(Control source) where T : new()
+        public T ControlToObject<T>(Control source) where T : new()
         {
             var result = new T();
             var properties = typeof(T).GetProperties();
@@ -200,27 +200,27 @@ namespace WebApplication2
                 {
                     if (control.ID == property.Name)
                     {
-                        if (TryFindAndSetObjectProperty&lt;T&gt;(control, "Checked", typeof(bool), result, property))
+                        if (TryFindAndSetObjectProperty<T>(control, "Checked", typeof(bool), result, property))
                         {
                             break;
                         }
 
-                        if (TryFindAndSetObjectProperty&lt;T&gt;(control, "Text", typeof(string), result, property))
+                        if (TryFindAndSetObjectProperty<T>(control, "Text", typeof(string), result, property))
                         {
                             break;
                         }
 
-                        if (TryFindAndSetObjectProperty&lt;T&gt;(control, "Value", typeof(string), result, property))
+                        if (TryFindAndSetObjectProperty<T>(control, "Value", typeof(string), result, property))
                         {
                             break;
                         }
 
-                        if (TryFindAndSetObjectProperty&lt;T&gt;(control, "SelectedValue", typeof(string), result, property))
+                        if (TryFindAndSetObjectProperty<T>(control, "SelectedValue", typeof(string), result, property))
                         {
                             break;
                         }
 
-                        if (TryFindAndSetObjectProperty&lt;T&gt;(control, "SelectedDate", typeof(DateTime), result, property))
+                        if (TryFindAndSetObjectProperty<T>(control, "SelectedDate", typeof(DateTime), result, property))
                         {
                             break;
                         }
@@ -232,7 +232,7 @@ namespace WebApplication2
             return result;
         }
 
-        private bool TryFindAndSetObjectProperty&lt;T&gt;(Control source, string sourcePropertyName, Type sourcePropertyType, T destination, PropertyInfo destinationPropertyInfo)
+        private bool TryFindAndSetObjectProperty<T>(Control source, string sourcePropertyName, Type sourcePropertyType, T destination, PropertyInfo destinationPropertyInfo)
         {
             if (_controlPropertyCache.ContainsKey(source.ID))
             {
@@ -263,7 +263,7 @@ namespace WebApplication2
         }
     }
 }
-</code></pre>
+```
 
 
   [1]: https://bitbucket.org/benmcevoy/webforms.framework

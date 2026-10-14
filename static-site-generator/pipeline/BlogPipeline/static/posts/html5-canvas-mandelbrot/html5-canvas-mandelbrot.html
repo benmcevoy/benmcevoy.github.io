@@ -11,7 +11,7 @@ And I have to say that I was very very pleased with the results :)  Not that it 
 
 <pre class='prettyprint'><code>
 var cn = new complexNumber(1, 1);  // real is 1, imaginary part is 1i
-</code></pre>
+```
 
 <p>The function that is applied is given on Wikipedia, but for those who don’t speak mathematics it’s basically </p>
 
@@ -32,7 +32,7 @@ var cn = new complexNumber(1, 1);  // real is 1, imaginary part is 1i
         for (var n = 0; n < 100; n++) {
             z = z.multiply(z).add(c);
         }
-</code></pre>
+```
 
 <p>After 100 iterations of applying this function we test the value of z and see if it has exceeded some threshold.  If it is still within the threshold then it’s part of the Mandelbrot set.</p>
 
@@ -68,14 +68,14 @@ var cn = new complexNumber(1, 1);  // real is 1, imaginary part is 1i
         return new complexNumber(this.r, -this.i);
     };
 
-</code></pre>
+```
 
 <p>This is sweet.  With the prototype pattern we can declared class level members using the this keyword, so this.r and this.i are now available throughout the class. They are also available as properties or fields on the class as well.
 The other very nice thing is we can now say </p>
 
 <pre class='prettyprint'><code>
     var cn = new complexNumber(1, 1);  // real is 1, imaginary part is 1i
-</code></pre>
+```
 
 <p>And new it up.  Sweet.</p>
 
@@ -186,7 +186,7 @@ $(function () {
     mandelbrot.render();
 });
 
-</code></pre>
+```
 
 <p>Now this code is pretty slow.  That’s not the point.  The point is that I could write this code and on the first time I ran it it worked. Perfectly.  I think that’s proof positive for me that following these patterns is an absolute must.  My old style crappy global function javascript is dead.</p>
 

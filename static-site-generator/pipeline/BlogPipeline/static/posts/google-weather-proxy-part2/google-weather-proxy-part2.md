@@ -12,7 +12,7 @@ Let’s prove our Google fu is cool first.  Let’s go and grab a [static map](h
 
 The codes;)
 
-<pre><code>
+```
 $(function() {
     navigator.geolocation.getCurrentPosition(function(pos) {
         var lat = pos.coords.latitude;
@@ -22,7 +22,8 @@ $(function() {
 
     });
 });
-</code></pre>
+```
+
 We can set the latitude and longitude using your modern browsers [geolocation](http://dev.w3.org/geo/api/spec-source.html#geolocation_interface) [support]( http://dev.w3.org/geo/api/spec-source.html#position).
 
 Asking for a location should prompt with a security check.
@@ -32,6 +33,7 @@ That is all just great.  Meanwhile back on the server we want to be passed in a 
 The server will expect latitude and longitude on the query string of the handler request.
 
 The server code in its entirety is below.  To be honest I am not proud of this code.  It’s brittle. It’s ugly. It assumes waaaay too much about what Google might return.  If I wrote this in production I would kick my arse.
+
 If this was production code I would:
 
  - Use a third party Google Map library to give me some strong types.
@@ -44,7 +46,7 @@ If this was production code I would:
 
 Note also that Google allows content negotiation. We could have called that geo code url and got JSON back instead.  It looks like this API does not support JSONP, [but this one here might](https://code.google.com/apis/maps/documentation/javascript/).
 
-<pre><code>
+```
     public class WeatherProxy : IHttpHandler
     {
         private HttpContext _context;
@@ -120,16 +122,17 @@ Note also that Google allows content negotiation. We could have called that geo 
             }
         }
     }
-</code></pre>
+```
 
 Client side is not looking too crash hot either, to be honest.  Some tidy up around the string concatenation would be nice.
-<pre><code>
-    &lt;h2&gt;How's the weather?&lt;/h2&gt;
-    &lt;div id="weather"&gt; &lt;/div&gt;
-    &lt;div&gt;
+
+```
+    <h2>How's the weather?</h2>
+    <div id="weather"> </div>
+    <div>
         You're about here:
-        &lt;image id="mapImage"&gt;&lt;/image&gt;
-    &lt;/div&gt;
+        <image id="mapImage"></image>
+    </div>
 
         $().ready(function () {
 
@@ -147,7 +150,7 @@ Client side is not looking too crash hot either, to be honest.  Some tidy up aro
             });
         });
 
-</code></pre>
+```
 
 [See it in all its glory](/../projects/google-weather/default2.aspx)
 

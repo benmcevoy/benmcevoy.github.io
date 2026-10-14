@@ -8,7 +8,7 @@
 
 <pre class='prettyprint'><code>
 Install-Package Microsoft.AspNet.FriendlyUrls
-</code></pre>
+```
 
 <p>A vanilla asp.net web application (in VS2013 at least) is kind enough to include this by default.</p>
 
@@ -17,7 +17,7 @@ Install-Package Microsoft.AspNet.FriendlyUrls
 <pre class='prettyprint'><code>
     var settings = new FriendlyUrlSettings();
     routes.EnableFriendlyUrls(settings);
-</code></pre>
+```
 
 <p>Armed with this and System.Web.Routing we can start to do less sucky things.</p>
 
@@ -27,13 +27,13 @@ Install-Package Microsoft.AspNet.FriendlyUrls
 
 <pre class='prettyprint'><code>
     routes.MapPageRoute("AboutRoute", "About/{param1}/{*param2}", "~/about.aspx");
-</code></pre>
+```
 
 <p>And we can map arbitrary friendly urls to existing pages:</p>
 
 <pre class='prettyprint'><code>
     routes.MapPageRoute("AnotherRoute", "TotallyFriendlyUrl/{param1}/{*param2}", "~/about.aspx");
-</code></pre>
+```
 
 <p>In the second case there is no underlying page at <em>TotallyFriendlyUrl.aspx</em> so if the route is not matched correctly, i.e. <em>/TotallyFriendlyUrl/this_bit_is_mandatory/this_bit_is_optional</em> then a 404 will result.</p>
 
@@ -48,7 +48,7 @@ Install-Package Microsoft.AspNet.FriendlyUrls
     NavigateUrl="&lt;%$RouteUrl:locale=CA,year=2009,routename=salesroute%&gt;"&gt;
     Sales Report - CA, 2009
 &lt;/asp:HyperLink&gt;
-</code></pre>
+```
 
 <p>And [FriendlyUrlSegments] parameter attribute for um.. doing things like <a href="http://www.asp.net/web-forms/tutorials/data-access/model-binding/retrieving-data">model binding to a method and junk</a>. And also [Form] and [QueryString] to boot.</p>
 

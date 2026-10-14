@@ -1,6 +1,4 @@
-# Building a Windows Phone App Part 3 #
-
-## Isolated Storage ##
+## Isolated Storage 
 
 [A good rundown of the options](http://msdn.microsoft.com/en-us/magazine/hh205658.aspx) available show as well as IsolatedStorage there is also SQL CE and Page and Application state dictionaries.  State can be tombstoned if the app is deactivated.
 
@@ -28,7 +26,7 @@ To read and write files we use the [IsolatedStorageFileStream](http://msdn.micro
 
 I ended up with a helper class to wrap it up a little:
 
-<pre><code>
+```
 public static class IsolatedStorageHelper
     {
         public static bool FileExists(string path)
@@ -73,20 +71,20 @@ public static class IsolatedStorageHelper
 
         public static IsolatedStorageFile Store { get { return IsolatedStorageFile.GetUserStoreForApplication(); } }
     }
-</code></pre>
+```
 
 I have a feeling I may run into concurrency issues some time in the future...  Watch the FileAccess/FileShare parameters...
 
-## Making Requests for Resources ##
+## Making Requests for Resources 
 
 WebClient.DownloadAsync, "piece of piss", as they say.
 
-<pre><code>
+```
         public void Get(Uri uri, string path)
         {
             var wc = new WebClient();
 
-            wc.DownloadStringCompleted += (s, e) =&gt;
+            wc.DownloadStringCompleted += (s, e) =>
             {
                 IsolatedStorageHelper.WriteFile(path, e.Result);
                 WeatherService.Current.Refresh();
@@ -94,7 +92,7 @@ WebClient.DownloadAsync, "piece of piss", as they say.
 
             wc.DownloadStringAsync(uri);
        }
-</code></pre>
+```
 
 This did not work, throwing a NotSupported exception.
 
@@ -119,7 +117,7 @@ Some rapid learnings later:
 
 So between the sockets example and [these raw commands](http://geekswithblogs.net/bigpapa/archive/2007/11/05/C-heart-RAW-FTP.aspx) I'm now getting:
 
-<pre><code>
+```
 220-Welcome to the Bureau of Meteorology FTP service.
 220-
 220-                              Disclaimer
@@ -155,7 +153,7 @@ So between the sockets example and [these raw commands](http://geekswithblogs.ne
 250 Directory successfully changed.
 200 Switching to Binary mode.
 227 Entering Passive Mode (134,178,63,130,233,247)
-</code></pre>
+```
 
 I have some refactoring to do...  Hopefully I will end up with a really simple FTP client using Silverlight sockets.  This is a bit more than I was expecting, but making something like this will probably be quite useful. For someone.  [Maybe this guy.](http://stackoverflow.com/questions/4588372/is-there-any-way-to-download-ftp-files-with-windows-phone-7-net-4)
 

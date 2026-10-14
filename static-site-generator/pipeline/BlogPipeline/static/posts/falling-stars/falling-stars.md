@@ -6,7 +6,7 @@ I have roughly ported that over to javascript.  By using prototype I found that 
 
 For instance, we have a Vector struct in C#
 
-<pre><code>
+```
     public struct Vector
     {
         public Vector(double x, double y)
@@ -44,11 +44,11 @@ For instance, we have a Vector struct in C#
             return new Vector(v1.X + v2.X, v1.Y + v2.Y);
         }
     }
-</code></pre>
+```
 
 And now in Javascript
 
-<pre><code>
+```
 var Vector = function (x, y) {
     this.x = x;
     this.y = y;
@@ -69,12 +69,11 @@ Vector.prototype.angle = function () {
 Vector.prototype.add = function(value){
     return new Vector(this.x + value.x, this.y + value.y);
 };
-</code></pre>
+```
 
 EventHandlers are replaced with callbacks - 
 
-<pre>
-<code>
+```
  public event EventHandler UniverseCleared;
 
 ...
@@ -85,13 +84,10 @@ EventHandlers are replaced with callbacks -
             }
 
 ...
-</code>
-</pre>
-
+```
 Becomes...
 
-<pre>
-<code>
+```
 // inject the callback
 var Universe = function (onUniverseCleared, onBodyRemoved) {
     this.gravity = new Vector(0, 0);
@@ -105,8 +101,7 @@ var Universe = function (onUniverseCleared, onBodyRemoved) {
         this.onUniverseCleared();
     }
 ...
-</code>
-</pre>
+```
 
 And so on - the only part that had to be rewritten was the rendering code.
 

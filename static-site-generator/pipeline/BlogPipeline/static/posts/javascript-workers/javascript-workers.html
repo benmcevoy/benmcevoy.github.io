@@ -32,7 +32,7 @@ onMessage – listen for message events</p>
             var message = event.data;
             _context.putImageData(event.data.canvasData, 0, 0);
         }, false);
-</code></pre>
+```
 
 <p>Then we must pass some data to operate on.  The canvas data is really just a big array of data, so I grab out a chunk, work out where we are in the set and then fire it off:</p>
 
@@ -40,7 +40,7 @@ onMessage – listen for message events</p>
         _worker1.postMessage({ canvasData: _context.getImageData(0, 0, width, height),
             options: { width: width, height: height, origin: origin1, zoom: _options.zoom }
         });
-</code></pre>
+```
 
 <p>The _canvas.getImageData just grabs out the subset of the array for this quadrant.  We post this message to the worker who immediately starts calculating.</p>
 
@@ -52,7 +52,7 @@ onmessage = function (event) {
 
         render(_options.width, _options.height);
     };
-</code></pre>
+```
 
 <p>When the work is complete the worker posts a message back using <a href="http://www.alistapart.com/articles/getoutbindingsituations">“self”</a> - self.postMessage({ canvasData: _canvasData, x: 0, y: 0 });</p>
 

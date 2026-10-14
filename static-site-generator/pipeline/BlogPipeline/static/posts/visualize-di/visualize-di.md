@@ -25,7 +25,7 @@ And if I ever get around to it, you could also visualize namespace references as
 
 In essence all I am doing is some simple reflection over an assembly, and graphing relationships between types and/or assemblies.
 
-<pre><code>
+```
         private void ShowConstructorInjection(Assembly rootAssembly)
         {
             AddAllParentTypes(rootAssembly);
@@ -42,14 +42,14 @@ In essence all I am doing is some simple reflection over an assembly, and graphi
                         try
                         {
                             AddVertex(param.ParameterType.FullName);
-                            GraphToVisualize.AddEdge(new Edge&lt;object&gt;(param.ParameterType.FullName, type.FullName));
+                            GraphToVisualize.AddEdge(new Edge<object>(param.ParameterType.FullName, type.FullName));
                         }
                         catch { }
                     }
                 }
             }
         }
-</code></pre>
+```
 
 The graphing and visualization is handled by the most excellent [QuickGraph](http://quickgraph.codeplex.com/) and [Graph#](http://graphsharp.codeplex.com/) respectively.
 

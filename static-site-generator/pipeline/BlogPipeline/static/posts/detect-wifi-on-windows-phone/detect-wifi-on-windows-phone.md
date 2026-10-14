@@ -1,28 +1,28 @@
 If you are making web requests on the windows phone you should check network availability first.  
 
-<pre><code>
+```
      Microsoft.Phone.Net.NetworkInformation.DeviceNetworkInformation.IsNetworkAvailable
-</code></pre>
+```
 
 If you are trying to be a conscientious developer you may only want to make web requests when the phone is connected to a wifi network, for instance in a background agent update.
 
 The API offers:
 
-<pre><code>
+```
      DeviceNetworkInformation.IsWiFiEnabled
-</code></pre>
+```
 
 This, however only tells you the user has wifi enabled.  It does not tell you if the phone is connected and using a wifi network. 
 
 You must also check the *[NetworkInterfaceType][1]*.  Note that the majority of interface types are not supported on the phone. There is really only **Wireless80211**, **MobileBroadbandGsm** and **MobileBroadbandCdma** to worry about.  I *believe* **Ethernet** is available when connected to a PC with Zune running, as I *think* Zune allows the phone to piggy back off the PC's network connection. AFAIK.
 
-<pre><code>
+```
     NetworkInterface.NetworkInterfaceType == NetworkInterfaceType.Wireless80211
-</code></pre>
+```
 
 Put it all together.
 
-<pre><code>
+```
 
         private bool IsWifiConnected()
         {
@@ -45,9 +45,9 @@ Put it all together.
         }
 
 
-</code></pre>
+```
 
-##This thing is slooooow##
+## This thing is slooooow
 
 After implementing something like this in a background agent on the phone, I was surprised to see the agent frequently not running correctly, usually timing out.
 
@@ -57,7 +57,7 @@ People on stackoverflow suggest wrapping these calls up in some async pattern, e
 
 In the case of a background agent I can't see how to determine if we are on a wifi network (or connected at all) in a timely manner.  The background task must complete in, I think, 25 seconds or so.  If the network takes 20-30 seconds, well you can see the problem.
 
-##WIFI is sleeping##
+## WIFI is sleeping
 
 The phone has certain behaviors you must be aware of.
 

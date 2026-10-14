@@ -12,7 +12,7 @@ It may not be the fastest or the best, but I think that feature set makes it a g
 We can start by enabling MSMQ in the control panel (under Windows Features).  This will start up a service and we will be good to go.
 First of all we want to create a source of messages.
 Here we just send a very basic string.  In practice you may want to create a message class, perhaps with a message type, Id and maybe a serialized DTO payload.
-<pre><code>
+```
 	// create a queue
 	if (!MessageQueue.Exists(_queueName))
 	{
@@ -42,10 +42,10 @@ Here we just send a very basic string.  In practice you may want to create a mes
 		return;
 	}
 
-</code></pre>
+```
 By default MSMQ uses an XML message formatter, and reading the message body is done through streams.  This is sometimes a bit inconvenient.
 I’ve added a simple message formatter (nicked from MSDN) to ease things.
-<pre><code>
+```
 	public class MessageFormatter : IMessageFormatter
 	{
 		public bool CanRead(Message message)
@@ -83,9 +83,9 @@ I’ve added a simple message formatter (nicked from MSDN) to ease things.
 			return new MessageFormatter();
 		}
 	}
-</code></pre>
+```
 We can then start up several process, just simple console apps, to listen to the queue and read the messages.  I was running three or four, and they would read the messages off the queue in a round robin fashion.  I found that quite pleasing :)
-<pre><code>
+```
 	public static void MonitorQueue ()
 	{
 		var myQueue = new MessageQueue(_queueName);
@@ -107,7 +107,7 @@ We can then start up several process, just simple console apps, to listen to the
 			}
 		}
 	}
-</code></pre>
+```
 I’m writing this at home and immediately discovered a few problems that are casting quite a few shadows on MSMQ.
 
 It seems there a few limitations when running MSMQ when you aren’t on a domain (which would be pretty much everyone when they’re not at work, geeks excepted).  At work (on a domain) I had no trouble. The messages were sent from one process and several listening processes merrily picked them up and ran with it.  Life was good.  At home (on a workgroup) my most trivial test does not work.
@@ -122,7 +122,7 @@ There were a couple of problems with WORKGROUP mode.
 
 The first one I do not really understand (I guess I need to RTFM).  If you "Manage" your computer you can see a Message Queuing node has been added.  I created a queue directly there, copied the name (something like machinename\private$\testqueue) and used that.  All good.  Apparantly you can only use private queus in WORKGROUP mode and must reference them with a specific naming format.  I found a few forum posts alluding to this, but no definitive answer anywhere. I'm sure it's mentioned somewhere in MSDN... 
 
-![Alt text](assets/msmq/manage_queue.JPG "manage queues manually")
+![Alt text](assets/manage_queue.JPG "manage queues manually")
 
 Secondly, although you can't see it here :) I was also enumerating the public queues on my machine, as a check that the queue was created.
 

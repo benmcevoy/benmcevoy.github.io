@@ -7,7 +7,7 @@
             &lt;input type="text" name="product[&lt;%#Container.ItemIndex %&gt;].Name" value="AsProductViewModel(Container).Name" /&gt
          &lt;/ItemTemplate&gt;
       &lt;/asp:Repeater&gt;
-</code></pre>
+```
 
 <p>I <em>really</em> don't like OnItemBound and all that crap. Nor FindControl or any of that.</p>
 
@@ -101,4 +101,4 @@ And a helper to cast the Container.DataItem as ProductViewModel.</p>
 
             return value;
         }
-</code></pre>
+```

@@ -1,5 +1,4 @@
-# Building a Windows Phone App Part 1 #
-## My <del>First</del> Second Windows Phone App ##
+## My <del>First</del> Second Windows Phone App 
 
 Having acquired a Windows Phone I now want to build some apps.  That and there is a competition going at the moment where I can win a newer phone.  Much procrastination ensues.
 
@@ -13,7 +12,7 @@ Or another idea to be able to update the tile of a bookmarked web page on the st
 
 I got some skills in Silverlight, HTML and JS, so native apps or Phone Gap apps are both open to me.  And I reckon I can cobble an XNA based app together.
 
-## I need a design ##
+## I need a design 
 
 Problem number one - what to build?
 
@@ -32,7 +31,7 @@ and/or
 
 *"what do I wish I could do but can't on this phone"*
 
-## I need a problem ##
+## I need a problem 
 
 I've got a lot of problems.  Personal issues aside, I do have few things I want out of this phone:
 
@@ -46,7 +45,7 @@ Some of these are easily solved by having a look through the market place.  Some
 
 Oh, and I like free.
 
-## OK, *Now* I need a design ##
+## OK, *Now* I need a design 
 
 I'm going to pick an easy (I hope) one - a weather app.  Hey, hey, why not, I've already written a couple for my own personal pleasures.  I want total saturation of weather information on all devices!
 

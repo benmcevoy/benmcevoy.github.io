@@ -19,7 +19,7 @@
     [StrategyFor("news.ycombinator.com")]
     public class HackerNewsStrategy : IMyStrategyInterface
 
-</code></pre>
+```
 
 <p>The resolver scans the calling assembly for implementations of TStrategy.  When any are found they are stashed away in a dictionary.</p>
 
@@ -87,7 +87,7 @@
         }
     }
 
-</code></pre>
+```
 
 <p>Each strategy implementation is decorated with the [StrategyFor] attribute.</p>
 
@@ -103,4 +103,4 @@
         public string Key { get; private set; }
     }
 
-</code></pre>
+```

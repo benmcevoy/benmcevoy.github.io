@@ -1,14 +1,14 @@
-## Web Api Cache Filter ##
+## Web Api Cache Filter 
 
 Having recently been playing with the ASP.NET Web API bits lately I found I wanted to be able to cache some of the actions response.
 
 The following will insert cache control headers into the response.  Perfect for responses that are the same for every user.
 
-<pre><code>
+```
 
     // in the ApiController
     [ApiCache(600)]  // cache for 10 minutes
-    public IEnumerable&lt;MyViewModel&gt; Get()
+    public IEnumerable<MyViewModel> Get()
     {
         ....
     }
@@ -35,5 +35,4 @@ The following will insert cache control headers into the response.  Perfect for 
             base.OnActionExecuted(actionExecutedContext);
         }
     }
-</code>
-</pre>
+```

@@ -4,7 +4,7 @@ Sometimes you want to know that any work pushed to the UI dispatcher has complet
 
 [A much better approach][2] is to use some [thread signalling][3]. The calling thread will wait until the dispatched work has completed, or give up after some period.
 
-<pre><code>
+```
 
         private static void WaitWithDispatcher(Action action)
         {
@@ -44,7 +44,7 @@ Sometimes you want to know that any work pushed to the UI dispatcher has complet
             Deployment.Current.Dispatcher.BeginInvoke(action);
         }
 
-</code></pre>
+```
 
 
   [1]: http://msdn.microsoft.com/en-us/library/d00bd51t(v=vs.95).aspx

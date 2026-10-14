@@ -45,7 +45,7 @@ Here we just send a very basic string.  In practice you may want to create a mes
     	return;
     }
 
-</code></pre>
+```
 
 <p>By default MSMQ uses an XML message formatter, and reading the message body is done through streams.  This is sometimes a bit inconvenient.
 I’ve added a simple message formatter (nicked from MSDN) to ease things.</p>
@@ -88,7 +88,7 @@ I’ve added a simple message formatter (nicked from MSDN) to ease things.</p>
     		return new MessageFormatter();
     	}
     }
-</code></pre>
+```
 
 <p>We can then start up several process, just simple console apps, to listen to the queue and read the messages.  I was running three or four, and they would read the messages off the queue in a round robin fashion.  I found that quite pleasing :)</p>
 
@@ -114,7 +114,7 @@ I’ve added a simple message formatter (nicked from MSDN) to ease things.</p>
     		}
     	}
     }
-</code></pre>
+```
 
 <p>I’m writing this at home and immediately discovered a few problems that are casting quite a few shadows on MSMQ.</p>
 

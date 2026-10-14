@@ -20,7 +20,7 @@ Whenever you make a database request, be it for downloading results or just popu
 
 Usage:
 
-<pre><code>
+```
 
     using (var context = new DataContext())
             {
@@ -42,11 +42,11 @@ Usage:
             }
 
 
-</code></pre>
+```
 
 
-<pre><code>
-    public static void DownloadAsCsv&lt;T&gt;(HttpContext httpContext, IQueryable&lt;T&gt; query, string fileName, int pageSize = 500) where T : class
+```
+    public static void DownloadAsCsv<T>(HttpContext httpContext, IQueryable<T> query, string fileName, int pageSize = 500) where T : class
         {
             var pageNumber = 0;
 
@@ -62,7 +62,7 @@ Usage:
                 {
                     var properties = typeof(T).GetProperties();
                     // a bit of reflection to generate the header row
-                    var header = properties.Aggregate("", (current, propertyInfo) =&gt; current + string.Format("{0},", propertyInfo.Name));
+                    var header = properties.Aggregate("", (current, propertyInfo) => current + string.Format("{0},", propertyInfo.Name));
 
                     header = header.TrimEnd(',');
                     header += "\r\n";
@@ -85,7 +85,7 @@ Usage:
             httpContext.Response.End();
         }
 
-    public static string ToCsv&lt;T&gt;(this IEnumerable&lt;T&gt; items)
+    public static string ToCsv<T>(this IEnumerable<T> items)
             where T : class
         {
             var csvBuilder = new StringBuilder();
@@ -93,14 +93,14 @@ Usage:
 
             foreach (T item in items)
             {
-                var line = string.Join(",", properties.Select(p =&gt; p.GetValue(item, null).ToCsvValue()).ToArray());
+                var line = string.Join(",", properties.Select(p => p.GetValue(item, null).ToCsvValue()).ToArray());
                 csvBuilder.AppendLine(line);
             }
 
             return csvBuilder.ToString();
         }
 
-        private static string ToCsvValue&lt;T&gt;(this T item)
+        private static string ToCsvValue<T>(this T item)
         {
             if (item == null) return "\"\"";
 
@@ -120,7 +120,7 @@ Usage:
         }
 
 
-</code></pre>
+```
 
 
 

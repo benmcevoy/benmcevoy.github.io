@@ -8,7 +8,7 @@ There's been some nice weather recently, we hit 40 degrees the other week, so I 
 
 I wrote a little [metro styled javascript weather app](http://benmcevoy.com.au/projects/metro-weather/default.htm) for Melbourne awhiles back, never did write a blog post on it, but it's just pulling some XML and JSON from the [BOM](http://www.bom.gov.au/) and reexposing it as a JSON service in a format I liked.
 
-## Target that WinMoPho ##
+## Target that WinMoPho 
 
 The layout is reasonably fluid, CSS ain't really my bag, I just aim for "less is more" and try and write as little as possible of it.  I wanted to view it on the phone and see it in a sensible format, that is each day tile is laid out vertically.
 
@@ -16,31 +16,31 @@ So google some "target windows phone 7 css" and get [this on conditional comment
 
 The first suggestion is an IE conditional comment:
 
-<pre><code>&lt;!--[if IEMobile]&gt;
-&lt;p>Welcome to Internet Explorer Mobile.&lt;/p&gt;
-&lt;![endif]--&gt;
-</code></pre>
+```<!--[if IEMobile]>
+<p>Welcome to Internet Explorer Mobile.</p>
+<![endif]-->
+```
 
 (Un)fortunately this has no effect.  Much googling later and we discover WinMoPho 7.5, with its IE9 based browser, does not support this.  But it does support media queries:
 
-<pre><code>&lt;link rel="stylesheet" type="text/css"
+```<link rel="stylesheet" type="text/css"
   media="screen and (max-device-width: 480px)"
-  href="mobile.css" /&gt;
-</code></pre>
+  href="mobile.css" />
+```
 
 And my mobile.css styles suddenly kick in.  Or at least, some of them do.  WinMoPho is still scaling the page and pretending it's 1024 by something.
 
 [Another MSDN blog post](https://blogs.msdn.com/b/iemobile/archive/2010/11/22/the-ie-mobile-viewport-on-windows-phone-7.aspx?Redirected=true) comes up with the viewport meta tag. Thankfully this is a fairly standard tag (not sure if it is a "standard" standard?) and is supported by iOS and others.  So we set:
 
-<pre><code>&lt;meta content="width=device-width" name="viewport"&gt;
-&lt;link rel="stylesheet" type="text/css" 
+```<meta content="width=device-width" name="viewport">
+<link rel="stylesheet" type="text/css" 
     media="screen and (device-width: 480px)" 
-    href="mobile.css" /&gt;
-</code></pre>
+    href="mobile.css" />
+```
 
 And lo! it is working as expected.  And quite probably on an iPhone too!
 
-## Making the pretty ##
+## Making the pretty 
 
 So now I want to pin that URL to my start page.  iPhone, iPad lets you[ have a pretty icon](http://www.jamiebutler.com/tutorials/iphone_web.php#5) for a "web app", (and a splash screen).  
 

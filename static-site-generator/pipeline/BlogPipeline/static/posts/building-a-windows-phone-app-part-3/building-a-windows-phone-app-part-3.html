@@ -75,7 +75,7 @@ public static class IsolatedStorageHelper
 
         public static IsolatedStorageFile Store { get { return IsolatedStorageFile.GetUserStoreForApplication(); } }
     }
-</code></pre>
+```
 
 <p>I have a feeling I may run into concurrency issues some time in the future...  Watch the FileAccess/FileShare parameters...</p>
 
@@ -96,7 +96,7 @@ public static class IsolatedStorageHelper
 
             wc.DownloadStringAsync(uri);
        }
-</code></pre>
+```
 
 <p>This did not work, throwing a NotSupported exception.</p>
 
@@ -159,7 +159,7 @@ public static class IsolatedStorageHelper
 250 Directory successfully changed.
 200 Switching to Binary mode.
 227 Entering Passive Mode (134,178,63,130,233,247)
-</code></pre>
+```
 
 <p>I have some refactoring to do...  Hopefully I will end up with a really simple FTP client using Silverlight sockets.  This is a bit more than I was expecting, but making something like this will probably be quite useful. For someone.  <a href="http://stackoverflow.com/questions/4588372/is-there-any-way-to-download-ftp-files-with-windows-phone-7-net-4">Maybe this guy.</a></p>
 

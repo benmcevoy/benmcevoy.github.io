@@ -1,22 +1,21 @@
-# You Never Get Anything Done #
 
-## Or How It Takes 8 Hours To Write One Line of Code ##
+## Or How It Takes 8 Hours To Write One Line of Code 
 
 I recently wrote some code to [cluster points on a map](http://benmcevoy.com.au/blog/clustering-results-with-windows-phone-bing-map-control).  This was a fun little problem, but I was nagged by the knowledge that my algorithm for working out distance for any scale was... flawed, to say the least.
 
-## Guesstimating ##
+## Guesstimating 
 
 While writing it I assumed that there must be some exponential relationship happening, for each level of zoom an order of magnitude more or less of map was being displayed.  So I chucked a few numbers in and quickly came to:
 
-<pre><code>
+```
     var threshold = 8192 / Math.Exp(zoomLevel); 
-</code></pre>
+```
 
 The 8192 term seemed to fix things up a bit, and what the hey it's a nice round number. In binary. So that was as good a reason to use it as any :)
 
 Unfortunately at low zoom levels the radius of the cluster would be quite large.  Several planets large.  
 
-## Numerical Techniques ##
+## Numerical Techniques 
 
 So I took the raw numbers it was generating at each zoom level, from 1-21 and wrote a little function to return the now hard coded values.  Then I tweaked those numbers till it looked better.
 
@@ -36,15 +35,15 @@ Excel ends up being able to figure out the formula - 8192e^-x which is the same 
 
 My new and improved tweaked formula:
 
-<pre><code>
+```
     var threshold = 560 * Math.Exp(-0.854 * zoomLevel); 
-</code></pre>
+```
 
 And life was good for the rest of the afternoon.
 
 It's a nice technique actually, and I'll keep that in my bag of tricks for another day - being able to take sampled data, or measured data and then pull out a relationship for it is very useful.
 
-## Realisation and Theory ##
+## Realisation and Theory 
 
 But still... this was crap.  There's no basis in reality for using that formula, except for the exponential part.  So I thunk some more on it and realised I should just state the problem I was really trying to solve:
 
@@ -71,13 +70,13 @@ circumference/360 * Cosine(latitude)
 or 111320m * Cosine(latitude)
 
 
-## The Perfect(ish) Line ##
+## The Perfect(ish) Line 
 
 Given all that I can now write, with some confidence:
 
-<pre><code>
+```
     var threshold = Math.Pow(2f, 16f - zoomLevel) / 1113.2;
-</code></pre>
+```
 
 Which lets me define that at zoom level 16 my area will be 1/1113.2 degrees long or
 
@@ -89,11 +88,11 @@ At zoom level 16 the map shows about [1km across the screen](http://msdn.microso
 
 At zoom level 12, for instance, the map should be showing about 18km across and our function gives us a length of 2^4/1113.2 degrees or about 1600 meters.
 
-## Finally ##
+## Finally 
 
 As there is a lot of logic embedded in those formulas I refactored them to be a bit more meaningful, as the next time I look at this I will NOT remember a damn thing.  They have also been tweaked further to give me more control over the size of the cluster, and the cluster size has been increased slightly to 150m at zoom level 16:
 
-<pre><code>
+```
 
      private const double EquatorialLatitudeMetersPerDegree = 111319.5431527;
     
@@ -121,9 +120,9 @@ As there is a lot of logic embedded in those formulas I refactored them to be a 
         return 150f * Math.Pow(2f, 16f - zoomLevel);
     }
 
-</code></pre>
+```
 
 
-  [1]: assets/cluster/RawDistance.PNG
-  [2]: assets/cluster/trendy.png
-  [3]: assets/cluster/formula.PNG
+  [1]: assets/RawDistance.PNG
+  [2]: assets/trendy.png
+  [3]: assets/formula.PNG

@@ -10,34 +10,34 @@ What I wanted was a simple digital clock display, like so:
 
 Nice. Guess what time I wrote this.  This is just a simple WPF application, the XAML being:
 
-<pre><code>
-&lt;Window x:Class="WPFScreensaver.Window1"
+```
+<Window x:Class="WPFScreensaver.Window1"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Window1" Background="Black" ResizeMode="NoResize" 
-        ShowInTaskbar="False" WindowStyle="None" WindowStartupLocation="CenterScreen" WindowState="Maximized"&gt;
-    &lt;Window.Resources&gt;
+        ShowInTaskbar="False" WindowStyle="None" WindowStartupLocation="CenterScreen" WindowState="Maximized">
+    <Window.Resources>
         
-        &lt;Style TargetType="{x:Type Label}"&gt;
-            &lt;Setter Property="Foreground" Value="White"/&gt;
-            &lt;Setter Property="FontSize" Value="180"/&gt;
-            &lt;Setter Property="FontFamily" Value="./#Digital-7 mono"/&gt;
-        &lt;/Style&gt;
+        <Style TargetType="{x:Type Label}">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="180"/>
+            <Setter Property="FontFamily" Value="./#Digital-7 mono"/>
+        </Style>
         
-    &lt;/Window.Resources&gt;
-    &lt;Grid HorizontalAlignment="Center" VerticalAlignment="Center"&gt;
-        &lt;Label x:Name="timeText" &gt;
-            &lt;Label.Effect&gt;
-                &lt;DropShadowEffect ShadowDepth="0" Color="GreenYellow" BlurRadius="20" /&gt;
-            &lt;/Label.Effect&gt;
-        &lt;/Label&gt;
-    &lt;/Grid&gt;
-&lt;/Window&gt;
-</code></pre>
+    </Window.Resources>
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Label x:Name="timeText" >
+            <Label.Effect>
+                <DropShadowEffect ShadowDepth="0" Color="GreenYellow" BlurRadius="20" />
+            </Label.Effect>
+        </Label>
+    </Grid>
+</Window>
+```
 
 Note the settings to hide all the chrome and startup the app maximised.  Also the sweet “glow” effect using the hardware accelerated DropShadowEffect.
 In the code behind we just have a timer that updates the Label content every second with the current time. No problem.
-<pre><code>
+```
         private Timer _timer = new Timer(1000);
 
         public Window1()
@@ -62,7 +62,7 @@ In the code behind we just have a timer that updates the Label content every sec
         {
             this.Dispatcher.Invoke(new Action(SetTime));
         }
-</code></pre>
+```
 
 I did want a nice monospace digital font, and preferably free and legit. A quick google search yielded up the [Digital-7 Mono font](http://www.dailyfreefonts.com/fonts/info/4774-Digital-7-Mono.html)
 
@@ -81,7 +81,7 @@ When Windows is calling the screensaver it passes one of three command line para
 [This explains it more fully and better than I.](http://www.harding.edu/fmccown/screensaver/screensaver.html)
 
 In the app.xaml.cs of the executable:
-<pre><code>
+```
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -98,13 +98,13 @@ In the app.xaml.cs of the executable:
                         break;
 
                // and so on
-</code></pre>
+```
 And so on...  [I stole this code from here](http://scorbs.com/2006/12/21/wpf-screen-saver-template/)
 
 At this point you can just new up your main window and go.  You will need to handle MouseMove and KeyDown events for the window so you can dismiss the application appropriately.  And be aware that a Timer will raise events on a non-UI thread, so you will need to dispatch any UI events back to the UI thread.
 
 MouseMove is a slight problem, previewing will usually result in the user also immediately dismissing the screensaver.  Other implementations I have seen also test if the mouse has moved significantly, by stashing the current mouse position and comparing it next time the event is raised.  However, this will be sufficient:
-<pre><code>
+```
   bool _isActive;
 
   private void Window1_MouseMove(object sender, MouseEventArgs e)
@@ -118,7 +118,7 @@ MouseMove is a slight problem, previewing will usually result in the user also i
         	Application.Current.Shutdown();
         }
   }
-</code></pre>
+```
 
 Now just build and change the .exe extension.  On my Windows 7 machine I can right click and “Install” the screensaver and I’m pretty sure you can do that on Vista and probably XP as well. Otherwise you may need to copy the .scr and and font file to the %windows%\system32 folder.
 

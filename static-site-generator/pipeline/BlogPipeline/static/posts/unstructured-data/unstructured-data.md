@@ -5,7 +5,7 @@ So what! I hear you say.  Well the log file was always plain text and  as such n
 
 So what! OK, ok.  Log entries look like this:
 
-<pre>
+```
 Tuesday 13 November 2007
 ------------------------------------------------------------------------------------------
 7:30-8:00	Talking to Matt about resourcing.
@@ -15,7 +15,7 @@ Tuesday 13 November 2007
 12:45-1:30	Lunch
 1:30-5:30	ProjectName. Review requirements
 5:30-8:30	Microsoft presentation on TabletPC/Ink and Linq/SQL
-</pre>
+```
 
 And so on.
 
@@ -30,8 +30,7 @@ So with some judicious use of regular expressions we are able to build a parser 
 
 I warn you - this code ain’t that pretty, and the main parse routine relies heavily on assumptions and continues out of the loop early and things being null. And it crashes a lot if things ain’t just so. But it works for me so screw you.
 
-<pre>
-<code>
+```
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -248,13 +247,11 @@ namespace TimeLog
     }
 }
 
-
-</code>
-</pre>
+```
 
 So all that is hydrating a domain model that represents the elements we identified earlier. Plus a few calculated properties such as total hours per day and so on.
 
-<pre><code>
+```
     public class TimeEntry
     {
         public TimeEntry()
@@ -274,7 +271,7 @@ So all that is hydrating a domain model that represents the elements we identifi
 
         public List<string> Comments { get; set; }
 
-</code></pre>
+```
 
 So frickin what!  Well…. Now I can browse my text file by date.  Now I can get a report of hours spent on a project.  Now I have strong data I can work with.  Now I can find out just how long I spent at lunch over the last ten years.
 

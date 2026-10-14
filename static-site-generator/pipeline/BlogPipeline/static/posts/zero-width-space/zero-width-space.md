@@ -6,21 +6,21 @@ I recently was building some nested master pages in ASP.NET.  Somehow I had mana
 
 It looked like this:	
 
-<pre><code>
-    &lt;%@ Master Language="C#" MasterPageFile="~/Site.Master" 
+```
+    <%@ Master Language="C#" MasterPageFile="~/Site.Master" 
         AutoEventWireup="true" CodeBehind="NestedMasterPage1.master.cs" 
-        Inherits="WebApplication1.NestedMasterPage1" %&gt;
+        Inherits="WebApplication1.NestedMasterPage1" %>
 
-    &lt;asp:Content ContentPlaceHolderID="MainContent" runat="server"&gt;
+    <asp:Content ContentPlaceHolderID="MainContent" runat="server">
         spot the typo
-    &lt;/asp:Content&gt;
-</code></pre>
+    </asp:Content>
+```
 
 You can immediately see the problem, right?
 
 Run the app and get a beautiful YSOD:
 
-![Alt text](assets/zero-width/utf-error.JPG "invisible characters are hard to spot")
+![Alt text](assets/utf-error.JPG "invisible characters are hard to spot")
 
 15 minutes later and I am near to tears.  But then… Open the file in a binary editor.
 
