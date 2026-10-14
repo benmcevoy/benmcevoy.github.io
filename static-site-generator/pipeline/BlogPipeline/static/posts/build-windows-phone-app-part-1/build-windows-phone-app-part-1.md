@@ -109,7 +109,7 @@ OK, so looking at that:
  - I should show the forecast temperature on the future day’s icon as well
  - I forgot the current temperature reading
 
-![wireframe take 2](aseets/weather-wireframe-2.png)
+![wireframe take 2](assets/weather-wireframe-2.png)
 
 The Live tile will look like the future tile.
 
