@@ -44,7 +44,7 @@ At the password prompt open the accessibilty tools, that little icon at the bott
  whoami
 ```
 
-I am [system](https://msdn.microsoft.com/en-us/library/windows/desktop/ms684190(v=vs.85%29.aspx). That's handy.
+I am [system](https://msdn.microsoft.com/en-us/library/windows/desktop/ms684190(v=vs.85).aspx). That's handy.
 
 ## Update password
 
