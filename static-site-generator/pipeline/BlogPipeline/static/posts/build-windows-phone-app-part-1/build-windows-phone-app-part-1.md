@@ -1,4 +1,4 @@
-## My <del>First</del> Second Windows Phone App 
+## My ~~First~~ Second Windows Phone App 
 
 Having acquired a Windows Phone I now want to build some apps.  That and there is a competition going at the moment where I can win a newer phone.  Much procrastination ensues.
 
