@@ -59,21 +59,11 @@ It took many attempts to find this.  This is NOT the right branch for the ports,
 
 **Important - much pain if the branches don't line up**
 
-> FreeBSD: releng/14.3 (https://git.freebsd.org/src.git) 
-> (Commit: 833d39bd2e38421a14ea489a956261a0fa993fbc)
+> FreeBSD: releng/14.3 (https://git.freebsd.org/src.git)<br/>(Commit: 833d39bd2e38421a14ea489a956261a0fa993fbc)
 > 
-> Xigmanas: 14.3.0.5 (https://svn.code.sf.net/p/xigmanas/code/branches/14.3.0.5/) 
-> (Revision: 10655) 
+> Xigmanas: 14.3.0.5 (https://svn.code.sf.net/p/xigmanas/code/branches/14.3.0.5/)<br/>(Revision: 10655) 
 > 
-> Ports: 14.2-eol (https://cgit.freebsd.org/ports/tree/databases?h=14.2-eol)  
-> (Commit: 4e450f33b9f9cf668688f9c439c58871751e2bbb)
-
-git -C /usr/ports rev-parse HEAD
-4e450f33b9f9cf668688f9c439c58871751e2bbb
-root@xigma-build:/usr/local/xigmanas # git -C /usr/src rev-parse HEAD
-833d39bd2e38421a14ea489a956261a0fa993fbc
-root@xigma-build:/usr/local/xigmanas # svn info /usr/local/xigmanas/svn | grep Revision
-Revision: 10655
+> Ports: 14.2-eol (https://cgit.freebsd.org/ports/tree/databases?h=14.2-eol)<br/>(Commit: 4e450f33b9f9cf668688f9c439c58871751e2bbb)
 
 
 ## Fix the ports
