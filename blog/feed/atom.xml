@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?><feed xml:lang="en-us" xmlns="http://www.w3.org/2005/Atom"><title type="text">Ben McEvoy</title><subtitle type="text">Just stuff for fun</subtitle><id>https://benmcevoy.com.au/blog/feed</id><updated>2026-10-18T20:13:11+11:00</updated><author><name>Ben McEvoy</name></author><link rel="alternate" href="https://benmcevoy.com.au/blog/feed" /><link rel="self" type="application/atom+xml" href="https://benmcevoy.com.au/blog/feed" /><entry><id>https://benmcevoy.com.au/blog/2026/10/custom-xigmanas-build/</id><title type="text">Customise XigmaNas build, adding drivers and Navidrome</title><published>2026-10-15T12:00:00+11:00</published><updated>2026-10-15T12:00:00+11:00</updated><link rel="alternate" href="https://benmcevoy.com.au/blog/2026/10/custom-xigmanas-build/" /><content type="html">&lt;h2 id="lets-build-xigmanas-from-source"&gt;Let's build XigmaNas from source!&lt;/h2&gt;
+﻿<?xml version="1.0" encoding="utf-8"?><feed xml:lang="en-us" xmlns="http://www.w3.org/2005/Atom"><title type="text">Ben McEvoy</title><subtitle type="text">Just stuff for fun</subtitle><id>https://benmcevoy.com.au/blog/feed</id><updated>2026-10-18T20:14:52+11:00</updated><author><name>Ben McEvoy</name></author><link rel="alternate" href="https://benmcevoy.com.au/blog/feed" /><link rel="self" type="application/atom+xml" href="https://benmcevoy.com.au/blog/feed" /><entry><id>https://benmcevoy.com.au/blog/2026/10/custom-xigmanas-build/</id><title type="text">Customise XigmaNas build, adding drivers and Navidrome</title><published>2026-10-15T12:00:00+11:00</published><updated>2026-10-15T12:00:00+11:00</updated><link rel="alternate" href="https://benmcevoy.com.au/blog/2026/10/custom-xigmanas-build/" /><content type="html">&lt;h2 id="lets-build-xigmanas-from-source"&gt;Let's build XigmaNas from source!&lt;/h2&gt;
 &lt;p&gt;What could go wrong?&lt;/p&gt;
 &lt;p&gt;I am a total FreeBSD noob and a terrible &amp;lt;s&amp;gt;C/Python&amp;lt;/s&amp;gt; programmer. But I love me some &lt;a href="https://www.xigmanas.com/"&gt;XigmaNas&lt;/a&gt;.  I really like the &amp;quot;firmware&amp;quot; model, it bootstraps itself up into a RAM disk and the original boot files and OS are never accessible, so in theory can't get corrupted.  I've been running it at home for years, I forget how many, maybe 10 years?  And it is rock solid.&lt;/p&gt;
 &lt;blockquote&gt;
@@ -35,9 +35,12 @@
 &lt;p&gt;It took many attempts to find this.  This is NOT the right branch for the ports, but I'm pretty sure there is no right branch.  This branch produced the least errors.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Important - much pain if the branches don't line up&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;FreeBSD: releng/14.3 (&lt;a href="https://git.freebsd.org/src.git"&gt;https://git.freebsd.org/src.git&lt;/a&gt;)&amp;lt;br/&amp;gt;(Commit: 833d39bd2e38421a14ea489a956261a0fa993fbc)&lt;/p&gt;
-&lt;p&gt;Xigmanas: 14.3.0.5 (&lt;a href="https://svn.code.sf.net/p/xigmanas/code/branches/14.3.0.5/"&gt;https://svn.code.sf.net/p/xigmanas/code/branches/14.3.0.5/&lt;/a&gt;)&amp;lt;br/&amp;gt;(Revision: 10655)&lt;/p&gt;
-&lt;p&gt;Ports: 14.2-eol (&lt;a href="https://cgit.freebsd.org/ports/tree/databases?h=14.2-eol"&gt;https://cgit.freebsd.org/ports/tree/databases?h=14.2-eol&lt;/a&gt;)&amp;lt;br/&amp;gt;(Commit: 4e450f33b9f9cf668688f9c439c58871751e2bbb)&lt;/p&gt;
+&lt;p&gt;FreeBSD: releng/14.3 (&lt;a href="https://git.freebsd.org/src.git"&gt;https://git.freebsd.org/src.git&lt;/a&gt;)&lt;br /&gt;
+(Commit: 833d39bd2e38421a14ea489a956261a0fa993fbc)&lt;/p&gt;
+&lt;p&gt;Xigmanas: 14.3.0.5 (&lt;a href="https://svn.code.sf.net/p/xigmanas/code/branches/14.3.0.5/"&gt;https://svn.code.sf.net/p/xigmanas/code/branches/14.3.0.5/&lt;/a&gt;)&lt;br /&gt;
+(Revision: 10655)&lt;/p&gt;
+&lt;p&gt;Ports: 14.2-eol (&lt;a href="https://cgit.freebsd.org/ports/tree/databases?h=14.2-eol"&gt;https://cgit.freebsd.org/ports/tree/databases?h=14.2-eol&lt;/a&gt;)&lt;br /&gt;
+(Commit: 4e450f33b9f9cf668688f9c439c58871751e2bbb)&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h2 id="fix-the-ports"&gt;Fix the ports&lt;/h2&gt;
 &lt;p&gt;With &lt;code&gt;14.2-eol&lt;/code&gt; I had three failures, which can be resolved:&lt;/p&gt;
