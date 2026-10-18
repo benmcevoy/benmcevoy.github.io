@@ -21,7 +21,7 @@ namespace BlogPipeline.Publishing
             html = html.Replace("{{title}}", post.Meta.Title);
             html = html.Replace("{{keywords}}", post.Meta.Keywords);
             html = html.Replace("{{summary}}", post.Meta.Summary);
-            html = html.Replace("{{published}}", post.Meta.Published.ToString("dddd MMMM yyyy"));
+            html = html.Replace("{{published}}", post.Meta.Published.ToString("dddd dd MMMM yyyy"));
             html = html.Replace("{{nav}}", NavPartial);
             html = html.Replace("{{navigation}}", (string)context["navigation"]);
 
