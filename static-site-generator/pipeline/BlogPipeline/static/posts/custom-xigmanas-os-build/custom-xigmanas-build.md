@@ -2,7 +2,7 @@
 
 What could go wrong?
 
-I am a total FreeBSD noob and a terrible ~~C/Python~~ programmer. But I love me some [XigmaNas](https://www.xigmanas.com/).  I really like the "firmware" model, it bootstraps itself up into a RAM disk and the original boot files and OS are never accessible, so in theory can't get corrupted.  I've been running it at home for years, I forget how many, maybe 10 years?  And it is rock solid.
+I am a total FreeBSD noob and a terrible <s>C/Python</s> programmer. But I love me some [XigmaNas](https://www.xigmanas.com/).  I really like the "firmware" model, it bootstraps itself up into a RAM disk and the original boot files and OS are never accessible, so in theory can't get corrupted.  I've been running it at home for years, I forget how many, maybe 10 years?  And it is rock solid.
 
 > XigmaNAS is an Open Source Storage NAS (Network-Attached Storage) distribution based on FreeBSD.
 
@@ -23,7 +23,6 @@ Today (Oct 2026) that is 14.3.0.5
 But hey, go for it.
 
 
-
 > You need to get your ducks in a row.
 > 
 > The Xigma release will reference a FreeBSD release, e.g. for XigmaNas-14.3 this is FreeBSD `releng/14.3`
@@ -36,9 +35,9 @@ This guide is to help me bake in the realtek-re-kmod drivers for the RTL8125 chi
 
 And to add [Navidrome](https://www.navidrome.org/) as a service.
 
-The XIgmaNas releases are not exactly reproducible builds.  If you are expert at FreeBSD, ports and make then you will probably have a better time than I did.
+The XigmaNas releases are not exactly reproducible builds.  If you are expert at FreeBSD, ports and make then you will probably have a better time than I did.
 
-The more I learn the more I see that this is not a XigmaNas issue, but a FreeBSD issue.  
+The more I learn the more I see that this is not a XigmaNas issue, but more a FreeBSD issue.  
 
 The main issue is building the ports.  Due to many dependencies, transitive dependencies, missing libraries, changes between versions of FreeBSD we find DEPENDENCY HELL. Ooooo.  Go search for "freebsd cython conflict". It seems FreeBSD has been a bit laissez faire in dependency management between, or even within, versions...
 
@@ -60,11 +59,22 @@ It took many attempts to find this.  This is NOT the right branch for the ports,
 
 **Important - much pain if the branches don't line up**
 
-> FreeBSD: releng/14.3 (https://git.freebsd.org/src.git)
+> FreeBSD: releng/14.3 (https://git.freebsd.org/src.git) 
+> (Commit: 833d39bd2e38421a14ea489a956261a0fa993fbc)
 > 
-> Xigmanas: 14.3.0.5 (https://svn.code.sf.net/p/xigmanas/code/branches/14.3.0.5/)
+> Xigmanas: 14.3.0.5 (https://svn.code.sf.net/p/xigmanas/code/branches/14.3.0.5/) 
+> (Revision: 10655) 
 > 
-> Ports: 14.2-eol (https://cgit.freebsd.org/ports/tree/databases?h=14.2-eol)
+> Ports: 14.2-eol (https://cgit.freebsd.org/ports/tree/databases?h=14.2-eol)  
+> (Commit: 4e450f33b9f9cf668688f9c439c58871751e2bbb)
+
+git -C /usr/ports rev-parse HEAD
+4e450f33b9f9cf668688f9c439c58871751e2bbb
+root@xigma-build:/usr/local/xigmanas # git -C /usr/src rev-parse HEAD
+833d39bd2e38421a14ea489a956261a0fa993fbc
+root@xigma-build:/usr/local/xigmanas # svn info /usr/local/xigmanas/svn | grep Revision
+Revision: 10655
+
 
 ## Fix the ports
 
@@ -108,14 +118,14 @@ We can set in `make.conf` instead and scope it to the "problem areas".  Yes, Cla
 ```
 .if ${.CURDIR:M*/devel/llvm19}
 MAKE_JOBS_NUMBER=4
-.endi
+.endif
 ```
 
 **python311**
 
 Probably related to cython? Who knows.
 
-The shipped Makefile for the xigmanas version of python311 expects the /usr/ports/ version of python311 to have been built.
+The shipped Makefile for the XigmaNas version of python311 expects the /usr/ports/ version of python311 to have been built.
 
 This error turns up while installing ports, so very late in the game.
 
@@ -137,7 +147,7 @@ This line in the Makefile seems... wrong?
 
 The realtek card I care about uses chipset RTL8125.  The realtek drivers (re) shipped by FreeBSD DO NOT support this at this time.  Or in v15 either.
 
-Hence we build the ports/net/realtek-re-kmod port and install.
+Hence we build the `ports/net/realtek-re-kmod` port and install.
 
 ## Create QEMU FreeBSD
 
@@ -228,7 +238,7 @@ On the VM I made this directory in my (root) home `~/xigma`.  And you should alr
 
 Follow the readme at `https://sourceforge.net/p/xigmanas/code/HEAD/tree/branches/14.3.0.5/build/README` but it's misleading.
 
-It's pretty much correct, just any mention of ports, or pullnig the ports has to be taken with a large chunk of salt.
+It's pretty much correct, just any mention of ports, or pulling the ports has to be taken with a large chunk of salt.
 
 Primarily it does not specify where the ports come from, which leads to much cursing.
 
@@ -327,7 +337,7 @@ post-stage:
 We will build the port, but later we will **NOT** install it.  The install goes to the `modules` folder instead of ports.
 
 ```
-cp -R /usr/ports/multimedia/realtek-re-kmod/ /usr/local/xigmanas/svn/build/ports/realtek-re-kmod
+cp -R /usr/ports/net/realtek-re-kmod/ /usr/local/xigmanas/svn/build/ports/realtek-re-kmod
 echo "ON" > /usr/local/xigmanas/svn/build/ports/realtek-re-kmod/pkg-state
 ```
 
@@ -341,7 +351,9 @@ Update the `/usr/local/xigmanas/svn/build/ports/Makefile` and add:
 
 After including Navidrome the image exceeds the size of the memory disk.  We need to extend that for the creation of the LiveCD ISO and for the actual memory disk when xigmanas is running.
 
-Edit the `/usr/local/xigmanas/svn/rc` file:
+> The two files (`rc` and `functions.inc`) MUST agree on the memory disk size - in this case 1600MB
+
+Edit the `/usr/local/xigmanas/svn/etc/rc` file:
 
 Replace:
 
@@ -360,7 +372,7 @@ SWAPSIZE=512m
 
 ```
 
-Edit the `/usr/local/xigmanas/svn/buildfuncitons.inc` file.
+Edit the `/usr/local/xigmanas/svn/build/functions.inc` file.
 
 Note the `XIGMANAS_MDLOCAL_SIZE` variable.
 
@@ -388,12 +400,6 @@ fi
 With:
 
 ```
-#       Local variables
-XIGMANAS_URL=$(cat $XIGMANAS_SVNDIR/etc/prd.url)
-XIGMANAS_SVNURL="https://svn.code.sf.net/p/xigmanas/code/trunk"
-XIGMANAS_GIT_SRCTREE="https://git.freebsd.org/src.git"
-XIGMANAS_GIT_BRANCH="releng/14.3"
-
 #       Size in MB of the MFS Root filesystem that will include all FreeBSD binary
 #       and XigmaNAS® WebGUI/Scripts. Keep this file very small! This file is unzipped
 #       to a RAM disk at XigmaNAS® startup.
@@ -511,9 +517,9 @@ Yes - run this.  Sets things up in `/usr/local/xigmanas/rootfs`
 
 **2.3 - Build/Install the Kernel.**
 
-- 1. Apply kernel patches
-- 2. Build kernel
-- 3. Install kernel + modules
+1. Apply kernel patches
+2. Build kernel
+3. Install kernel + modules
 
 Run all of these.  You can select all three at once.
 
@@ -536,9 +542,11 @@ Yes - run this.  Updates some of the `/usr/ports/distfiles` with build specific 
 
 Run 1 & 4.
 
-When we run 4 **desleect the realtek-re-mod** port.
+When we run 4 **deselect the realtek-re-mod** port.
 
-This takes ages. Like, 4 hours. And sometimes has a dialog you have to hit enter on. Although that might have been Navidrome.  Hopefully the `make.conf` settings have shut it all up.
+> Rerunning the "Install" step is very brittle. You MUST rebuild or `make clean` the port before trying to reinstall.
+
+This takes ages. Like, 8 hours. And sometimes has a dialog you have to hit enter on. Although that might have been Navidrome.  Hopefully the `make.conf` settings have shut it all up.
 
 You should see navidrome in the list.  And realtek-re-kmod too. Cool.
 
@@ -629,7 +637,7 @@ Does the module exist?
 
 `ls -l /boot/modules/if_re.ko`
 
-Can we load the module - should get no errors
+Can we load the module - should get no errors.
 
 `kldload /boot/modules/if_re.ko`
 

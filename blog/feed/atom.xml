@@ -1,7 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?><feed xml:lang="en-us" xmlns="http://www.w3.org/2005/Atom"><title type="text">Ben McEvoy</title><subtitle type="text">Just stuff for fun</subtitle><id>https://benmcevoy.com.au/blog/feed</id><updated>2026-10-15T13:10:35+11:00</updated><author><name>Ben McEvoy</name></author><link rel="alternate" href="https://benmcevoy.com.au/blog/feed" /><link rel="self" type="application/atom+xml" href="https://benmcevoy.com.au/blog/feed" />
-    <entry><id>https://benmcevoy.com.au/blog/2026/10/custom-xigmanas-build/</id><title type="text">Customise XigmaNas build, adding drivers and Navidrome</title><published>2026-10-15T12:00:00+11:00</published><updated>2026-10-15T12:00:00+11:00</updated><link rel="alternate" href="https://benmcevoy.com.au/blog/2026/10/custom-xigmanas-build/" /><content type="html">&lt;h2 id="lets-build-xigmanas-from-source"&gt;Let's build XigmaNas from source!&lt;/h2&gt;
+﻿<?xml version="1.0" encoding="utf-8"?><feed xml:lang="en-us" xmlns="http://www.w3.org/2005/Atom"><title type="text">Ben McEvoy</title><subtitle type="text">Just stuff for fun</subtitle><id>https://benmcevoy.com.au/blog/feed</id><updated>2026-10-18T20:05:00+11:00</updated><author><name>Ben McEvoy</name></author><link rel="alternate" href="https://benmcevoy.com.au/blog/feed" /><link rel="self" type="application/atom+xml" href="https://benmcevoy.com.au/blog/feed" /><entry><id>https://benmcevoy.com.au/blog/2026/10/custom-xigmanas-build/</id><title type="text">Customise XigmaNas build, adding drivers and Navidrome</title><published>2026-10-15T12:00:00+11:00</published><updated>2026-10-15T12:00:00+11:00</updated><link rel="alternate" href="https://benmcevoy.com.au/blog/2026/10/custom-xigmanas-build/" /><content type="html">&lt;h2 id="lets-build-xigmanas-from-source"&gt;Let's build XigmaNas from source!&lt;/h2&gt;
 &lt;p&gt;What could go wrong?&lt;/p&gt;
-&lt;p&gt;I am a total FreeBSD noob and a terrible &lt;&gt;C/Python&lt;/&gt; programmer. But I love me some &lt;a href="https://www.xigmanas.com/"&gt;XigmaNas&lt;/a&gt;.  I really like the &amp;quot;firmware&amp;quot; model, it bootstraps itself up into a RAM disk and the original boot files and OS are never accessible, so in theory can't get corrupted.  I've been running it at home for years, I forget how many, maybe 10 years?  And it is rock solid.&lt;/p&gt;
+&lt;p&gt;I am a total FreeBSD noob and a terrible &amp;lt;s&amp;gt;C/Python&amp;lt;/s&amp;gt; programmer. But I love me some &lt;a href="https://www.xigmanas.com/"&gt;XigmaNas&lt;/a&gt;.  I really like the &amp;quot;firmware&amp;quot; model, it bootstraps itself up into a RAM disk and the original boot files and OS are never accessible, so in theory can't get corrupted.  I've been running it at home for years, I forget how many, maybe 10 years?  And it is rock solid.&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;XigmaNAS is an Open Source Storage NAS (Network-Attached Storage) distribution based on FreeBSD.&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -23,8 +22,8 @@
 &lt;p&gt;&lt;strong&gt;releng&lt;/strong&gt; - &amp;quot;release engineering branch&amp;quot;, a little FreeBSDism.&lt;/p&gt;
 &lt;p&gt;This guide is to help me bake in the realtek-re-kmod drivers for the RTL8125 chipset, used in my cheap TPLink 2.5Gbe card.&lt;/p&gt;
 &lt;p&gt;And to add &lt;a href="https://www.navidrome.org/"&gt;Navidrome&lt;/a&gt; as a service.&lt;/p&gt;
-&lt;p&gt;The XIgmaNas releases are not exactly reproducible builds.  If you are expert at FreeBSD, ports and make then you will probably have a better time than I did.&lt;/p&gt;
-&lt;p&gt;The more I learn the more I see that this is not a XigmaNas issue, but a FreeBSD issue.&lt;/p&gt;
+&lt;p&gt;The XigmaNas releases are not exactly reproducible builds.  If you are expert at FreeBSD, ports and make then you will probably have a better time than I did.&lt;/p&gt;
+&lt;p&gt;The more I learn the more I see that this is not a XigmaNas issue, but more a FreeBSD issue.&lt;/p&gt;
 &lt;p&gt;The main issue is building the ports.  Due to many dependencies, transitive dependencies, missing libraries, changes between versions of FreeBSD we find DEPENDENCY HELL. Ooooo.  Go search for &amp;quot;freebsd cython conflict&amp;quot;. It seems FreeBSD has been a bit laissez faire in dependency management between, or even within, versions...&lt;/p&gt;
 &lt;h2 id="orientation"&gt;Orientation&lt;/h2&gt;
 &lt;p&gt;I am operating on this repository - &lt;a href="https://svn.code.sf.net/p/xigmanas/code/branches/14.3.0.5/"&gt;https://svn.code.sf.net/p/xigmanas/code/branches/14.3.0.5/&lt;/a&gt;&lt;/p&gt;
@@ -36,10 +35,19 @@
 &lt;p&gt;It took many attempts to find this.  This is NOT the right branch for the ports, but I'm pretty sure there is no right branch.  This branch produced the least errors.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Important - much pain if the branches don't line up&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;FreeBSD: releng/14.3 (&lt;a href="https://git.freebsd.org/src.git"&gt;https://git.freebsd.org/src.git&lt;/a&gt;)&lt;/p&gt;
-&lt;p&gt;Xigmanas: 14.3.0.5 (&lt;a href="https://svn.code.sf.net/p/xigmanas/code/branches/14.3.0.5/"&gt;https://svn.code.sf.net/p/xigmanas/code/branches/14.3.0.5/&lt;/a&gt;)&lt;/p&gt;
-&lt;p&gt;Ports: 14.2-eol (&lt;a href="https://cgit.freebsd.org/ports/tree/databases?h=14.2-eol"&gt;https://cgit.freebsd.org/ports/tree/databases?h=14.2-eol&lt;/a&gt;)&lt;/p&gt;
+&lt;p&gt;FreeBSD: releng/14.3 (&lt;a href="https://git.freebsd.org/src.git"&gt;https://git.freebsd.org/src.git&lt;/a&gt;)
+(Commit: 833d39bd2e38421a14ea489a956261a0fa993fbc)&lt;/p&gt;
+&lt;p&gt;Xigmanas: 14.3.0.5 (&lt;a href="https://svn.code.sf.net/p/xigmanas/code/branches/14.3.0.5/"&gt;https://svn.code.sf.net/p/xigmanas/code/branches/14.3.0.5/&lt;/a&gt;)
+(Revision: 10655)&lt;/p&gt;
+&lt;p&gt;Ports: 14.2-eol (&lt;a href="https://cgit.freebsd.org/ports/tree/databases?h=14.2-eol"&gt;https://cgit.freebsd.org/ports/tree/databases?h=14.2-eol&lt;/a&gt;)&lt;br /&gt;
+(Commit: 4e450f33b9f9cf668688f9c439c58871751e2bbb)&lt;/p&gt;
 &lt;/blockquote&gt;
+&lt;p&gt;git -C /usr/ports rev-parse HEAD
+4e450f33b9f9cf668688f9c439c58871751e2bbb
+root@xigma-build:/usr/local/xigmanas # git -C /usr/src rev-parse HEAD
+833d39bd2e38421a14ea489a956261a0fa993fbc
+root@xigma-build:/usr/local/xigmanas # svn info /usr/local/xigmanas/svn | grep Revision
+Revision: 10655&lt;/p&gt;
 &lt;h2 id="fix-the-ports"&gt;Fix the ports&lt;/h2&gt;
 &lt;p&gt;With &lt;code&gt;14.2-eol&lt;/code&gt; I had three failures, which can be resolved:&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;php84-APCu&lt;/strong&gt;&lt;/p&gt;
@@ -62,11 +70,11 @@
 &lt;p&gt;We can set in &lt;code&gt;make.conf&lt;/code&gt; instead and scope it to the &amp;quot;problem areas&amp;quot;.  Yes, Claude told me this.&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;.if ${.CURDIR:M*/devel/llvm19}
 MAKE_JOBS_NUMBER=4
-.endi
+.endif
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;strong&gt;python311&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Probably related to cython? Who knows.&lt;/p&gt;
-&lt;p&gt;The shipped Makefile for the xigmanas version of python311 expects the /usr/ports/ version of python311 to have been built.&lt;/p&gt;
+&lt;p&gt;The shipped Makefile for the XigmaNas version of python311 expects the /usr/ports/ version of python311 to have been built.&lt;/p&gt;
 &lt;p&gt;This error turns up while installing ports, so very late in the game.&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;cd /usr/ports/lang/python311
 make stage
@@ -77,7 +85,7 @@ make stage
 &lt;p&gt;&lt;code&gt;DEP_STAGEDIR=	${PORTSDIR}/lang/python311/work/stage&lt;/code&gt;&lt;/p&gt;
 &lt;h2 id="realtek-driver"&gt;Realtek driver&lt;/h2&gt;
 &lt;p&gt;The realtek card I care about uses chipset RTL8125.  The realtek drivers (re) shipped by FreeBSD DO NOT support this at this time.  Or in v15 either.&lt;/p&gt;
-&lt;p&gt;Hence we build the ports/net/realtek-re-kmod port and install.&lt;/p&gt;
+&lt;p&gt;Hence we build the &lt;code&gt;ports/net/realtek-re-kmod&lt;/code&gt; port and install.&lt;/p&gt;
 &lt;h2 id="create-qemu-freebsd"&gt;Create QEMU FreeBSD&lt;/h2&gt;
 &lt;p&gt;&lt;a href="https://download.freebsd.org/ftp/releases/amd64/amd64/ISO-IMAGES/14.3/"&gt;https://download.freebsd.org/ftp/releases/amd64/amd64/ISO-IMAGES/14.3/&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;Use the &lt;code&gt;FreeBSD-14.3-RELEASE-amd64-disc1.iso.&lt;/code&gt;&lt;/p&gt;
@@ -134,7 +142,7 @@ mkdir ~/xigma
 &lt;p&gt;&lt;code&gt;sshfs -o port=2222 root@192.168.122.1:/usr/local/xigmanas ~/xigma&lt;/code&gt;&lt;/p&gt;
 &lt;h2 id="the-xigmanas-readme-hmmmm"&gt;The XigmaNas Readme - hmmmm...&lt;/h2&gt;
 &lt;p&gt;Follow the readme at &lt;code&gt;https://sourceforge.net/p/xigmanas/code/HEAD/tree/branches/14.3.0.5/build/README&lt;/code&gt; but it's misleading.&lt;/p&gt;
-&lt;p&gt;It's pretty much correct, just any mention of ports, or pullnig the ports has to be taken with a large chunk of salt.&lt;/p&gt;
+&lt;p&gt;It's pretty much correct, just any mention of ports, or pulling the ports has to be taken with a large chunk of salt.&lt;/p&gt;
 &lt;p&gt;Primarily it does not specify where the ports come from, which leads to much cursing.&lt;/p&gt;
 &lt;p&gt;We pull the BSD source and ports ourselves.&lt;/p&gt;
 &lt;h2 id="prepare-the-build-environment"&gt;Prepare the build environment&lt;/h2&gt;
@@ -200,7 +208,7 @@ post-stage:
 &lt;/code&gt;&lt;/pre&gt;
 &lt;h2 id="adding-the-realtek-port"&gt;Adding the realtek port&lt;/h2&gt;
 &lt;p&gt;We will build the port, but later we will &lt;strong&gt;NOT&lt;/strong&gt; install it.  The install goes to the &lt;code&gt;modules&lt;/code&gt; folder instead of ports.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;cp -R /usr/ports/multimedia/realtek-re-kmod/ /usr/local/xigmanas/svn/build/ports/realtek-re-kmod
+&lt;pre&gt;&lt;code&gt;cp -R /usr/ports/net/realtek-re-kmod/ /usr/local/xigmanas/svn/build/ports/realtek-re-kmod
 echo &amp;quot;ON&amp;quot; &amp;gt; /usr/local/xigmanas/svn/build/ports/realtek-re-kmod/pkg-state
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Update the &lt;code&gt;/usr/local/xigmanas/svn/build/ports/Makefile&lt;/code&gt; and add:&lt;/p&gt;
@@ -208,7 +216,10 @@ echo &amp;quot;ON&amp;quot; &amp;gt; /usr/local/xigmanas/svn/build/ports/realtek
 &lt;/code&gt;&lt;/pre&gt;
 &lt;h2 id="making-the-memory-disk-bigger"&gt;Making the memory disk bigger&lt;/h2&gt;
 &lt;p&gt;After including Navidrome the image exceeds the size of the memory disk.  We need to extend that for the creation of the LiveCD ISO and for the actual memory disk when xigmanas is running.&lt;/p&gt;
-&lt;p&gt;Edit the &lt;code&gt;/usr/local/xigmanas/svn/rc&lt;/code&gt; file:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The two files (&lt;code&gt;rc&lt;/code&gt; and &lt;code&gt;functions.inc&lt;/code&gt;) MUST agree on the memory disk size - in this case 1600MB&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Edit the &lt;code&gt;/usr/local/xigmanas/svn/etc/rc&lt;/code&gt; file:&lt;/p&gt;
 &lt;p&gt;Replace:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;# Fixed values requested by build/make.sh
 MDLOCALSIZE=1332m
@@ -220,7 +231,7 @@ MDLOCALSIZE=1600m
 SWAPSIZE=512m
 
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Edit the &lt;code&gt;/usr/local/xigmanas/svn/buildfuncitons.inc&lt;/code&gt; file.&lt;/p&gt;
+&lt;p&gt;Edit the &lt;code&gt;/usr/local/xigmanas/svn/build/functions.inc&lt;/code&gt; file.&lt;/p&gt;
 &lt;p&gt;Note the &lt;code&gt;XIGMANAS_MDLOCAL_SIZE&lt;/code&gt; variable.&lt;/p&gt;
 &lt;p&gt;Replace:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;#	Size in MB of the MFS Root filesystem that will include all FreeBSD binary
@@ -241,13 +252,7 @@ if [ &amp;quot;amd64&amp;quot; = ${XIGMANAS_ARCH} ]; then
 fi
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;With:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;#       Local variables
-XIGMANAS_URL=$(cat $XIGMANAS_SVNDIR/etc/prd.url)
-XIGMANAS_SVNURL=&amp;quot;https://svn.code.sf.net/p/xigmanas/code/trunk&amp;quot;
-XIGMANAS_GIT_SRCTREE=&amp;quot;https://git.freebsd.org/src.git&amp;quot;
-XIGMANAS_GIT_BRANCH=&amp;quot;releng/14.3&amp;quot;
-
-#       Size in MB of the MFS Root filesystem that will include all FreeBSD binary
+&lt;pre&gt;&lt;code&gt;#       Size in MB of the MFS Root filesystem that will include all FreeBSD binary
 #       and XigmaNAS® WebGUI/Scripts. Keep this file very small! This file is unzipped
 #       to a RAM disk at XigmaNAS® startup.
 #       The image must fit on 2GB CF/USB.
@@ -363,23 +368,11 @@ Compile Menu:
 &lt;p&gt;&lt;strong&gt;2.2 - Create Filesystem Structure.&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Yes - run this.  Sets things up in &lt;code&gt;/usr/local/xigmanas/rootfs&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;2.3 - Build/Install the Kernel.&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
 &lt;ol&gt;
 &lt;li&gt;Apply kernel patches&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;ol start="2"&gt;
 &lt;li&gt;Build kernel&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;ol start="3"&gt;
 &lt;li&gt;Install kernel + modules&lt;/li&gt;
 &lt;/ol&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
 &lt;p&gt;Run all of these.  You can select all three at once.&lt;/p&gt;
 &lt;p&gt;The install kernel + modules step is the bit we need to copy later to install the realtek driver.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;2.4 - Build World.&lt;/strong&gt;&lt;/p&gt;
@@ -410,8 +403,11 @@ Compile Menu:
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Run 1 &amp;amp; 4.&lt;/p&gt;
-&lt;p&gt;When we run 4 &lt;strong&gt;desleect the realtek-re-mod&lt;/strong&gt; port.&lt;/p&gt;
-&lt;p&gt;This takes ages. Like, 4 hours. And sometimes has a dialog you have to hit enter on. Although that might have been Navidrome.  Hopefully the &lt;code&gt;make.conf&lt;/code&gt; settings have shut it all up.&lt;/p&gt;
+&lt;p&gt;When we run 4 &lt;strong&gt;deselect the realtek-re-mod&lt;/strong&gt; port.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Rerunning the &amp;quot;Install&amp;quot; step is very brittle. You MUST rebuild or &lt;code&gt;make clean&lt;/code&gt; the port before trying to reinstall.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;This takes ages. Like, 8 hours. And sometimes has a dialog you have to hit enter on. Although that might have been Navidrome.  Hopefully the &lt;code&gt;make.conf&lt;/code&gt; settings have shut it all up.&lt;/p&gt;
 &lt;p&gt;You should see navidrome in the list.  And realtek-re-kmod too. Cool.&lt;/p&gt;
 &lt;p&gt;&lt;img src="assets/time-passes.jpg" alt="Insert SpongeBob Time Card meme here." /&gt;&lt;/p&gt;
 &lt;blockquote&gt;
@@ -470,7 +466,7 @@ qemu-system-x86_64 -cpu host -enable-kvm -m 8192 -smp 4 \
 &lt;p&gt;&lt;strong&gt;Test realtek-re-kmod as best we can&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Does the module exist?&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;ls -l /boot/modules/if_re.ko&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;Can we load the module - should get no errors&lt;/p&gt;
+&lt;p&gt;Can we load the module - should get no errors.&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;kldload /boot/modules/if_re.ko&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;This VM does not have the hardware, so the rest of the config can happen later.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Test Navidrome&lt;/strong&gt;&lt;/p&gt;
@@ -918,4 +914,62 @@ copy cmd.exe utilman.exe
 
 
 &lt;/code&gt;&lt;/pre&gt;
+</content></entry><entry><id>https://benmcevoy.com.au/blog/2013/07/detect-wifi-on-windows-phone/</id><title type="text">Detect wifi on Windows Phone</title><published>2013-07-23T07:00:00+10:00</published><updated>2013-07-23T07:00:00+10:00</updated><link rel="alternate" href="https://benmcevoy.com.au/blog/2013/07/detect-wifi-on-windows-phone/" /><content type="html">&lt;p&gt;If you are making web requests on the windows phone you should check network availability first.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;     Microsoft.Phone.Net.NetworkInformation.DeviceNetworkInformation.IsNetworkAvailable
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you are trying to be a conscientious developer you may only want to make web requests when the phone is connected to a wifi network, for instance in a background agent update.&lt;/p&gt;
+&lt;p&gt;The API offers:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;     DeviceNetworkInformation.IsWiFiEnabled
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This, however only tells you the user has wifi enabled.  It does not tell you if the phone is connected and using a wifi network.&lt;/p&gt;
+&lt;p&gt;You must also check the &lt;em&gt;&lt;a href="http://msdn.microsoft.com/en-US/library/windowsphone/develop/microsoft.phone.net.networkinformation.networkinterfacetype(v=vs.105).aspx"&gt;NetworkInterfaceType&lt;/a&gt;&lt;/em&gt;.  Note that the majority of interface types are not supported on the phone. There is really only &lt;strong&gt;Wireless80211&lt;/strong&gt;, &lt;strong&gt;MobileBroadbandGsm&lt;/strong&gt; and &lt;strong&gt;MobileBroadbandCdma&lt;/strong&gt; to worry about.  I &lt;em&gt;believe&lt;/em&gt; &lt;strong&gt;Ethernet&lt;/strong&gt; is available when connected to a PC with Zune running, as I &lt;em&gt;think&lt;/em&gt; Zune allows the phone to piggy back off the PC's network connection. AFAIK.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;    NetworkInterface.NetworkInterfaceType == NetworkInterfaceType.Wireless80211
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Put it all together.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+        private bool IsWifiConnected()
+        {
+            if(IsNetworkAvailable() &amp;amp;&amp;amp; IsWifiEnabled())
+            {
+                return NetworkInterface.NetworkInterfaceType == NetworkInterfaceType.Wireless80211;
+            }
+
+            return false;
+        }
+
+        private bool IsWifiEnabled()
+        {
+            return DeviceNetworkInformation.IsWiFiEnabled;
+        }
+
+        private bool IsNetworkAvailable()
+        {
+            return DeviceNetworkInformation.IsNetworkAvailable;
+        }
+
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id="this-thing-is-slooooow"&gt;This thing is slooooow&lt;/h2&gt;
+&lt;p&gt;After implementing something like this in a background agent on the phone, I was surprised to see the agent frequently not running correctly, usually timing out.&lt;/p&gt;
+&lt;p&gt;As far as as I can tell, the call to &lt;strong&gt;NetworkInterface.NetworkInterfaceType&lt;/strong&gt; can be very slow, sometimes 20-30 seconds, and sometimes simply returning &lt;em&gt;None&lt;/em&gt;, even though the phone is clearly connected to the network.&lt;/p&gt;
+&lt;p&gt;People on stackoverflow suggest wrapping these calls up in some async pattern, either threadpool or whatever, as it will be a blocking call otherwise.&lt;/p&gt;
+&lt;p&gt;In the case of a background agent I can't see how to determine if we are on a wifi network (or connected at all) in a timely manner.  The background task must complete in, I think, 25 seconds or so.  If the network takes 20-30 seconds, well you can see the problem.&lt;/p&gt;
+&lt;h2 id="wifi-is-sleeping"&gt;WIFI is sleeping&lt;/h2&gt;
+&lt;p&gt;The phone has certain behaviors you must be aware of.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;wifi will turn off if the phone is asleep&lt;/li&gt;
+&lt;li&gt;the phone will preferentially use the mobile connection&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;On the windows phone 8 a recent update allows the user to specify &amp;quot;Keep WiFi on when screen times out&amp;quot;.&lt;/p&gt;
+&lt;p&gt;On windows phone 7.5 it seems to keep WiFi on by default. I am not sure.&lt;/p&gt;
+&lt;p&gt;Basically, during a background task:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;if the user has wifi enabled and mobile data turned on the phone will opt for mobile data&lt;/li&gt;
+&lt;li&gt;if the user has wifi enabled and wifi enabled during sleep (and mobile data) the phone &lt;em&gt;should&lt;/em&gt; opt for wifi&lt;/li&gt;
+&lt;li&gt;if the user has wifi enabled, wifi enabled during sleep and mobile data off, the check for network will succeed (uses wifi)&lt;/li&gt;
+&lt;li&gt;if the user has wifi enabled, mobile data off, the check for network will fail (timeout)&lt;/li&gt;
+&lt;li&gt;if the user has wifi disabled, mobile data on, the check for network will  succeed (uses mobile data)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;At the end of the day the best you can do is inform your users.&lt;/p&gt;
+&lt;p&gt;&amp;quot;If you wish to use wifi for background data requests please check &amp;quot;Keep WiFi on when screen times out&amp;quot; is enabled under the advanced settings of your wifi connection.&amp;quot;&lt;/p&gt;
 </content></entry></feed>

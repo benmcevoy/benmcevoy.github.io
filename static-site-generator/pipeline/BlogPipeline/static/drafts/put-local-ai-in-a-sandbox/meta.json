@@ -1,0 +1,7 @@
+{
+    "published": "2026-10-16T07:00:00",
+    "summary": "Pass through your GPU to a virtual machine and run local AI slightly more safely.",
+    "keywords": "AI, SI, local LLM, pass-through GPU, virtual machines, VM",
+    "slug": "put-local-ai-in-a-sandbox",
+    "title": "Put Local AI in a Sandbox"
+}

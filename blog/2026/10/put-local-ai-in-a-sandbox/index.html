@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Pass through your GPU to a virtual machine and run local AI slightly more safely.">
+    <meta name="keywords" content="AI, SI, local LLM, pass-through GPU, virtual machines, VM">
+    <meta name="author" content="ben mcevoy">
+    <title>Put Local AI in a Sandbox - blog.benmcevoy.com.au</title>
+    <link href="/blog/assets/css/site.css" rel="stylesheet">
+    <link type="application/atom+xml" rel="alternate" href="/blog/feed/atom.xml" />
+</head>
+
+<body>
+    <!-- Navigation -->
+<nav class="nav">
+    <a class="brand" href="https://benmcevoy.com.au/">Home</a>
+    <button class="toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="menu">
+        <span></span><span></span><span></span>
+    </button>
+    <ul id="menu" class="menu">
+        <li><a href="https://github.com/benmcevoy/">Github</a></li>
+        <li><a href="https://benmcevoy.com.au/resume.htm">Resume</a></li>
+        <li><a href="/blog/feed/atom.xml">Feed</a></li>
+    </ul>
+</nav>
+    <div class="layout">
+        <div class="main">
+            <div class="markdown-body">
+                <div class="title">
+                    <h1>Put Local AI in a Sandbox</h1>
+                </div>
+                <div class="date-line">
+                    <span> &#x23F2;</span> Posted on Friday October 2026
+                </div>
+
+                <h1 id="goals">Goals</h1>
+<ul>
+<li>vm sandbox fo agent</li>
+<li>running claude-code</li>
+<li>running local model (maybe a small IBM granite model)</li>
+<li>pass through or direct access to GPU</li>
+</ul>
+<p><a href="https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95">https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95</a></p>
+<h2 id="create-vm-sandbox">create VM sandbox</h2>
+<p>qemu allows for GPU passthough, which is what we need
+but requires 2 gpu installed, one for host, one for virtual</p>
+<p>i do not have two gpu installed...  oh my cpu has IGP...</p>
+<p>in bios enable vt-d and igp</p>
+<p>this is helpful <a href="https://github.com/HarbourHeading/KVM-GPU-Passthrough?tab=readme-ov-file#is-virtualization-supported">https://github.com/HarbourHeading/KVM-GPU-Passthrough?tab=readme-ov-file#is-virtualization-supported</a></p>
+<p><a href="https://documentation.ubuntu.com/server/how-to/graphics/gpu-virtualization-with-qemu-kvm/">https://documentation.ubuntu.com/server/how-to/graphics/gpu-virtualization-with-qemu-kvm/</a></p>
+<p><a href="https://discourse.ubuntu.com/t/qemu-gpu-passthrough/54509">https://discourse.ubuntu.com/t/qemu-gpu-passthrough/54509</a></p>
+<p>the GPU needs to be configured for pass through which is quite complicated.</p>
+<p>I'm trying to work it out.</p>
+<ul>
+<li>setup VM via <code>virt-manager</code></li>
+<li>disable NVIDIA gpu in host (this guide seems to work for me: <a href="https://discourse.ubuntu.com/t/qemu-gpu-passthrough/54509">https://discourse.ubuntu.com/t/qemu-gpu-passthrough/54509</a> note I skipped the qemu.q symlink bit)</li>
+<li>ensure IOMMU is enabled for GPU (should be by default)</li>
+<li>using virt-manager can add hardware - add pci-host, need the whole group - add the GPU and associated hardware in the IOMMU group</li>
+<li>seems super unhappy about this. have to reboot host etc.  the bus id and slot id for the pci card changes all the time</li>
+<li>PITA...</li>
+<li>use ubuntu 22.04.5 LTS as v24 seems to not support old NVIDIA cards...</li>
+<li>boot into VM, graphics are whacky, but install nvidia drivers sudo apt install nvidia-driver-535</li>
+<li>reboot the VM</li>
+<li>set Video to use VGA in virt-manager</li>
+<li>VM seems stable now and reports the NVIDIA GPU, but not actually using it...</li>
+<li>sudo apt install glmark2
+glmark2</li>
+<li>btop will show GPU usage as well.  um... well it did. once.</li>
+<li>install QEMU guest agent too why not...</li>
+</ul>
+<p>sudo apt install nvidia-driver-535 btop glmark2</p>
+<p>after much stuffing around</p>
+<p>I cannot work out how to specify to use NVIDIA GPU as primary</p>
+<p>but you can right click and run with discrete card - which does the trick</p>
+<pre><code># check which GPU I am using
+sudo prime-select query
+
+# use intel as primary
+sudo prime-select intel
+
+# reboot
+
+# check virtualisaiton is enable - should see VT-x
+lscpu | grep &quot;Virtualisation&quot; 
+
+# get some id's
+lspci -nn | grep -E &quot;NVIDIA&quot;
+
+</code></pre>
+<p>02:00.0 VGA compatible controller [0300]: NVIDIA Corporation TU104 [GeForce RTX 2080 SUPER] [10de:1e81] (rev a1)
+02:00.1 Audio device [0403]: NVIDIA Corporation TU104 HD Audio Controller [10de:10f8] (rev a1)
+02:00.2 USB controller [0c03]: NVIDIA Corporation TU104 USB 3.1 Host Controller [10de:1ad8] (rev a1)
+02:00.3 Serial bus controller [0c80]: NVIDIA Corporation TU104 USB Type-C UCSI Controller [10de:1ad9] (rev a1)</p>
+<h2 id="install-claude-code">Install Claude code</h2>
+<pre><code>sudo apt install curl
+curl -fsSL https://claude.ai/install.sh | bash
+
+curl -fsSL https://ollama.com/install.sh | sh
+
+# pull model locally
+ollama pull granite3.3
+# or use bjoernb/qwen3-coder-30b
+# ollama rm bjoernb/qwen3-coder-30b
+
+# required if running claude directly
+export ANTHROPIC_AUTH_TOKEN=ollama  
+export ANTHROPIC_BASE_URL=http://localhost:11434
+
+# default context is 4096 which is way to small
+export OLLAMA_CONTEXT_LENGTH=16000 
+export OLLAMA_DEBUG=1 
+export OLLAMA_KV_CACHE_TYPE=&quot;q4_0&quot; 
+export OLLAMA_FLASH_ATTENTION=1 
+
+# running this context window and e.g. qwen3 i estimate about 60GB memory required!
+# granite3.3 with 65k context took 40GB
+# check with `ollama ps`
+
+
+# launch sets the env values automatically
+ollama launch claude
+
+# nvidia-smi -L to find UUID, then it is a comma seperated list
+# i only have one
+export CUDA_VISIBLE_DEVICES=GPU-a378ee9b-4a63-8df0-de05-95ee6c3f2b83
+
+</code></pre>
+<p>ultimately... it passthrough but the host keeps crashing!</p>
+<p>i am giving up on this and try something else</p>
+<p>rollback</p>
+<pre><code>sudo nano /etc/default/grub
+# remove intel_iommu=on
+
+sudo nano /etc/initramfs-tools/modules
+# remove vfio and vhost-net stuff
+vfio
+vfio_iommu_type1
+vfio_pci
+vfio_virqfd
+vhost-net
+
+sudo update-initramfs -u
+
+reboot
+</code></pre>
+<p>reinstall nvidia drivers - i did this and it fucked my drivers, lost network <code>sudo ubuntu-drivers autoinstall</code></p>
+<p><code>sudo apt install nvidia-driver-590</code></p>
+<p>now fix the network....</p>
+<p>reboot and in BIOS prefer PCI instead of CPU/PEG</p>
+<p>and I had blacklist the noveaua drivers... <code>/etc/modprobe.d/blacklist-nouveau.conf</code> should <em>NOT</em> have</p>
+<pre><code>blacklist nouveau
+options nouveau modeset=0
+</code></pre>
+<p>and now.. after several reboots and <code>sudo apt-get purge '*nvidia*'</code></p>
+<p>select driver -580 via the additional drivers utility.</p>
+<pre><code>sudo prime-select nvidia
+</code></pre>
+<p>reboot some more.</p>
+<p>performance for the grantite3.3 (small model) was about 42 tok/s
+but using CPU...</p>
+<p>i set up claude+ollama on the metal to test performance</p>
+<p>well, it's certainly using the GPU...</p>
+<h1 id="try-to-passthrough-again">try to passthrough again</h1>
+<p>switch to IGP <code>sudo prime-select intel</code></p>
+<p>reboot</p>
+<p>in BIOS:</p>
+<ul>
+<li>set IGP on as CPU/PEG</li>
+<li>set IGP multi monitor thing on as it &quot;empowers&quot; both cards</li>
+</ul>
+<p>after a couple of reboots <code>lshw</code> shows the 2080 as &quot;unclaimed&quot;.</p>
+<p>add host-PCI to VM</p>
+<p>ok.  that just works.</p>
+<h1 id="try-to-passthrough-again-1">try to passthrough again</h1>
+<p>a few days later...</p>
+<p>i think updates got applied and now the 2080 is no longer unclaimed.</p>
+<p>can't start VM no more.</p>
+<p>check <code>sudo prime-select query</code> and it is back on-demand. set to intel, reboot.</p>
+<pre><code>*-display
+                description: VGA compatible controller
+                product: TU104 [GeForce RTX 2080 SUPER]
+</code></pre>
+<p>not unclaimed.</p>
+<p>Try the <a href="https://discourse.ubuntu.com/t/qemu-gpu-passthrough/54509">https://discourse.ubuntu.com/t/qemu-gpu-passthrough/54509</a></p>
+<ul>
+<li>set GRUB_CMDLINE_LINUX_DEFAULT=&quot;quiet splash intel_iommu=on&quot;</li>
+<li>add the vfio modules</li>
+<li>update grub and initramfs</li>
+<li>reboot</li>
+</ul>
+<p>unistall nvidia drivers and blacklist noveau</p>
+<pre><code>sudo apt-get purge '*nvidia*'
+
+echo &quot;blacklist nouveau&quot; | sudo tee /etc/modprobe.d/blacklist-nouveau.conf          
+echo &quot;options nouveau modeset=0&quot; | sudo tee -a /etc/modprobe.d/blacklist-nouveau.conf
+sudo update-initramfs -u                                                         
+sudo reboot 
+
+
+# try and check what drivers are installed, meant to be vfio
+lspci -v | grep -A 10 &quot; VGA &quot;
+</code></pre>
+<pre><code>01:00.0 VGA compatible controller: NVIDIA Corporation TU104 [GeForce RTX 2080 SUPER] (rev a1) (prog-if 00 [VGA controller])
+	Subsystem: Gigabyte Technology Co., Ltd TU104 [GeForce RTX 2080 SUPER]
+	Flags: fast devsel, IRQ 255, IOMMU group 2
+	Memory at 80000000 (32-bit, non-prefetchable) [disabled] [size=16M]
+	Memory at 6000000000 (64-bit, prefetchable) [disabled] [size=256M]
+	Memory at 6010000000 (64-bit, prefetchable) [disabled] [size=32M]
+	I/O ports at 4000 [disabled] [size=128]
+	Expansion ROM at 81000000 [disabled] [size=512K]
+	Capabilities: &lt;access denied&gt;
+	Kernel modules: nvidiafb, nouveau
+</code></pre>
+<p>nvidiafb is a framebuffer driver</p>
+<p>also blacklist
+blacklist-nvidiafb.conf add <code>blacklist nividiafb</code>
+blacklist-nvidia-nouveau.conf same as blacklist-nouveau.conf</p>
+<p>and</p>
+<pre><code>sudo update-initramfs -u                                                         
+sudo reboot 
+</code></pre>
+<p>once more...</p>
+<p>well, still says modules are loaded but this time it is unclaimed...</p>
+<p>vm won't start still</p>
+<p><a href="https://davidwin93.github.io/vfio_guide/">https://davidwin93.github.io/vfio_guide/</a></p>
+<p>so after much muckinmg around</p>
+<p>gave up.</p>
+<p>I just cannot get the vfio driver to load,
+it worked briefly, but i do not know how.</p>
+<p>in a nutshell my understanding is</p>
+<ul>
+<li>disable nvidia and nouveau drivers, by unistalling and blacklisting</li>
+<li>try and get the gpu to use vfio (although not really sure about this)</li>
+<li>assign the pci-host to the vm</li>
+<li>then it should work.</li>
+</ul>
+<p>but it doesn't work :(</p>
+<h1 id="local-model-tool-calling">local model tool calling</h1>
+<p><code>settings.json</code> can specify permissions to call tools</p>
+<p>Granite will generate e.g.</p>
+<blockquote>
+<p>create &quot;README.md&quot; in current directory</p>
+</blockquote>
+<pre><code>[{                                                                                                    
+      &quot;function&quot;: &quot;CreateFile&quot;,                                                                         
+      &quot;name&quot;: &quot;Create File&quot;,
+      &quot;arguments&quot;: {                                                                                    
+          &quot;path&quot;: &quot;./README.md&quot;                                   
+      }                                                                                                 
+  }]  
+</code></pre>
+<p>Which looks like a tool invocation, but does not actually execute</p>
+<p>Granite can call tools via Ollama, or vLLM or some other agent harness... which I am not using...</p>
+<p>maybe if I configure ollama...  ollama assumes you write some script then add the manifest... feels like a mismatch between claude-code and ollama.</p>
+<p><a href="https://www.ibm.com/think/tutorials/local-tool-calling-ollama-granite">https://www.ibm.com/think/tutorials/local-tool-calling-ollama-granite</a></p>
+<p>meanwhile, as GPU works, I will try qwen again.</p>
+<p>cannot call tools either...</p>
+<p>and now glm-4.7-flash which the internet assures me can call tools</p>
+<p>alternative - qwen3 has it's own agent and may work with the gemini agent</p>
+<h1 id="alternative-agents">alternative agents</h1>
+<p>OpenCode - <a href="https://opencode.ai/docs/tools/">https://opencode.ai/docs/tools/</a>
+Claude Code
+Gemini CLI - <a href="https://geminicli.com/">https://geminicli.com/</a>
+OpenClaw
+Cline
+Aider
+Smol
+Cursor
+pi
+oh-my-pi</p>
+<p><a href="https://khaled.boo/blog/minimal-agent-from-scratch">https://khaled.boo/blog/minimal-agent-from-scratch</a></p>
+<h1 id="models-i-tried">models i tried</h1>
+<ul>
+<li>glm-4.7-flash</li>
+<li>granite3.3</li>
+<li>qwen3-coder-30b</li>
+</ul>
+<h1 id="still-cant-call-tools">still can't call tools...</h1>
+<p>glm-4.7-flash can read the directory and read the contents of a file
+but cannot create a file....</p>
+<p>maybe time to give up on claude cli for now...</p>
+<p><a href="https://peterfalkingham.com/2025/10/27/using-local-ai-llm-in-vs-code-without-third-party-software/">https://peterfalkingham.com/2025/10/27/using-local-ai-llm-in-vs-code-without-third-party-software/</a></p>
+<h1 id="context-window-size">context window size</h1>
+<p>ollama default is 4096 tokens
+claude code expected is around ~200k</p>
+<p><code>export OLLAMA_CONTEXT_LENGTH=200000 ollama serve</code></p>
+<p>claude and it's 200k context window is killing me</p>
+<h1 id="open-code">open code</h1>
+<p>curl -fsSL <a href="https://opencode.ai/install">https://opencode.ai/install</a> | bash</p>
+<p><code>ollama launch opencode</code></p>
+<p>at 16k context window i fall out of vram.</p>
+<p>at 32k at 13GB...  at least I have RAM</p>
+<p>at 65k 22GB</p>
+<p>even at 8k i fall out of vram, just...</p>
+<p>Claude now recommends a Q4 model to fit in 8GB or so of VRAM</p>
+<p>Qwen3-14b-Q4</p>
+<p>omg, still no go...  was using a 4k context.</p>
+<p>trying 32k now, at 15GB</p>
+<p>halleljah!  it made a file!</p>
+<p>it took 16 minutes to run the /init</p>
+<p>using the qwen3:8b down to 4 minutes</p>
+<p>for now this is OK.</p>
+<h1 id="once-more-with-feeling-gpu-passthrough">once more with feeling, GPU passthrough</h1>
+<p>enable iGP in bios. plug in IGP hdmi cable and unplug the GPU one.</p>
+<pre><code>prime-select intel
+sudo apt-get purge '*nvidia*'
+
+sudo nano /etc/default/grub
+</code></pre>
+<p>GRUB_CMDLINE_LINUX_DEFAULT=&quot;intel_iommu=on iommu=pt vfio-pci.ids=10de:1e81,10de:10f8,10de:1ad8,10de:1ad9&quot;</p>
+<p>the id's can be found via <code>lspci -nn | grep -E &quot;NVIDIA&quot;</code></p>
+<pre><code>sudo grub-mkconfig -o /boot/grub/grub.cfg
+sudo reboot now
+</code></pre>
+<p><code>lspci -v | grep -A 10 &quot; VGA &quot;</code></p>
+<p>hopefully you now see: &quot;Kernel driver in use: vfio-pci&quot;</p>
+<p>if nouveau then <code>/etc/modprobe.d/blacklist-nouveau.conf</code>
+with the content</p>
+<pre><code># Blacklist Nouveau driver
+blacklist nouveau
+blacklist lbm-nouveau
+options nouveau modeset=0
+alias nouveau off
+alias lbm-nouveau off
+</code></pre>
+<p><a href="https://www.dotlinux.net/blog/how-to-disable-blacklist-nouveau-nvidia-driver-on-ubuntu-22-04-jammy-jellyfish-linux/#why-disable-nouveau">https://www.dotlinux.net/blog/how-to-disable-blacklist-nouveau-nvidia-driver-on-ubuntu-22-04-jammy-jellyfish-linux/#why-disable-nouveau</a></p>
+<p>and did the GRUB modeset=0 as well.</p>
+<p>and suddenly... it works?</p>
+<p><code>lspci -k | grep -A 2 -E &quot;(VGA|3D)&quot;</code></p>
+<p>after talking to chatgpt about it.</p>
+<p>In bios:</p>
+<ul>
+<li>4g decoding should be ON</li>
+<li>fastboot OFF</li>
+<li>CSM off</li>
+</ul>
+<p>but MOST IMPORTANT - if IOMMU group shows as 0000.03.0 etc it is stuffed!</p>
+<p><strong>MUST be IOMMU group pci@0000.01.xx.x</strong></p>
+<p>at which point it works, lspci does not hang etc.</p>
+<p>still do not understand why it changes, but a reboot seems to fix it.</p>
+<p>lspci -t</p>
+<p>find /sys/kernel/iommu_groups/ -type l | sort</p>
+<p>for g in /sys/kernel/iommu_groups/<em>; do
+echo &quot;IOMMU Group ${g##</em>/}:&quot;
+for d in $g/devices/<em>; do
+lspci -nns ${d##</em>/}
+done
+echo
+done</p>
+<p>ChatGpt says all NVIDIA devices MUST be vfio-pci
+and turn off PCI ASPM in bios.</p>
+<h1 id="qwen3.5">qwen3.5</h1>
+<p>can pull from huggiing face, e.g.</p>
+<p>ollama pull hf.co/unsloth/Qwen3.5-9B-GGUF</p>
+<p><a href="https://unsloth.ai/docs/models/qwen3.5">https://unsloth.ai/docs/models/qwen3.5</a></p>
+<h1 id="gpu-passthough">GPU passthough</h1>
+<p>so it appears that in order to be stable:</p>
+<h2 id="bios-is-finicky-and-must-be">BIOS is finicky and must be</h2>
+<ul>
+<li>4g decoding should be ON</li>
+<li>fastboot OFF</li>
+<li>CSM off</li>
+<li>PCI apsm should be off</li>
+<li>PEG should be GEN3</li>
+</ul>
+<h2 id="grub-should-be-configured">GRUB should be configured</h2>
+<ul>
+<li>include the vcio ids to try and load those drivers early</li>
+</ul>
+<h2 id="initramfs-changes">Initramfs changes</h2>
+<ul>
+<li>i added some modules here as per docs, no idea if it helps</li>
+</ul>
+<h2 id="at-boot-time">At boot time</h2>
+<ul>
+<li>GPU must be in IOMMU group 0000.01.xx.x</li>
+<li>only vcio drivers in effect for the four items in the group</li>
+</ul>
+<p>I can unbind the driver so:</p>
+<pre><code>sudo modprobe vfio-pci
+echo 0000:01:00.2 | sudo tee /sys/bus/pci/devices/0000:01:00.2/driver/unbind
+echo 10de 1ad8 | sudo tee /sys/bus/pci/drivers/vfio-pci/new_id
+</code></pre>
+<h2 id="every-time-i-boot-its-different">Every time I boot it's different</h2>
+<p>need to check</p>
+
+            </div>
+        </div>
+        <aside class="secondary-nav">
+            
+                <div>
+                    <h4>2026</h4>
+                    <div>
+                        <div>
+                            <ul>
+                                <li><a href="/blog/2026/10/put-local-ai-in-a-sandbox/">Put Local AI in a Sandbox</a></li><li><a href="/blog/2026/10/custom-xigmanas-build/">Customise XigmaNas build, adding drivers and Navidrome</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            
+                <div>
+                    <h4>2014</h4>
+                    <div>
+                        <div>
+                            <ul>
+                                <li><a href="/blog/2014/07/recover-password-on-a-vm/">Recover password on a vm</a></li><li><a href="/blog/2014/06/less-worse-webforms/">Less Worse Webforms</a></li><li><a href="/blog/2014/05/web-transforms-for-external-files/">Web Transforms for external files</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            
+                <div>
+                    <h4>2013</h4>
+                    <div>
+                        <div>
+                            <ul>
+                                <li><a href="/blog/2013/09/simulating-contentplaceholder-without-masterpages/">Simulating Content PlaceHolder without MasterPages</a></li><li><a href="/blog/2013/09/windows-phone-download-stats/">Windows Phone Download Stats</a></li><li><a href="/blog/2013/09/resolve-strategy-by-key/">Resolving strategies by key</a></li><li><a href="/blog/2013/08/synchronize-dispatcher-and-caller/">Synchronize dispatcher and caller</a></li><li><a href="/blog/2013/07/better-csv-downloads/">Better CSV downloads</a></li><li><a href="/blog/2013/07/detect-wifi-on-windows-phone/">Detect wifi on Windows Phone</a></li><li><a href="/blog/2013/04/quick-caching-for-web-api/">Quick n Dirty Web API Caching</a></li><li><a href="/blog/2013/04/using-aliases-for-class-name-collisions/">Using aliases for class name collisions</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            
+                <div>
+                    <h4>2012</h4>
+                    <div>
+                        <div>
+                            <ul>
+                                <li><a href="/blog/2012/12/app-upgrade-manager/">App Upgrade Manager</a></li><li><a href="/blog/2012/11/classing-invalid-elements-with-webforms-validation/">Classing Invalid Elements With WebForms Validation</a></li><li><a href="/blog/2012/11/webforms-modelbinder/">WebForms ModelBinder</a></li><li><a href="/blog/2012/10/bookmark-to-feed/">Bookmark to RSS</a></li><li><a href="/blog/2012/10/aspnet-webforms-modelbinding/">Budget ModelBinder for ASP.NET WebForms</a></li><li><a href="/blog/2012/09/optimising-csharp/">Optimising C#</a></li><li><a href="/blog/2012/07/falling-stars/">Falling Stars</a></li><li><a href="/blog/2012/05/the-simplest-thing-event-aggregation/">the simplest thing - event aggregation</a></li><li><a href="/blog/2012/05/you-never-get-anything-done/">You Never Get Anything Done</a></li><li><a href="/blog/2012/05/clustering-results-with-windows-phone-bing-map-control/">Clustering Results with Windows Phone Bing Map Control</a></li><li><a href="/blog/2012/04/csv-the-file-format-that-would-not-die/">CSV the file format that would not die</a></li><li><a href="/blog/2012/01/building-a-windows-phone-app-part-fuuuu/">Building a Windows Phone App Part FUUUU</a></li><li><a href="/blog/2012/01/building-a-windows-phone-app-part-3/">Building a Windows Phone App Part 3</a></li><li><a href="/blog/2012/01/building-a-windows-phone-app-part-2/">Building a Windows Phone App Part 2</a></li><li><a href="/blog/2012/01/build-windows-phone-app-part-1/">Building a Windows Phone App Part 1</a></li><li><a href="/blog/2012/01/target-winmopho-css/">Target Windows Phone CSS</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            
+                <div>
+                    <h4>2011</h4>
+                    <div>
+                        <div>
+                            <ul>
+                                <li><a href="/blog/2011/12/javascript-select/">JavaScript select</a></li><li><a href="/blog/2011/11/jquery-plugin-template/">jQuery Plugin Template</a></li><li><a href="/blog/2011/10/javascript-workers/">Mandelbrot with Workers</a></li><li><a href="/blog/2011/10/html5-canvas-mandelbrot/">Drawing the Mandelbrot Set on HTML5 canvas</a></li><li><a href="/blog/2011/09/metro/">Metro GOOD, url rewriting BAD</a></li><li><a href="/blog/2011/09/simple-log-helper/">Simple Logging Helpers</a></li><li><a href="/blog/2011/09/wpf-find-textbox/">WPF Find Textbox</a></li><li><a href="/blog/2011/09/zero-width-space/">Zero Width Space</a></li><li><a href="/blog/2011/08/unstructured-data/">Structuring Data</a></li><li><a href="/blog/2011/08/getting-started-with-msmq/">Getting Started with MSMQ</a></li><li><a href="/blog/2011/08/javascript-module-template/">JavaScript Module Visual Studio Template</a></li><li><a href="/blog/2011/07/visualize-di/">Visualizing Dependancies</a></li><li><a href="/blog/2011/07/fluent-file-renamer/">Fluent File Renaming API</a></li><li><a href="/blog/2011/07/google-weather-proxy-part2/">Proxy Google Weather as JSON (Part 2)</a></li><li><a href="/blog/2011/07/google-weather-proxy-part1/">Proxy Google Weather as JSON (Part 1)</a></li><li><a href="/blog/2011/06/google-suggests/">What does Google suggest?</a></li><li><a href="/blog/2011/06/wpf-screensaver/">Basic Screen saver in WPF</a></li><li><a href="/blog/2011/06/impersonal-search/">Un-Personalizing your google search results (in FireFox)</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            
+        </aside>
+    </div>
+    <hr>
+    </div>
+    <script type='module'>
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+    <!-- KaTeX -->
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css'>
+    <script src='https://cdn.jsdelivr.net/npm/katex/dist/katex.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/katex/dist/contrib/auto-render.min.js'></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            renderMathInElement(document.body, {
+                // customised options
+                // • auto-render specific keys, e.g.:
+                delimiters: [
+                    { left: '$$', right: '$$', display: true },
+                    { left: '$', right: '$', display: false },
+                    { left: '\\(', right: '\\)', display: false },
+                    { left: '\\[', right: '\\]', display: true }
+                ],
+                // • rendering keys, e.g.:
+                throwOnError: false
+            });
+        });
+
+        const toggle = document.querySelector('.toggle'), menu = document.querySelector('.menu');
+        toggle.addEventListener('click', () =>
+            toggle.setAttribute('aria-expanded', menu.classList.toggle('open')));
+    </script>
+</body>
+
+</html>
