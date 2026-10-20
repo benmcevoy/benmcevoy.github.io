@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?><feed xml:lang="en-us" xmlns="http://www.w3.org/2005/Atom"><title type="text">Ben McEvoy</title><subtitle type="text">Just stuff for fun</subtitle><id>https://benmcevoy.com.au/blog/feed</id><updated>2026-10-18T20:14:52+11:00</updated><author><name>Ben McEvoy</name></author><link rel="alternate" href="https://benmcevoy.com.au/blog/feed" /><link rel="self" type="application/atom+xml" href="https://benmcevoy.com.au/blog/feed" /><entry><id>https://benmcevoy.com.au/blog/2026/10/custom-xigmanas-build/</id><title type="text">Customise XigmaNas build, adding drivers and Navidrome</title><published>2026-10-15T12:00:00+11:00</published><updated>2026-10-15T12:00:00+11:00</updated><link rel="alternate" href="https://benmcevoy.com.au/blog/2026/10/custom-xigmanas-build/" /><content type="html">&lt;h2 id="lets-build-xigmanas-from-source"&gt;Let's build XigmaNas from source!&lt;/h2&gt;
+﻿<?xml version="1.0" encoding="utf-8"?><feed xml:lang="en-us" xmlns="http://www.w3.org/2005/Atom"><title type="text">Ben McEvoy</title><subtitle type="text">Just stuff for fun</subtitle><id>https://benmcevoy.com.au/blog/feed</id><updated>2026-10-20T20:23:41+11:00</updated><author><name>Ben McEvoy</name></author><link rel="alternate" href="https://benmcevoy.com.au/blog/feed" /><link rel="self" type="application/atom+xml" href="https://benmcevoy.com.au/blog/feed" /><entry><id>https://benmcevoy.com.au/blog/2026/10/custom-xigmanas-build/</id><title type="text">Customise XigmaNas build, adding drivers and Navidrome</title><published>2026-10-15T12:00:00+11:00</published><updated>2026-10-15T12:00:00+11:00</updated><link rel="alternate" href="https://benmcevoy.com.au/blog/2026/10/custom-xigmanas-build/" /><content type="html">&lt;h2 id="lets-build-xigmanas-from-source"&gt;Let's build XigmaNas from source!&lt;/h2&gt;
 &lt;p&gt;What could go wrong?&lt;/p&gt;
-&lt;p&gt;I am a total FreeBSD noob and a terrible &amp;lt;s&amp;gt;C/Python&amp;lt;/s&amp;gt; programmer. But I love me some &lt;a href="https://www.xigmanas.com/"&gt;XigmaNas&lt;/a&gt;.  I really like the &amp;quot;firmware&amp;quot; model, it bootstraps itself up into a RAM disk and the original boot files and OS are never accessible, so in theory can't get corrupted.  I've been running it at home for years, I forget how many, maybe 10 years?  And it is rock solid.&lt;/p&gt;
+&lt;p&gt;I am a total FreeBSD noob and a terrible &lt;del&gt;C/Python&lt;/del&gt; programmer. But I love me some &lt;a href="https://www.xigmanas.com/"&gt;XigmaNas&lt;/a&gt;.  I really like the &amp;quot;firmware&amp;quot; model, it bootstraps itself up into a RAM disk and the original boot files and OS are never accessible, so in theory can't get corrupted.  I've been running it at home for years, I forget how many, maybe 10 years?  And it is rock solid.&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;XigmaNAS is an Open Source Storage NAS (Network-Attached Storage) distribution based on FreeBSD.&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -182,28 +182,17 @@ cd /usr/local/xigmanas &amp;amp;&amp;amp; svn co https://svn.code.sf.net/p/xigma
 &lt;h2 id="adding-the-navidrome-port"&gt;Adding the navidrome port&lt;/h2&gt;
 &lt;p&gt;While we still have nano available, and before running the &lt;code&gt;make.sh&lt;/code&gt;.&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;cp -R /usr/ports/multimedia/navidrome/ /usr/local/xigmanas/svn/build/ports/navidrome
-echo &amp;quot;ON&amp;quot; &amp;gt; /usr/local/xigmanas/svn/build/ports/navidrome/pkg-state
+echo &amp;quot;OFF&amp;quot; &amp;gt; /usr/local/xigmanas/svn/build/ports/navidrome/pkg-state
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Update the &lt;code&gt;/usr/local/xigmanas/svn/build/ports/Makefile&lt;/code&gt; and add:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;    SUBDIR += navidrome
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Update the Navidrome &lt;code&gt;/usr/local/xigmanas/svn/build/ports/navidrome/Makefile&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;Add:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;# add this near the top somewhere, or we get a lot interactive prompts
-BATCH=yes
-
-# add this after the post-install: target
-post-stage:
-	@${MKDIR} ${XIGMANAS_ROOTFS}${PREFIX}/bin ${XIGMANAS_ROOTFS}${PREFIX}/etc/rc.d ${XIGMANAS_ROOTFS}${PREFIX}/etc/navidrome
-	@${INSTALL_PROGRAM} -v ${STAGEDIR}${PREFIX}/bin/navidrome ${XIGMANAS_ROOTFS}${PREFIX}/bin
-	@${INSTALL_SCRIPT} -v ${STAGEDIR}${PREFIX}/etc/rc.d/navidrome ${XIGMANAS_ROOTFS}${PREFIX}/etc/rc.d
-	@${INSTALL_DATA} -v ${STAGEDIR}${PREFIX}/etc/navidrome/config.toml.sample ${XIGMANAS_ROOTFS}${PREFIX}/etc/navidrome
-
-&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There is some manual intervention required later on - so watch out for that.&lt;/p&gt;
 &lt;h2 id="adding-the-realtek-port"&gt;Adding the realtek port&lt;/h2&gt;
 &lt;p&gt;We will build the port, but later we will &lt;strong&gt;NOT&lt;/strong&gt; install it.  The install goes to the &lt;code&gt;modules&lt;/code&gt; folder instead of ports.&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;cp -R /usr/ports/net/realtek-re-kmod/ /usr/local/xigmanas/svn/build/ports/realtek-re-kmod
-echo &amp;quot;ON&amp;quot; &amp;gt; /usr/local/xigmanas/svn/build/ports/realtek-re-kmod/pkg-state
+echo &amp;quot;OFF&amp;quot; &amp;gt; /usr/local/xigmanas/svn/build/ports/realtek-re-kmod/pkg-state
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Update the &lt;code&gt;/usr/local/xigmanas/svn/build/ports/Makefile&lt;/code&gt; and add:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;    SUBDIR += realtek-re-kmod
@@ -221,7 +210,7 @@ SWAPSIZE=512m
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;With:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;# Fixed values requested by build/make.sh
-MDLOCALSIZE=1600m
+MDLOCALSIZE=1800m
 SWAPSIZE=512m
 
 &lt;/code&gt;&lt;/pre&gt;
@@ -252,13 +241,13 @@ fi
 #       The image must fit on 2GB CF/USB.
 #       Actual size of MDLOCAL is defined in /etc/rc line 38.
 XIGMANAS_MFSROOT_SIZE=132
-XIGMANAS_MDLOCAL_SIZE=1600
+XIGMANAS_MDLOCAL_SIZE=1800
 XIGMANAS_MDLOCAL_MINI_SIZE=36
 #       Now image size is less than 500MB (up to 476MiB - alignment)
 XIGMANAS_IMG_SIZE=460
 if [ &amp;quot;amd64&amp;quot; = ${XIGMANAS_ARCH} ]; then
         XIGMANAS_MFSROOT_SIZE=144
-        XIGMANAS_MDLOCAL_SIZE=1600
+        XIGMANAS_MDLOCAL_SIZE=1800
         XIGMANAS_MDLOCAL_MINI_SIZE=52
         XIGMANAS_IMG_SIZE=500
 fi
@@ -276,8 +265,6 @@ cd /usr/ports/devel/subversion &amp;amp;&amp;amp; make BATCH=yes install clean
 
 cd /usr/ports/devel/git &amp;amp;&amp;amp; make BATCH=yes install clean
 
-# to fix problem with installing ports
-cd /usr/ports/lang/python311 &amp;amp;&amp;amp; make BATCH=yes stage
 &lt;/code&gt;&lt;/pre&gt;
 &lt;h2 id="build-xigmanas-run-the-make-file"&gt;Build XigmaNas - run the make file&lt;/h2&gt;
 &lt;p&gt;Remove the &lt;code&gt;cython&lt;/code&gt; problem and run &lt;code&gt;make.sh&lt;/code&gt;.&lt;/p&gt;
@@ -397,14 +384,19 @@ Compile Menu:
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Run 1 &amp;amp; 4.&lt;/p&gt;
-&lt;p&gt;When we run 4 &lt;strong&gt;deselect the realtek-re-mod&lt;/strong&gt; port.&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Rerunning the &amp;quot;Install&amp;quot; step is very brittle. You MUST rebuild or &lt;code&gt;make clean&lt;/code&gt; the port before trying to reinstall.&lt;/p&gt;
-&lt;/blockquote&gt;
 &lt;p&gt;This takes ages. Like, 8 hours. And sometimes has a dialog you have to hit enter on. Although that might have been Navidrome.  Hopefully the &lt;code&gt;make.conf&lt;/code&gt; settings have shut it all up.&lt;/p&gt;
 &lt;p&gt;You should see navidrome in the list.  And realtek-re-kmod too. Cool.&lt;/p&gt;
+&lt;p&gt;Do NOT build navidrome yet.  Build everything else.&lt;/p&gt;
 &lt;p&gt;&lt;img src="assets/time-passes.jpg" alt="Insert SpongeBob Time Card meme here." /&gt;&lt;/p&gt;
+&lt;p&gt;Exit back to the shell and fix &lt;code&gt;python311&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# to fix problem with installing ports
+cd /usr/ports/lang/python311 &amp;amp;&amp;amp; make BATCH=yes stage
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Run &lt;code&gt;make.sh&lt;/code&gt; again and return to this menu.&lt;/p&gt;
+&lt;p&gt;When we run 4 &lt;strong&gt;deselect the realtek-re-mod and the navidrome&lt;/strong&gt; port.&lt;/p&gt;
+&lt;p&gt;Install everything else.&lt;/p&gt;
 &lt;blockquote&gt;
+&lt;p&gt;Rerunning the &amp;quot;Install&amp;quot; step is very brittle. You MUST rebuild or &lt;code&gt;make clean&lt;/code&gt; the port before trying to reinstall.&lt;/p&gt;
 &lt;p&gt;At this point we can stop and exit the &lt;code&gt;make.sh&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;We need to get the realtek module in place.&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -414,6 +406,18 @@ Compile Menu:
 &lt;pre&gt;&lt;code&gt;install -v -o root -g wheel -m 555 \
     /usr/local/xigmanas/svn/build/ports/realtek-re-kmod/work/*/if_re.ko \
     /usr/local/xigmanas/rootfs/boot/modules
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id="adding-the-navidrome-port-1"&gt;Adding the navidrome port&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;cd /usr/local/xigmanas/svn/build/ports/navidrome
+
+make BATCH=yes stage
+
+# manual installation into the xigmanas rootfs
+R=/usr/local/xigmanas/rootfs/usr/local
+mkdir -p $R/bin $R/etc/rc.d $R/etc/navidrome
+install -m 555 work/stage/usr/local/bin/navidrome $R/bin/
+install -m 555 work/navidrome $R/etc/rc.d/navidrome
+install -m 644 work/stage/usr/local/etc/navidrome/config.toml.sample $R/etc/navidrome/
 &lt;/code&gt;&lt;/pre&gt;
 &lt;blockquote&gt;
 &lt;p&gt;And now - back to &lt;code&gt;/usr/local/xigmanas/svn/build/make.sh&lt;/code&gt;.&lt;/p&gt;
@@ -525,6 +529,142 @@ if_re_name=&amp;quot;/boot/modules/if_re.ko&amp;quot;
 &lt;p&gt;&lt;code&gt;chown -R www:www /mnt/navidrome-data&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;And reboot.&lt;/p&gt;
 &lt;p&gt;We can now hit the navidrome gui at &lt;a href="http://192.168.1.xxx:4533"&gt;http://192.168.1.xxx:4533&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id="put-it-all-together"&gt;Put it all together&lt;/h2&gt;
+&lt;p&gt;Script I run once SSH and SSHFS is working on the VM.  I copy it into a &lt;code&gt;build.sh&lt;/code&gt; and off it goes.&lt;/p&gt;
+&lt;p&gt;The below is slightly different to above - pulls navidrome from the &lt;code&gt;2026Q2&lt;/code&gt; branch as I wanted the multi library feature.  It's just pulling that branch and copying the port folder as before, just a different version.  This version's dependencies still seem satisfied by the &lt;code&gt;14.2-eol&lt;/code&gt; branch, so things work.&lt;/p&gt;
+&lt;p&gt;You still have to bail out while building the ports, but this is mostly non-interactive.&lt;/p&gt;
+&lt;p&gt;Just let it cook.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#!/bin/sh
+
+# this should have been done when setting up ssh
+# mkdir /usr/local/xigmanas
+# used for sshfs
+# mkdir ~/xigma
+
+pkg install -y git subversion
+
+cat &amp;gt; /etc/make.conf &amp;lt;&amp;lt; 'EOF'
+OPTIONS_UNSET=X11
+DEFAULT_VERSIONS+=mysql=8.0
+DEFAULT_VERSIONS+=ssl=base
+DEFAULT_VERSIONS+=php=8.4
+
+# due to 14.3 being so &amp;quot;old&amp;quot;, i mean it's been over a year...
+ALLOW_UNSUPPORTED_SYSTEM=yes
+# oh my
+DISABLE_VULNERABILITIES=yes
+
+# vbox build blows up the swap
+.if ${.CURDIR:M*/devel/llvm19}
+MAKE_JOBS_NUMBER=4
+.endif
+EOF
+
+# update the ports tree
+rm -rf /usr/ports
+git clone --depth 1 --branch 14.2-eol https://git.FreeBSD.org/ports.git /usr/ports
+
+# pull the src - note: releng/14.3 - or do this later via the build menu
+# although with --depth 1 this way is faster ~350MB vs ~1.8GB
+rm -rf /usr/src
+git clone --depth 1 -b releng/14.3 https://git.freebsd.org/src.git /usr/src
+
+# Pull the source for XigmaNas 14.3.0.5
+cd /usr/local/xigmanas &amp;amp;&amp;amp; svn co https://svn.code.sf.net/p/xigmanas/code/branches/14.3.0.5/ svn 
+
+# removes the pkg we installed - git, subversion, nano and a few other things
+pkg delete -y -f \*
+cd /usr/ports/shells/bash &amp;amp;&amp;amp; make BATCH=yes install clean
+
+cd /usr/ports/ports-mgmt/portupgrade &amp;amp;&amp;amp; make BATCH=yes install clean
+
+cd /usr/ports/sysutils/cdrtools &amp;amp;&amp;amp; make BATCH=yes install clean
+
+cd /usr/ports/devel/subversion &amp;amp;&amp;amp; make BATCH=yes install clean
+
+cd /usr/ports/devel/git &amp;amp;&amp;amp; make BATCH=yes install clean
+
+# tweak php84-APCu to remove lang dependency
+sed -i '' -e '/php84:lang\/php84/d' -e '/pecl-APCu/s/ *\\$//' /usr/local/xigmanas/svn/build/ports/php84-APCu/Makefile
+
+# copy in  realtek-re-kmod, navidrome 
+cp -R /usr/ports/net/realtek-re-kmod/ /usr/local/xigmanas/svn/build/ports/realtek-re-kmod
+echo &amp;quot;ON&amp;quot; &amp;gt; /usr/local/xigmanas/svn/build/ports/realtek-re-kmod/pkg-state
+
+# pull the version of navidrome we want v60.x 
+# this is the last easily compatiable version. next branch needs go126, which is 
+# not on 14.2-eol
+git clone --depth 1 --branch 2026Q2 https://git.FreeBSD.org/ports.git ~/ports
+
+cp -R ~/ports/multimedia/navidrome/ /usr/local/xigmanas/svn/build/ports/navidrome
+echo &amp;quot;OFF&amp;quot; &amp;gt; /usr/local/xigmanas/svn/build/ports/navidrome/pkg-state
+
+sed -i '' '/SUBDIR += nano/a\
+\    SUBDIR += realtek-re-kmod\
+\    SUBDIR += navidrome
+' /usr/local/xigmanas/svn/build/ports/Makefile
+
+# fixes issue with samba422 build
+pkg-static delete -y -f py311-cython3
+
+# fix up navidrome
+f=/usr/local/xigmanas/svn/build/ports/navidrome/Makefile
+
+# BATCH=yes at the top
+sed -i '' '1i\
+BATCH=yes\
+
+' &amp;quot;$f&amp;quot;
+
+# force to go125 exactly
+sed -i '' 's/go:1\.25+,modules/go:1.25,modules/' &amp;quot;$f&amp;quot;
+
+# post-stage target after post-install
+printf '\n# add this after the post-install: target\npost-stage:\n\t@${MKDIR} ${XIGMANAS_ROOTFS}${PREFIX}/bin ${XIGMANAS_ROOTFS}${PREFIX}/etc/rc.d ${XIGMANAS_ROOTFS}${PREFIX}/etc/navidrome\n\t@${INSTALL_PROGRAM} -v ${STAGEDIR}${PREFIX}/bin/navidrome ${XIGMANAS_ROOTFS}${PREFIX}/bin\n\t@${INSTALL_SCRIPT} -v ${STAGEDIR}${PREFIX}/etc/rc.d/navidrome ${XIGMANAS_ROOTFS}${PREFIX}/etc/rc.d\n\t@${INSTALL_DATA} -v ${STAGEDIR}${PREFIX}/etc/navidrome/config.toml.sample ${XIGMANAS_ROOTFS}${PREFIX}/etc/navidrome\n' &amp;gt; /tmp/post-stage.txt
+sed -i '' '/ETCDIR}\/config.toml.sample$/r /tmp/post-stage.txt' &amp;quot;$f&amp;quot;
+
+# edit the memory disk - bump the size from 1392 to 1600, about 1.5GB of ram
+sed -i '' -e 's/^MDLOCALSIZE=1332m$/MDLOCALSIZE=1800m/' -e '/^SWAPSIZE=512m$/G' /usr/local/xigmanas/svn/etc/rc
+sed -i '' -E 's/XIGMANAS_MDLOCAL_SIZE=(1192|1332)/XIGMANAS_MDLOCAL_SIZE=1800/' /usr/local/xigmanas/svn/build/functions.inc
+
+/usr/local/xigmanas/svn/build/make.sh
+
+
+# once we get up to the ports build 
+# we can build realtek-re-kmod
+# DO NOT build navidrome
+# complete the build phase (takes about 8 hours)
+# exit out and run
+
+# to fix problem with installing ports
+# cd /usr/ports/lang/python311 &amp;amp;&amp;amp; make BATCH=yes stage
+
+# then install all ports except navidrome and realtek-re-kmod
+# then via the build menu build navidrome
+# then exit out again
+
+# install -v -o root -g wheel -m 555 \
+#     /usr/local/xigmanas/svn/build/ports/realtek-re-kmod/work/*/if_re.ko \
+#     /usr/local/xigmanas/rootfs/boot/modules
+
+# cd /usr/local/xigmanas/svn/build/ports/navidrome
+#
+# make BATCH=yes stage
+#
+# R=/usr/local/xigmanas/rootfs/usr/local
+# mkdir -p $R/bin $R/etc/rc.d $R/etc/navidrome
+# install -m 555 work/stage/usr/local/bin/navidrome $R/bin/
+# install -m 555 work/navidrome $R/etc/rc.d/navidrome
+# install -m 644 work/stage/usr/local/etc/navidrome/config.toml.sample $R/etc/navidrome/
+
+# fix samba which is broken now too for some unknown reason
+
+# mkdir -p /usr/local/xigmanas/rootfs/usr/local/libdata/ldconfig
+# echo /usr/local/lib/samba4 &amp;gt; /usr/local/xigmanas/rootfs/usr/local/libdata/ldconfig/samba4
+# cat /usr/local/xigmanas/rootfs/usr/local/libdata/ldconfig/samba4
+
+# rerun make and carry on from &amp;quot;step 7&amp;quot; of the compile menu
+&lt;/code&gt;&lt;/pre&gt;
 </content></entry><entry><id>https://benmcevoy.com.au/blog/2014/07/recover-password-on-a-vm/</id><title type="text">Recover password on a vm</title><published>2014-07-21T19:00:00+10:00</published><updated>2014-07-21T19:00:00+10:00</updated><link rel="alternate" href="https://benmcevoy.com.au/blog/2014/07/recover-password-on-a-vm/" /><content type="html">&lt;p&gt;Recover password on a VM. Or any machine you have physical access to.&lt;/p&gt;
 &lt;p&gt;Oh I forgot my password.  Not sure what happened really, copied the VM and now I cannot login.&lt;/p&gt;
 &lt;p&gt;Beware if you have EFS or encrypted files.  You will probably have a bad time.&lt;/p&gt;

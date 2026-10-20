@@ -14,6 +14,7 @@ namespace BlogPipeline.Publishing
                 new ProcessPosts(),  
                 new CreateHomePage(), 
                 new CreateRssFeed(), 
+                new CreateSitemap()
             });
 
             return postProcessor.Run(context);

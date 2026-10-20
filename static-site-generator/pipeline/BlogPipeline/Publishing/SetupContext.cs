@@ -38,7 +38,7 @@ namespace BlogPipeline.Publishing
             var post = new PostToProcess
             {
                 SourcePath = currentPath,
-                BodyHtml = document.ToHtml(),
+                BodyHtml = document.ToHtml(_markdownPipeline),
                 Meta = meta,
                 RelativePath = string.Format("{0:yyyy}/{0:MM}/{1}/", meta.Published, meta.Slug)
             };
